@@ -1,0 +1,10 @@
+@use "../styles/mixins.scss" as mixins;
+
+.title {
+  margin: 0 0 var(--space-3);
+  font-size: 2rem;
+}
+
+.grid {
+  @include mixins.grid-responsive;
+}

@@ -1,0 +1,18 @@
+---
+description: Enforce project export and language conventions
+alwaysApply: true
+---
+
+# Project Conventions
+
+- Use named exports only.
+- Do not create barrel files or re-export modules (e.g. `export { X } from "..."`).
+- Prefer direct imports from concrete file paths.
+- Use functional React components and hooks only.
+- Keep TypeScript strict and explicit.
+- Write all user-facing text and assistant output in English.
+
+# Framework Exception
+
+- Next.js route files may require a default export (`app/page.tsx`, `app/layout.tsx`).
+- In those files, define a named function and keep the framework-required default export as a thin alias only.

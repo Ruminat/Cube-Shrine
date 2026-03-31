@@ -1,0 +1,11 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.25rem 0.75rem;
+  border: 1px solid var(--card-border);
+  background: rgba(129, 140, 248, 0.15);
+  color: var(--text-primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+}

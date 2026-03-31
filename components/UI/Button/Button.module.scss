@@ -1,0 +1,13 @@
+.button {
+  border: 1px solid var(--card-border);
+  border-radius: 0.75rem;
+  background: var(--accent);
+  color: var(--text-primary);
+  padding: 0.5rem 0.9rem;
+  transition: opacity var(--transition-fast);
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}

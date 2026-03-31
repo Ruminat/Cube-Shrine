@@ -1,0 +1,35 @@
+@use "../../styles/mixins.scss" as mixins;
+
+.root {
+  position: fixed;
+  top: var(--space-2);
+  right: var(--space-2);
+  z-index: 70;
+}
+
+.gear {
+  @include mixins.glass-card;
+  border-radius: 999px;
+  width: 2.5rem;
+  height: 2.5rem;
+  color: var(--text-primary);
+  border: 1px solid var(--card-border);
+  cursor: pointer;
+}
+
+.panel {
+  @include mixins.glass-card;
+  margin-top: var(--space-2);
+  width: 300px;
+  padding: var(--space-2);
+  border-radius: var(--radius-md);
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-1);
+  color: var(--text-primary);
+  margin-bottom: var(--space-1);
+}

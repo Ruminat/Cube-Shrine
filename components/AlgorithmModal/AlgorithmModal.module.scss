@@ -1,0 +1,35 @@
+@use "../../styles/mixins.scss" as mixins;
+
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  background: rgba(15, 23, 42, 0.75);
+  display: grid;
+  place-items: center;
+  padding: var(--space-3);
+}
+
+.modal {
+  @include mixins.glass-card;
+  width: min(960px, 100%);
+  border-radius: var(--radius-lg);
+  padding: var(--space-3);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.notation {
+  color: var(--text-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.description {
+  margin-top: var(--space-2);
+  color: var(--text-primary);
+}
