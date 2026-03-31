@@ -1,5 +1,7 @@
 import type { Algorithm } from "@/types/algorithm";
 
+/*
+Previous algorithm set (temporarily disabled for move debugging):
 export const algorithms: Algorithm[] = [
   {
     id: "jb-perm",
@@ -59,5 +61,73 @@ export const algorithms: Algorithm[] = [
     description: "PLL case that cycles three upper-layer edges clockwise.",
     category: "PLL",
     preparationRotations: [{ face: "U", angle: 180 }]
+  }
+];
+*/
+
+export const algorithms: Algorithm[] = [
+  {
+    id: "move-r",
+    name: "R",
+    notation: "R",
+    description: "Single R turn for move debugging.",
+    category: "PLL",
+    preparationRotations: []
+  },
+  {
+    id: "move-u",
+    name: "U",
+    notation: "U",
+    description: "Single U turn for move debugging.",
+    category: "PLL",
+    preparationRotations: []
+  },
+  {
+    id: "move-d",
+    name: "D",
+    notation: "D",
+    description: "Single D turn for move debugging.",
+    category: "PLL",
+    preparationRotations: []
+  },
+  {
+    id: "move-l",
+    name: "L",
+    notation: "L",
+    description: "Single L turn for move debugging.",
+    category: "OLL",
+    preparationRotations: []
+  },
+  {
+    id: "move-f",
+    name: "F",
+    notation: "F",
+    description: "Single F turn for move debugging.",
+    category: "OLL",
+    preparationRotations: []
+  },
+  {
+    id: "move-b",
+    name: "B",
+    notation: "B",
+    description: "Single B turn for move debugging.",
+    category: "F2L",
+    preparationRotations: []
+  },
+  {
+    id: "move-m",
+    name: "M",
+    notation: "M",
+    description: "Single M turn for move debugging.",
+    category: "F2L",
+    preparationRotations: []
+  },
+  {
+    id: "move-s",
+    name: "S",
+    notation: "S",
+    description: "Single S turn for move debugging.",
+    category: "PLL",
+    preparationRotations: []
   }
 ];

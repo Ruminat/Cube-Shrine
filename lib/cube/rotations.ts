@@ -10,7 +10,9 @@ const axisByFace: Record<RotationStep["face"], THREE.Vector3> = {
   L: new THREE.Vector3(-1, 0, 0),
   R: new THREE.Vector3(1, 0, 0),
   F: new THREE.Vector3(0, 0, 1),
-  B: new THREE.Vector3(0, 0, -1)
+  B: new THREE.Vector3(0, 0, -1),
+  M: new THREE.Vector3(1, 0, 0),
+  S: new THREE.Vector3(0, 0, 1)
 };
 
 const layerByFace: Record<RotationStep["face"], "x" | "y" | "z"> = {
@@ -19,7 +21,9 @@ const layerByFace: Record<RotationStep["face"], "x" | "y" | "z"> = {
   L: "x",
   R: "x",
   F: "z",
-  B: "z"
+  B: "z",
+  M: "x",
+  S: "z"
 };
 
 const layerSign: Record<RotationStep["face"], number> = {
@@ -28,7 +32,9 @@ const layerSign: Record<RotationStep["face"], number> = {
   L: -1,
   R: 1,
   F: 1,
-  B: -1
+  B: -1,
+  M: 0,
+  S: 0
 };
 
 const roundToLayer = (value: number): number => Math.round(value);
@@ -42,7 +48,8 @@ export const rotateFace = (
   const axis = axisByFace[step.face];
   const layerAxis = layerByFace[step.face];
   const sign = layerSign[step.face];
-  const radians = THREE.MathUtils.degToRad(step.angle);
+  // Invert parser angle sign to match standard cube notation direction.
+  const radians = THREE.MathUtils.degToRad(-step.angle);
   const selected = cubies.filter(
     (cubie) => Math.abs(cubie.userData.coord[layerAxis] - sign) < EPSILON
   );
