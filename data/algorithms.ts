@@ -1,5 +1,6 @@
 import type { Algorithm } from "@/types/algorithm";
 
+// Main algorithms enabled:
 export const algorithms: Algorithm[] = [
   {
     id: "jb-perm",
@@ -61,7 +62,6 @@ export const algorithms: Algorithm[] = [
     preparationRotations: [{ face: "U", angle: 180 }]
   }
 ];
-
 /*
 Temporary single-move test set (disabled):
 export const algorithms: Algorithm[] = [
