@@ -1,3 +1,4 @@
+import { memo, useCallback, useMemo } from "react";
 import { MiniCube } from "@/components/MiniCube/MiniCube";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { Badge } from "@/components/UI/Badge/Badge";
@@ -12,11 +13,12 @@ interface AlgorithmCardProps {
   onClick: (algorithm: Algorithm) => void;
 }
 
-export function AlgorithmCard({ algorithm, onClick }: AlgorithmCardProps) {
-  const notationRotations = parseNotation(algorithm.notation);
+function AlgorithmCardComponent({ algorithm, onClick }: AlgorithmCardProps) {
+  const notationRotations = useMemo(() => parseNotation(algorithm.notation), [algorithm.notation]);
+  const handleClick = useCallback(() => onClick(algorithm), [algorithm, onClick]);
 
   return (
-    <article className={styles.card} onClick={() => onClick(algorithm)}>
+    <article className={styles.card} onClick={handleClick}>
       <h3 className={styles.title}>{algorithm.name}</h3>
       <AlgorithmNotation notation={algorithm.notation} />
       <div className={styles.cubeWrapper}>
@@ -28,3 +30,5 @@ export function AlgorithmCard({ algorithm, onClick }: AlgorithmCardProps) {
     </article>
   );
 }
+
+export const AlgorithmCard = memo(AlgorithmCardComponent);

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { AlgorithmCard } from "@/components/AlgorithmCard/AlgorithmCard";
 import { AlgorithmModal } from "@/components/AlgorithmModal/AlgorithmModal";
 import { SettingsPanel } from "@/components/SettingsPanel/SettingsPanel";
@@ -11,6 +11,9 @@ import styles from "./page.module.scss";
 
 export function HomePage() {
   const [selected, setSelected] = useState<Algorithm | null>(null);
+  const handleCloseModal = useCallback(() => {
+    setSelected(null);
+  }, []);
 
   return (
     <>
@@ -23,7 +26,7 @@ export function HomePage() {
           ))}
         </section>
       </Container>
-      <AlgorithmModal algorithm={selected} onClose={() => setSelected(null)} />
+      <AlgorithmModal algorithm={selected} onClose={handleCloseModal} />
     </>
   );
 }

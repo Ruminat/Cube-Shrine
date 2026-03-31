@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { Button } from "@/components/UI/Button/Button";
 import { parseNotation } from "@/lib/notation/parser";
@@ -15,7 +15,6 @@ interface AlgorithmModalProps {
 export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
   if (!algorithm) return null;
   const notationRotations = parseNotation(algorithm.notation);
-  const [isCubeReady, setIsCubeReady] = useState(false);
 
   useEffect(() => {
     const onKeyDown = (event: KeyboardEvent) => {
@@ -26,24 +25,6 @@ export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [onClose]);
 
-  useEffect(() => {
-    setIsCubeReady(false);
-
-    let timeoutId: number | undefined;
-    const frameId = window.requestAnimationFrame(() => {
-      timeoutId = window.setTimeout(() => {
-        setIsCubeReady(true);
-      }, 0);
-    });
-
-    return () => {
-      window.cancelAnimationFrame(frameId);
-      if (timeoutId !== undefined) {
-        window.clearTimeout(timeoutId);
-      }
-    };
-  }, [algorithm.id]);
-
   return (
     <div className={styles.backdrop} onClick={onClose}>
       <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
@@ -52,13 +33,7 @@ export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
           <Button onClick={onClose}>Close</Button>
         </header>
         <p className={styles.notation}>{algorithm.notation}</p>
-        <div className={styles.cubeSlot}>
-          {isCubeReady ? (
-            <CubeRenderer size={500} preparationRotations={notationRotations} />
-          ) : (
-            <div className={styles.cubeSkeleton} aria-hidden="true" />
-          )}
-        </div>
+        <CubeRenderer size={500} preparationRotations={notationRotations} />
         <p className={styles.description}>{algorithm.description}</p>
       </div>
     </div>
