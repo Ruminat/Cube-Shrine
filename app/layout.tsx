@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { AppThemeProvider } from "@/components/AppTheme/AppThemeProvider";
+import "@radix-ui/themes/styles.css";
 import "./globals.scss";
 
 export const metadata: Metadata = {
@@ -11,7 +13,9 @@ export function RootLayout({
 }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <AppThemeProvider>{children}</AppThemeProvider>
+      </body>
     </html>
   );
 }

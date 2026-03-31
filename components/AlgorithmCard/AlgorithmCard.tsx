@@ -1,7 +1,7 @@
-import { memo, useCallback, useMemo } from "react";
+import { memo, useCallback, useMemo, useState } from "react";
+import { Badge, Button, Card, Flex, IconButton, Text } from "@radix-ui/themes";
+import { CheckIcon, ClipboardCopyIcon, OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { MiniCube } from "@/components/MiniCube/MiniCube";
-import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
-import { Badge } from "@/components/UI/Badge/Badge";
 import { parseNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 import styles from "./AlgorithmCard.module.scss";
@@ -15,19 +15,62 @@ interface AlgorithmCardProps {
 
 function AlgorithmCardComponent({ algorithm, onClick }: AlgorithmCardProps) {
   const notationRotations = useMemo(() => parseNotation(algorithm.notation), [algorithm.notation]);
-  const handleClick = useCallback(() => onClick(algorithm), [algorithm, onClick]);
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleOpenDialog = useCallback(() => onClick(algorithm), [algorithm, onClick]);
+  const handleCopyNotation = useCallback(async () => {
+    if (!navigator?.clipboard?.writeText) {
+      return;
+    }
+
+    await navigator.clipboard.writeText(algorithm.notation);
+    setIsCopied(true);
+    window.setTimeout(() => setIsCopied(false), 1400);
+  }, [algorithm.notation]);
 
   return (
-    <article className={styles.card} onClick={handleClick}>
-      <h3 className={styles.title}>{algorithm.name}</h3>
-      <AlgorithmNotation notation={algorithm.notation} />
+    <Card className={styles.card} size="1">
       <div className={styles.cubeWrapper}>
         <MiniCube size={CARD_CUBE_SIZE} preparationRotations={notationRotations} interactive={false} />
       </div>
-      <div className={styles.category}>
-        <Badge>{algorithm.category}</Badge>
-      </div>
-    </article>
+
+      <Flex className={styles.content} direction="column" gap="2">
+        <Flex className={styles.header} align="center" justify="between" gap="2">
+          <Flex align="center" gap="2">
+            <h3 className={styles.title}>{algorithm.name}</h3>
+            <Badge variant="soft">{algorithm.category}</Badge>
+          </Flex>
+          <Button
+            className={styles.openButton}
+            onClick={handleOpenDialog}
+            type="button"
+            aria-label={`Open ${algorithm.name} details`}
+            size="1"
+            variant="soft"
+          >
+            <OpenInNewWindowIcon />
+            View
+          </Button>
+        </Flex>
+
+        <Flex className={styles.notationRow} align="center" justify="between" gap="2">
+          <Text className={styles.notation} as="p">
+            {algorithm.notation}
+          </Text>
+          <IconButton
+            className={styles.copyButton}
+            onClick={handleCopyNotation}
+            type="button"
+            aria-label={`Copy ${algorithm.name} notation`}
+            size="1"
+            variant="soft"
+            highContrast
+          >
+            {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
+          </IconButton>
+        </Flex>
+      </Flex>
+    </Card>
   );
 }
 

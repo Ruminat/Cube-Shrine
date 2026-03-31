@@ -3,7 +3,7 @@
 import { useCallback, useState } from "react";
 import { AlgorithmCard } from "@/components/AlgorithmCard/AlgorithmCard";
 import { AlgorithmModal } from "@/components/AlgorithmModal/AlgorithmModal";
-import { SettingsPanel } from "@/components/SettingsPanel/SettingsPanel";
+import { TopNav } from "@/components/TopNav/TopNav";
 import { Container } from "@/components/UI/Container/Container";
 import { algorithms } from "@/data/algorithms";
 import type { Algorithm } from "@/types/algorithm";
@@ -17,9 +17,8 @@ export function HomePage() {
 
   return (
     <>
-      <SettingsPanel />
+      <TopNav />
       <Container>
-        <h1 className={styles.title}>Rubik&apos;s Cube Algorithms</h1>
         <section className={styles.grid}>
           {algorithms.map((algorithm) => (
             <AlgorithmCard key={algorithm.id} algorithm={algorithm} onClick={setSelected} />
