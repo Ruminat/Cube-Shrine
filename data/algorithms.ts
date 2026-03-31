@@ -1,7 +1,5 @@
 import type { Algorithm } from "@/types/algorithm";
 
-/*
-Previous algorithm set (temporarily disabled for move debugging):
 export const algorithms: Algorithm[] = [
   {
     id: "jb-perm",
@@ -63,8 +61,9 @@ export const algorithms: Algorithm[] = [
     preparationRotations: [{ face: "U", angle: 180 }]
   }
 ];
-*/
 
+/*
+Temporary single-move test set (disabled):
 export const algorithms: Algorithm[] = [
   {
     id: "move-r",
@@ -131,3 +130,4 @@ export const algorithms: Algorithm[] = [
     preparationRotations: []
   }
 ];
+*/

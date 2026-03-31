@@ -1,4 +1,17 @@
-export type CubeFace = "U" | "D" | "L" | "R" | "F" | "B" | "M" | "S";
+export type CubeFace =
+  | "U"
+  | "D"
+  | "L"
+  | "R"
+  | "F"
+  | "B"
+  | "M"
+  | "S"
+  | "u"
+  | "d"
+  | "l"
+  | "r"
+  | "f";
 
 export interface RotationStep {
   face: CubeFace;
