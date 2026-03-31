@@ -33,3 +33,34 @@
   margin-top: var(--space-2);
   color: var(--text-primary);
 }
+
+.cubeSlot {
+  min-height: 500px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cubeSkeleton {
+  width: 500px;
+  height: 500px;
+  max-width: 100%;
+  border-radius: var(--radius-md);
+  background: linear-gradient(
+    120deg,
+    rgba(255, 255, 255, 0.06) 0%,
+    rgba(255, 255, 255, 0.12) 50%,
+    rgba(255, 255, 255, 0.06) 100%
+  );
+  background-size: 200% 100%;
+  animation: cube-skeleton-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes cube-skeleton-shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

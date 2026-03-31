@@ -28,6 +28,24 @@ interface CubeDimensions {
   cubeGap: number;
 }
 
+const disposeMaterialSet = (materialSet: ReturnType<typeof getMaterialsFromCSSVariables> | null) => {
+  if (!materialSet) return;
+
+  const materialKeys: (keyof ReturnType<typeof getMaterialsFromCSSVariables>)[] = [
+    "white",
+    "yellow",
+    "red",
+    "orange",
+    "green",
+    "blue",
+    "hidden",
+  ];
+
+  materialKeys.forEach((key) => {
+    materialSet[key].dispose();
+  });
+};
+
 const getCubeDimensionsFromCSS = (): CubeDimensions => {
   const rootStyle = getComputedStyle(document.documentElement);
   const elementSize = parseFloat(rootStyle.getPropertyValue("--cube-element-size"));
@@ -40,12 +58,6 @@ const createSceneLights = () => {
   const directional = new THREE.DirectionalLight(0xffffff, 0.6);
   directional.position.set(6, 6, 6);
   return { ambient, directional };
-};
-
-const getFaceMaterialKey = (axis: "x" | "y" | "z", sign: 1 | -1) => {
-  if (axis === "x") return sign === 1 ? "green" : "blue";
-  if (axis === "y") return sign === 1 ? "yellow" : "white";
-  return sign === 1 ? "red" : "orange";
 };
 
 const useCubeSceneLifecycle = ({
@@ -124,6 +136,13 @@ const useCubeSceneLifecycle = ({
       cancelAnimationFrame(frame);
       setRenderScene(null);
       if (controls) controls.dispose();
+      cubeGroup.clear();
+      cubiesRef.current = [];
+      cubeGroupRef.current = null;
+      disposeMaterialSet(materialsRef.current);
+      materialsRef.current = null;
+      renderer.renderLists.dispose();
+      renderer.forceContextLoss();
       renderer.dispose();
       scene.clear();
       mountNode.removeChild(renderer.domElement);
@@ -161,6 +180,7 @@ const useCubePaletteSync = ({
       currentMaterial.color.copy(nextMaterial.color);
       currentMaterial.needsUpdate = true;
     });
+    disposeMaterialSet(nextSet);
     requestRender();
   }, [paletteVersion, materialsRef, cubeGroupRef, requestRender]);
 };
