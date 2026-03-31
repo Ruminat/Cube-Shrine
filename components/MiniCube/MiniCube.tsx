@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { RotationStep } from "@/types/cube";
-import { useCubeRenderer } from "@/hooks/useCubeRenderer";
+import { useCubeRenderer } from "@/components/Cube/useCubeRenderer";
 import styles from "./MiniCube.module.scss";
 
 interface MiniCubeProps {
