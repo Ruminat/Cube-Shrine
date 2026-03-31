@@ -5,6 +5,8 @@ import { parseNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 import styles from "./AlgorithmCard.module.scss";
 
+const CARD_CUBE_SIZE = 75;
+
 interface AlgorithmCardProps {
   algorithm: Algorithm;
   onClick: (algorithm: Algorithm) => void;
@@ -18,7 +20,7 @@ export function AlgorithmCard({ algorithm, onClick }: AlgorithmCardProps) {
       <h3 className={styles.title}>{algorithm.name}</h3>
       <AlgorithmNotation notation={algorithm.notation} />
       <div className={styles.cubeWrapper}>
-        <MiniCube preparationRotations={notationRotations} />
+        <MiniCube size={CARD_CUBE_SIZE} preparationRotations={notationRotations} interactive={false} />
       </div>
       <div className={styles.category}>
         <Badge>{algorithm.category}</Badge>

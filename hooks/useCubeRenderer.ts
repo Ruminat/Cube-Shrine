@@ -12,6 +12,7 @@ import { useCSSVariables } from "./useCSSVariables";
 interface UseCubeRendererOptions {
   size: number;
   preparationRotations: RotationStep[];
+  interactive?: boolean;
 }
 
 interface CubeRendererRefs {
@@ -50,13 +51,17 @@ const getFaceMaterialKey = (axis: "x" | "y" | "z", sign: 1 | -1) => {
 const useCubeSceneLifecycle = ({
   size,
   preparationRotations,
+  interactive,
   refs,
   rebuildMaterials,
+  setRenderScene,
 }: {
   size: number;
   preparationRotations: RotationStep[];
+  interactive: boolean;
   refs: CubeRendererRefs;
   rebuildMaterials: () => void;
+  setRenderScene: (renderScene: (() => void) | null) => void;
 }) => {
   const { mountRef, cubiesRef, cubeGroupRef, spacingRef, materialsRef } = refs;
 
@@ -78,11 +83,13 @@ const useCubeSceneLifecycle = ({
     renderer.setSize(size, size);
     mountNode.appendChild(renderer.domElement);
 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.enablePan = false;
-    controls.enableZoom = false;
-    controls.autoRotate = false;
-    controls.update();
+    const controls = interactive ? new OrbitControls(camera, renderer.domElement) : null;
+    if (controls) {
+      controls.enablePan = false;
+      controls.enableZoom = false;
+      controls.autoRotate = false;
+      controls.update();
+    }
 
     const { ambient, directional } = createSceneLights();
     scene.add(ambient, directional);
@@ -96,32 +103,44 @@ const useCubeSceneLifecycle = ({
     cubies.forEach((cubie) => cubeGroup.add(cubie));
     applyPreparation(cubies, cubeGroup, spacingRef.current, preparationRotations);
 
-    let frame = 0;
-    const animate = () => {
-      frame = requestAnimationFrame(animate);
-      controls.update();
+    const renderScene = () => {
+      if (controls) controls.update();
       renderer.render(scene, camera);
     };
-    animate();
+    setRenderScene(() => renderScene);
+
+    let frame = 0;
+    if (interactive) {
+      const animate = () => {
+        frame = requestAnimationFrame(animate);
+        renderScene();
+      };
+      animate();
+    } else {
+      renderScene();
+    }
 
     return () => {
       cancelAnimationFrame(frame);
-      controls.dispose();
+      setRenderScene(null);
+      if (controls) controls.dispose();
       renderer.dispose();
       scene.clear();
       mountNode.removeChild(renderer.domElement);
     };
-  }, [size, preparationRotations, rebuildMaterials, mountRef, cubiesRef, cubeGroupRef, spacingRef, materialsRef]);
+  }, [interactive, size, preparationRotations, rebuildMaterials, mountRef, cubiesRef, cubeGroupRef, spacingRef, materialsRef, setRenderScene]);
 };
 
 const useCubePaletteSync = ({
   paletteVersion,
   materialsRef,
   cubeGroupRef,
+  requestRender,
 }: {
   paletteVersion: string;
   materialsRef: RefObject<ReturnType<typeof getMaterialsFromCSSVariables> | null>;
   cubeGroupRef: RefObject<THREE.Group | null>;
+  requestRender: () => void;
 }) => {
   useEffect(() => {
     if (!cubeGroupRef.current || !paletteVersion || !materialsRef.current) return;
@@ -142,28 +161,36 @@ const useCubePaletteSync = ({
       currentMaterial.color.copy(nextMaterial.color);
       currentMaterial.needsUpdate = true;
     });
-  }, [paletteVersion, materialsRef, cubeGroupRef]);
+    requestRender();
+  }, [paletteVersion, materialsRef, cubeGroupRef, requestRender]);
 };
 
 export const useCubeRenderer = ({
   size,
-  preparationRotations
+  preparationRotations,
+  interactive = true
 }: UseCubeRendererOptions) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const cubiesRef = useRef<CubeCubie[]>([]);
   const cubeGroupRef = useRef<THREE.Group | null>(null);
   const spacingRef = useRef(1);
   const materialsRef = useRef<ReturnType<typeof getMaterialsFromCSSVariables> | null>(null);
+  const renderSceneRef = useRef<(() => void) | null>(null);
   const { paletteVersion } = useCSSVariables();
 
   const rebuildMaterials = useCallback(() => {
     materialsRef.current = getMaterialsFromCSSVariables();
   }, []);
 
+  const requestRender = useCallback(() => {
+    renderSceneRef.current?.();
+  }, []);
+
   const resetCube = useCallback(() => {
     if (!cubeGroupRef.current) return;
     cubeGroupRef.current.rotation.set(0, 0, 0);
-  }, []);
+    requestRender();
+  }, [requestRender]);
 
   const applyPreparationRotations = useCallback(() => {
     if (!cubeGroupRef.current) return;
@@ -173,16 +200,19 @@ export const useCubeRenderer = ({
       spacingRef.current,
       preparationRotations
     );
-  }, [preparationRotations]);
+    requestRender();
+  }, [preparationRotations, requestRender]);
 
   const rotateByStep = useCallback((step: RotationStep) => {
     if (!cubeGroupRef.current) return;
     rotateFace(cubiesRef.current, step, cubeGroupRef.current, spacingRef.current);
-  }, []);
+    requestRender();
+  }, [requestRender]);
 
   useCubeSceneLifecycle({
     size,
     preparationRotations,
+    interactive,
     refs: {
       mountRef,
       cubiesRef,
@@ -191,12 +221,16 @@ export const useCubeRenderer = ({
       materialsRef,
     },
     rebuildMaterials,
+    setRenderScene: (renderScene) => {
+      renderSceneRef.current = renderScene;
+    },
   });
 
   useCubePaletteSync({
     paletteVersion,
     materialsRef,
     cubeGroupRef,
+    requestRender,
   });
 
   return {

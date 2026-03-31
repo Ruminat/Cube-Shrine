@@ -8,6 +8,7 @@ import styles from "./MiniCube.module.scss";
 interface MiniCubeProps {
   preparationRotations: RotationStep[];
   size?: number;
+  interactive?: boolean;
 }
 
 const FALLBACK_CUBE_SIZE = 75;
@@ -18,7 +19,7 @@ const getCubeSizeFromCSS = () => {
   return Number.isFinite(parsedSize) ? parsedSize : FALLBACK_CUBE_SIZE;
 };
 
-export function MiniCube({ preparationRotations, size }: MiniCubeProps) {
+export function MiniCube({ preparationRotations, size, interactive = true }: MiniCubeProps) {
   const [cssCubeSize, setCssCubeSize] = useState(FALLBACK_CUBE_SIZE);
 
   useEffect(() => {
@@ -41,7 +42,14 @@ export function MiniCube({ preparationRotations, size }: MiniCubeProps) {
   const { mountRef } = useCubeRenderer({
     size: resolvedSize,
     preparationRotations,
+    interactive,
   });
 
-  return <div className={styles.root} ref={mountRef} style={{ width: resolvedSize, height: resolvedSize }} />;
+  return (
+    <div
+      className={styles.root}
+      ref={mountRef}
+      style={{ width: resolvedSize, height: resolvedSize, cursor: interactive ? "grab" : "default" }}
+    />
+  );
 }
