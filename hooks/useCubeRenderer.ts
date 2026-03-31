@@ -116,28 +116,33 @@ const useCubeSceneLifecycle = ({
 
 const useCubePaletteSync = ({
   paletteVersion,
-  cubiesRef,
+  materialsRef,
   cubeGroupRef,
 }: {
   paletteVersion: string;
-  cubiesRef: RefObject<CubeCubie[]>;
+  materialsRef: RefObject<ReturnType<typeof getMaterialsFromCSSVariables> | null>;
   cubeGroupRef: RefObject<THREE.Group | null>;
 }) => {
   useEffect(() => {
-    if (!cubeGroupRef.current || !paletteVersion) return;
+    if (!cubeGroupRef.current || !paletteVersion || !materialsRef.current) return;
     const nextSet = getMaterialsFromCSSVariables();
+    const materialKeys: (keyof ReturnType<typeof getMaterialsFromCSSVariables>)[] = [
+      "white",
+      "yellow",
+      "red",
+      "orange",
+      "green",
+      "blue",
+      "hidden",
+    ];
 
-    cubiesRef.current.forEach((cubie) => {
-      cubie.material = [
-        cubie.userData.coord.x === 1 ? nextSet[getFaceMaterialKey("x", 1)] : nextSet.hidden,
-        cubie.userData.coord.x === -1 ? nextSet[getFaceMaterialKey("x", -1)] : nextSet.hidden,
-        cubie.userData.coord.y === 1 ? nextSet[getFaceMaterialKey("y", 1)] : nextSet.hidden,
-        cubie.userData.coord.y === -1 ? nextSet[getFaceMaterialKey("y", -1)] : nextSet.hidden,
-        cubie.userData.coord.z === 1 ? nextSet[getFaceMaterialKey("z", 1)] : nextSet.hidden,
-        cubie.userData.coord.z === -1 ? nextSet[getFaceMaterialKey("z", -1)] : nextSet.hidden,
-      ];
+    materialKeys.forEach((key) => {
+      const currentMaterial = materialsRef.current![key];
+      const nextMaterial = nextSet[key];
+      currentMaterial.color.copy(nextMaterial.color);
+      currentMaterial.needsUpdate = true;
     });
-  }, [paletteVersion, cubiesRef, cubeGroupRef]);
+  }, [paletteVersion, materialsRef, cubeGroupRef]);
 };
 
 export const useCubeRenderer = ({
@@ -190,7 +195,7 @@ export const useCubeRenderer = ({
 
   useCubePaletteSync({
     paletteVersion,
-    cubiesRef,
+    materialsRef,
     cubeGroupRef,
   });
 
