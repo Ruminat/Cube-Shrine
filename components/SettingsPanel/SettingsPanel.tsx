@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Button } from "@/components/UI/Button/Button";
+import { Button } from "@radix-ui/themes";
 import styles from "./SettingsPanel.module.scss";
 
 const colorVars = [

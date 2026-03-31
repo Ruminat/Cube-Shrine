@@ -1,11 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
+import { Box, Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
-import { Button } from "@/components/UI/Button/Button";
 import { parseNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
-import styles from "./AlgorithmModal.module.scss";
 
 interface AlgorithmModalProps {
   algorithm: Algorithm | null;
@@ -14,28 +12,39 @@ interface AlgorithmModalProps {
 
 export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
   if (!algorithm) return null;
+
   const notationRotations = parseNotation(algorithm.notation);
 
-  useEffect(() => {
-    const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-
-    window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [onClose]);
-
   return (
-    <div className={styles.backdrop} onClick={onClose}>
-      <div className={styles.modal} onClick={(event) => event.stopPropagation()}>
-        <header className={styles.header}>
-          <h2>{algorithm.name}</h2>
-          <Button onClick={onClose}>Close</Button>
-        </header>
-        <p className={styles.notation}>{algorithm.notation}</p>
-        <CubeRenderer size={500} preparationRotations={notationRotations} />
-        <p className={styles.description}>{algorithm.description}</p>
-      </div>
-    </div>
+    <Dialog.Root open onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}>
+      <Dialog.Content maxWidth="980px" style={{ maxHeight: "90vh", overflow: "auto" }}>
+        <Flex direction="column" gap="4">
+          <Box>
+            <Dialog.Title>{algorithm.name}</Dialog.Title>
+            <Dialog.Description>
+              <Text as="span" size="2" color="gray">
+                {algorithm.notation}
+              </Text>
+            </Dialog.Description>
+          </Box>
+
+          <Flex justify="center" align="center">
+            <CubeRenderer size={500} preparationRotations={notationRotations} />
+          </Flex>
+
+          <Text as="p" size="2">
+            {algorithm.description}
+          </Text>
+
+          <Flex justify="end">
+            <Dialog.Close>
+              <Button variant="soft" color="gray">
+                Close
+              </Button>
+            </Dialog.Close>
+          </Flex>
+        </Flex>
+      </Dialog.Content>
+    </Dialog.Root>
   );
 }
