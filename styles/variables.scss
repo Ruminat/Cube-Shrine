@@ -5,6 +5,15 @@
   --cube-color-orange: #ff8c00;
   --cube-color-green: #51b141;
   --cube-color-blue: #33517c;
+  --cube-stripe: linear-gradient(
+    90deg,
+    var(--cube-color-white) 0%,
+    var(--cube-color-yellow) 20%,
+    var(--cube-color-red) 40%,
+    var(--cube-color-blue) 60%,
+    var(--cube-color-green) 80%,
+    var(--cube-color-orange) 100%
+  );
   --cube-size: 75px;
   --cube-element-size: 0.94;
   --cube-gap: 0.06;
@@ -46,6 +55,20 @@
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --accent: #818cf8;
+
+  /* Radix custom accent scale driven by cube palette */
+  --accent-1: #150f08;
+  --accent-2: #211609;
+  --accent-3: #382006;
+  --accent-4: #522a08;
+  --accent-5: #67330a;
+  --accent-6: #7e3e0e;
+  --accent-7: #9a4d10;
+  --accent-8: #bc6112;
+  --accent-9: var(--cube-color-orange);
+  --accent-10: #ffa120;
+  --accent-11: var(--cube-color-yellow);
+  --accent-12: #fff4d4;
 }
 
 :root[data-theme="light"] {
@@ -56,4 +79,18 @@
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --accent: #4f46e5;
+
+  /* Radix custom accent scale driven by cube palette */
+  --accent-1: #fffaf2;
+  --accent-2: #fff4e3;
+  --accent-3: #ffe7c1;
+  --accent-4: #ffd79a;
+  --accent-5: #ffc36e;
+  --accent-6: #ffaf40;
+  --accent-7: #f59a1f;
+  --accent-8: #e68600;
+  --accent-9: var(--cube-color-orange);
+  --accent-10: #f08300;
+  --accent-11: #a64f00;
+  --accent-12: #4e2a00;
 }
