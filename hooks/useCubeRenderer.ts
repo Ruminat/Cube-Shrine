@@ -42,9 +42,9 @@ const createSceneLights = () => {
 };
 
 const getFaceMaterialKey = (axis: "x" | "y" | "z", sign: 1 | -1) => {
-  if (axis === "x") return sign === 1 ? "red" : "orange";
-  if (axis === "y") return sign === 1 ? "white" : "yellow";
-  return sign === 1 ? "green" : "blue";
+  if (axis === "x") return sign === 1 ? "green" : "blue";
+  if (axis === "y") return sign === 1 ? "yellow" : "white";
+  return sign === 1 ? "red" : "orange";
 };
 
 const useCubeSceneLifecycle = ({

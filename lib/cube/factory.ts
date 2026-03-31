@@ -14,12 +14,12 @@ const materialsForCubie = (
   z: number,
   materialSet: CubeMaterialSet
 ): THREE.Material[] => [
-  x === 1 ? materialSet.red : materialSet.hidden,
-  x === -1 ? materialSet.orange : materialSet.hidden,
-  y === 1 ? materialSet.white : materialSet.hidden,
-  y === -1 ? materialSet.yellow : materialSet.hidden,
-  z === 1 ? materialSet.green : materialSet.hidden,
-  z === -1 ? materialSet.blue : materialSet.hidden
+  x === 1 ? materialSet.green : materialSet.hidden,
+  x === -1 ? materialSet.blue : materialSet.hidden,
+  y === 1 ? materialSet.yellow : materialSet.hidden,
+  y === -1 ? materialSet.white : materialSet.hidden,
+  z === 1 ? materialSet.red : materialSet.hidden,
+  z === -1 ? materialSet.orange : materialSet.hidden
 ];
 
 export const createCubeElements = (
