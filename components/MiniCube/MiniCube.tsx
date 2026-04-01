@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import type { RotationStep } from "@/types/cube";
+import { CUBE_FULL_QUALITY_MIN_SIZE_PX } from "@/components/Cube/definitions";
 import { useCubeRenderer } from "@/components/Cube/useCubeRenderer";
 import { useInViewport } from "@/hooks/useInViewport";
 import styles from "./MiniCube.module.scss";
@@ -9,7 +10,6 @@ import styles from "./MiniCube.module.scss";
 interface MiniCubeProps {
   preparationRotations: RotationStep[];
   size?: number;
-  interactive?: boolean;
   /** When true, the canvas mounts only while the cube slot is in (or near) the viewport. */
   deferUntilVisible?: boolean;
 }
@@ -24,18 +24,17 @@ const getCubeSizeFromCSS = () => {
 
 function MiniCubeScene({
   preparationRotations,
-  resolvedSize,
-  interactive
+  resolvedSize
 }: {
   preparationRotations: RotationStep[];
   resolvedSize: number;
-  interactive: boolean;
 }) {
   const { mountRef } = useCubeRenderer({
     size: resolvedSize,
-    preparationRotations,
-    interactive
+    preparationRotations
   });
+
+  const previewSlot = resolvedSize < CUBE_FULL_QUALITY_MIN_SIZE_PX;
 
   return (
     <div
@@ -44,8 +43,7 @@ function MiniCubeScene({
       style={{
         width: resolvedSize,
         height: resolvedSize,
-        cursor: interactive ? "grab" : "default",
-        pointerEvents: interactive ? undefined : "none"
+        pointerEvents: previewSlot ? "none" : undefined
       }}
     />
   );
@@ -53,12 +51,10 @@ function MiniCubeScene({
 
 function MiniCubeDeferredViewport({
   preparationRotations,
-  resolvedSize,
-  interactive
+  resolvedSize
 }: {
   preparationRotations: RotationStep[];
   resolvedSize: number;
-  interactive: boolean;
 }) {
   const { ref: viewportRef, isIntersecting } = useInViewport<HTMLDivElement>();
 
@@ -66,29 +62,19 @@ function MiniCubeDeferredViewport({
     width: resolvedSize,
     height: resolvedSize,
     minWidth: resolvedSize,
-    minHeight: resolvedSize,
-    cursor: interactive ? ("grab" as const) : ("default" as const)
+    minHeight: resolvedSize
   };
 
   return (
     <div ref={viewportRef} className={styles.viewportSlot} style={slotStyle}>
       {isIntersecting ? (
-        <MiniCubeScene
-          preparationRotations={preparationRotations}
-          resolvedSize={resolvedSize}
-          interactive={interactive}
-        />
+        <MiniCubeScene preparationRotations={preparationRotations} resolvedSize={resolvedSize} />
       ) : null}
     </div>
   );
 }
 
-export function MiniCube({
-  preparationRotations,
-  size,
-  interactive = true,
-  deferUntilVisible = false
-}: MiniCubeProps) {
+export function MiniCube({ preparationRotations, size, deferUntilVisible = false }: MiniCubeProps) {
   const [cssCubeSize, setCssCubeSize] = useState(FALLBACK_CUBE_SIZE);
 
   useEffect(() => {
@@ -110,19 +96,9 @@ export function MiniCube({
 
   if (deferUntilVisible) {
     return (
-      <MiniCubeDeferredViewport
-        preparationRotations={preparationRotations}
-        resolvedSize={resolvedSize}
-        interactive={interactive}
-      />
+      <MiniCubeDeferredViewport preparationRotations={preparationRotations} resolvedSize={resolvedSize} />
     );
   }
 
-  return (
-    <MiniCubeScene
-      preparationRotations={preparationRotations}
-      resolvedSize={resolvedSize}
-      interactive={interactive}
-    />
-  );
+  return <MiniCubeScene preparationRotations={preparationRotations} resolvedSize={resolvedSize} />;
 }

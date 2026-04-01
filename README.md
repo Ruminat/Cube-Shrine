@@ -8,7 +8,7 @@ Static [Next.js](https://nextjs.org/) app for browsing CFOP-style algorithms wit
 - **Per-card preview**: small cube drawn from parsed notation; **reverse notation** toggle, **copy**, and **open details**.
 - **Modal** with description, notation, and a larger cube preview.
 - **Theme**: light/dark toggle with `localStorage` and `data-theme` on `:root`.
-- **Performance**: list cubes mount only when **near the viewport**; static card renders use **lower DPR**, **simpler fills**, and a **single** root observer for cube colors (`CubePaletteProvider`).
+- **Performance**: list cubes mount only when **near the viewport**; **small** cube canvases use **lower DPR** and **simpler fills**; one root observer drives palette updates (`CubePaletteProvider`).
 
 ## Tech stack
 
@@ -44,7 +44,7 @@ Design tokens live in `styles/variables.scss` (cube colors, size, surfaces, moti
 
 - **Model**: 27 cubies with stickers; preparation moves come from parsed notation (`lib/notation`).
 - **`useCubeRenderer`**: creates a canvas, applies preparation rotations, exposes redraw/cleanup.
-- **Interactive vs static**: modal cube uses full quality; **card cubes** use `interactive={false}` (cheaper pixels and fills, `pointer-events: none`).
+- **Size-based canvas quality**: below `CUBE_FULL_QUALITY_MIN_SIZE_PX` (`components/Cube/definitions.ts`), drawing uses `CUBE_PREVIEW_DPR_CAP`, compact sticker fills, and `pointer-events: none` on the mount (card thumbnails). Larger cubes use `CUBE_DETAIL_DPR_CAP` and full gradients.
 
 ## Deployment
 

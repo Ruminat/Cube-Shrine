@@ -2,7 +2,11 @@
 
 import { useEffect } from "react";
 import type { RotationStep } from "@/types/cube";
-import type { CubeRendererRefs } from "./definitions";
+import {
+  CUBE_DETAIL_DPR_CAP,
+  CUBE_PREVIEW_DPR_CAP,
+  type CubeRendererRefs
+} from "./definitions";
 import { drawCube } from "./render";
 import { applyRotationStep, createSolvedCubies } from "./rotation";
 import { getPaletteFromCSS } from "./utils";
@@ -10,12 +14,12 @@ import { getPaletteFromCSS } from "./utils";
 export const useCubeSceneLifecycle = ({
   size,
   preparationRotations,
-  interactive,
+  previewQuality,
   refs
 }: {
   size: number;
   preparationRotations: RotationStep[];
-  interactive: boolean;
+  previewQuality: boolean;
   refs: CubeRendererRefs;
 }) => {
   const { mountRef, cubiesRef, redrawRef } = refs;
@@ -25,7 +29,10 @@ export const useCubeSceneLifecycle = ({
     if (!mountNode) return;
 
     const canvas = document.createElement("canvas");
-    const dpr = interactive ? Math.min(window.devicePixelRatio || 1, 2) : 1;
+    const deviceDpr = window.devicePixelRatio || 1;
+    const dpr = previewQuality
+      ? Math.min(deviceDpr, CUBE_PREVIEW_DPR_CAP)
+      : Math.min(deviceDpr, CUBE_DETAIL_DPR_CAP);
     canvas.width = Math.floor(size * dpr);
     canvas.height = Math.floor(size * dpr);
     canvas.style.width = `${size}px`;
@@ -46,7 +53,7 @@ export const useCubeSceneLifecycle = ({
 
     const redraw = () => {
       const palette = getPaletteFromCSS();
-      drawCube(context, cubiesRef.current, size, palette, { compactFill: !interactive });
+      drawCube(context, cubiesRef.current, size, palette, { compactFill: previewQuality });
     };
     redrawRef.current = redraw;
     redraw();
@@ -56,7 +63,7 @@ export const useCubeSceneLifecycle = ({
       cubiesRef.current = [];
       mountNode.removeChild(canvas);
     };
-  }, [size, preparationRotations, interactive, mountRef, cubiesRef, redrawRef]);
+  }, [size, preparationRotations, previewQuality, mountRef, cubiesRef, redrawRef]);
 };
 
 export const useCubePaletteSync = ({

@@ -3,19 +3,16 @@
 import { useCallback, useRef } from "react";
 import type { RotationStep } from "@/types/cube";
 import { useCubePalette } from "@/components/Cube/CubePaletteContext";
-import type { UseCubeRendererOptions } from "./definitions";
+import { CUBE_FULL_QUALITY_MIN_SIZE_PX, type UseCubeRendererOptions } from "./definitions";
 import { useCubePaletteSync, useCubeSceneLifecycle } from "./hooks";
 import { applyRotationStep, createSolvedCubies } from "./rotation";
 
-export const useCubeRenderer = ({
-  size,
-  preparationRotations,
-  interactive = true
-}: UseCubeRendererOptions) => {
+export const useCubeRenderer = ({ size, preparationRotations }: UseCubeRendererOptions) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const cubiesRef = useRef(createSolvedCubies());
   const redrawRef = useRef<(() => void) | null>(null);
   const { paletteVersion } = useCubePalette();
+  const previewQuality = size < CUBE_FULL_QUALITY_MIN_SIZE_PX;
 
   const requestRender = useCallback(() => {
     redrawRef.current?.();
@@ -46,7 +43,7 @@ export const useCubeRenderer = ({
   useCubeSceneLifecycle({
     size,
     preparationRotations,
-    interactive,
+    previewQuality,
     refs: {
       mountRef,
       cubiesRef,
