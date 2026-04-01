@@ -40,7 +40,7 @@ const drawStickerFace = ({
     "z-": [{ x: -1, y: 0, z: 0 }, { x: 0, y: -1, z: 0 }]
   };
   const [u, v] = tangentVectors[normal];
-  const half = 0.45;
+  const half = 0.48;
   const corners = [
     { x: center.x - u.x * half - v.x * half, y: center.y - u.y * half - v.y * half, z: center.z - u.z * half - v.z * half },
     { x: center.x + u.x * half - v.x * half, y: center.y + u.y * half - v.y * half, z: center.z + u.z * half - v.z * half },

@@ -9,7 +9,9 @@
   &:hover .openButton,
   &:focus-within .openButton,
   &:hover .copyButton,
-  &:focus-within .copyButton {
+  &:focus-within .copyButton,
+  &:hover .reverseButton,
+  &:focus-within .reverseButton {
     opacity: 1;
     pointer-events: auto;
   }
@@ -17,6 +19,7 @@
 
 .title {
   margin: 0;
+  min-width: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
   font-size: 0.95rem;
   line-height: 1.2;
@@ -39,6 +42,10 @@
 .header {
   margin-bottom: var(--space-1);
   min-width: 0;
+}
+
+.toolbar {
+  flex: 0 0 auto;
 }
 
 .notation {
@@ -71,7 +78,14 @@
   transition: opacity var(--transition-fast);
 }
 
-.copyButton:focus-visible {
+.reverseButton {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity var(--transition-fast);
+}
+
+.copyButton:focus-visible,
+.reverseButton:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }

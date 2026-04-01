@@ -11,6 +11,26 @@ const invertAngle = (angle: RotationStep["angle"]): RotationStep["angle"] => {
   return (angle * -1) as RotationStep["angle"];
 };
 
+const formatRotationStep = (step: RotationStep): string => {
+  const { face, angle } = step;
+  if (angle === 180 || angle === -180) {
+    return `${face}2`;
+  }
+  if (angle === -90) {
+    return `${face}'`;
+  }
+  return `${face}`;
+};
+
+/** Inverse move sequence (undo order, invert each turn), formatted like the source notation. */
+export const invertNotationSequence = (notation: string): string =>
+  parseNotation(notation)
+    .slice()
+    .reverse()
+    .map((step) => ({ ...step, angle: invertAngle(step.angle) }))
+    .map(formatRotationStep)
+    .join(" ");
+
 export const parseNotation = (notation: string): RotationStep[] =>
   notation
     .split(" ")

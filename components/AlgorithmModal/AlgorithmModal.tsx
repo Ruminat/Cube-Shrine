@@ -1,33 +1,39 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { CheckIcon, ClipboardCopyIcon } from "@radix-ui/react-icons";
+import { CheckIcon, ClipboardCopyIcon, DoubleArrowLeftIcon } from "@radix-ui/react-icons";
 import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
-import { parseReversedNotation } from "@/lib/notation/parser";
+import { invertNotationSequence, parseReversedNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
 
 interface AlgorithmModalProps {
   algorithm: Algorithm | null;
+  isReversed: boolean;
   onClose: () => void;
+  onToggleReverse: () => void;
 }
 
-export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
+export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse }: AlgorithmModalProps) {
   const [isCopied, setIsCopied] = useState(false);
-  const notation = algorithm?.notation ?? "";
-  const notationRotations = useMemo(() => parseReversedNotation(notation), [notation]);
+  const baseNotation = algorithm?.notation ?? "";
+  const displayNotation = useMemo(
+    () => (isReversed ? invertNotationSequence(baseNotation) : baseNotation),
+    [baseNotation, isReversed]
+  );
+  const notationRotations = useMemo(() => parseReversedNotation(displayNotation), [displayNotation]);
   const handleCopyNotation = useCallback(async () => {
     if (!navigator?.clipboard?.writeText) {
       return;
     }
 
-    await navigator.clipboard.writeText(notation);
+    await navigator.clipboard.writeText(displayNotation);
     setIsCopied(true);
     window.setTimeout(() => setIsCopied(false), 1400);
-  }, [notation]);
+  }, [displayNotation]);
 
   if (!algorithm) return null;
 
@@ -44,18 +50,31 @@ export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
             </Dialog.Description>
           </Box>
 
-          <Flex align="center" justify="center" gap="2">
-            <AlgorithmNotation notation={algorithm.notation} />
-            <IconButton
-              onClick={handleCopyNotation}
-              type="button"
-              aria-label={`Copy ${algorithm.name} notation`}
-              size="1"
-              variant="soft"
-              highContrast
-            >
-              {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
-            </IconButton>
+          <Flex align="center" justify="center" gap="2" wrap="wrap">
+            <AlgorithmNotation notation={displayNotation} />
+            <Flex align="center" gap="1">
+              <IconButton
+                onClick={onToggleReverse}
+                type="button"
+                aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
+                aria-pressed={isReversed}
+                size="1"
+                variant={isReversed ? "solid" : "soft"}
+                highContrast
+              >
+                <DoubleArrowLeftIcon />
+              </IconButton>
+              <IconButton
+                onClick={handleCopyNotation}
+                type="button"
+                aria-label={`Copy ${algorithm.name} notation`}
+                size="1"
+                variant="soft"
+                highContrast
+              >
+                {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
+              </IconButton>
+            </Flex>
           </Flex>
 
           <Flex justify="center" align="center">

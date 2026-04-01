@@ -1,0 +1,15 @@
+@use "../../styles/mixins.scss" as mixins;
+
+.group {
+  margin: 0;
+}
+
+.groupTitle {
+  margin: 0 0 var(--space-3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.grid {
+  @include mixins.grid-responsive;
+}

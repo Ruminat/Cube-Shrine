@@ -1,5 +1,5 @@
-@use "../styles/mixins.scss" as mixins;
-
-.grid {
-  @include mixins.grid-responsive;
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
 }

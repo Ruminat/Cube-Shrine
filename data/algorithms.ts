@@ -1,4 +1,23 @@
-import type { Algorithm } from "@/types/algorithm";
+import type { Algorithm, AlgorithmCategory } from "@/types/algorithm";
+
+/** Display order for grouped sections on the home page. */
+export const ALGORITHM_CATEGORY_ORDER: AlgorithmCategory[] = ["F2L", "OLL", "PLL"];
+
+export function getAlgorithmGroupsByCategory(source: Algorithm[]): Array<{
+  category: AlgorithmCategory;
+  algorithms: Algorithm[];
+}> {
+  const byCategory = new Map<AlgorithmCategory, Algorithm[]>(
+    ALGORITHM_CATEGORY_ORDER.map((category) => [category, []])
+  );
+  for (const algorithm of source) {
+    byCategory.get(algorithm.category)?.push(algorithm);
+  }
+  return ALGORITHM_CATEGORY_ORDER.map((category) => ({
+    category,
+    algorithms: byCategory.get(category) ?? []
+  })).filter((group) => group.algorithms.length > 0);
+}
 
 // Main algorithms enabled:
 export const algorithms: Algorithm[] = [
