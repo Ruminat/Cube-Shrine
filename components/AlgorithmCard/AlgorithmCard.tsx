@@ -42,7 +42,12 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
   return (
     <Card className={styles.card} size="1">
       <div className={styles.cubeWrapper}>
-        <MiniCube size={CARD_CUBE_SIZE} preparationRotations={notationRotations} interactive={false} />
+        <MiniCube
+          deferUntilVisible
+          size={CARD_CUBE_SIZE}
+          preparationRotations={notationRotations}
+          interactive={false}
+        />
       </div>
 
       <Flex className={styles.content} direction="column" gap="2">

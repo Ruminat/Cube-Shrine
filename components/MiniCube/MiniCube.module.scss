@@ -3,3 +3,10 @@
   height: var(--cube-size);
   cursor: grab;
 }
+
+.viewportSlot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
