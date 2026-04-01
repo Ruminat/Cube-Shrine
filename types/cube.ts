@@ -11,7 +11,11 @@ export type CubeFace =
   | "d"
   | "l"
   | "r"
-  | "f";
+  | "f"
+  /** Whole-cube rotation (same direction as R / U / F respectively). */
+  | "x"
+  | "y"
+  | "z";
 
 export interface RotationStep {
   face: CubeFace;

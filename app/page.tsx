@@ -36,11 +36,10 @@ export function HomePage() {
       <TopNav />
       <Container>
         <div className={styles.groups}>
-          {getAlgorithmGroupsByCategory(algorithms).map(({ category, algorithms: groupAlgorithms }) => (
+          {getAlgorithmGroupsByCategory(algorithms).map((group) => (
             <AlgorithmGroup
-              key={category}
-              category={category}
-              algorithms={groupAlgorithms}
+              key={group.category}
+              group={group}
               onOpenAlgorithm={setSelected}
               isAlgorithmReversed={isAlgorithmReversed}
               onToggleAlgorithmReverse={handleToggleAlgorithmReverse}

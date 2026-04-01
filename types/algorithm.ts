@@ -8,5 +8,7 @@ export interface Algorithm {
   notation: string;
   description: string;
   category: AlgorithmCategory;
+  /** When set, used to nest under category subsections (e.g. PLL families). */
+  subgroupId?: string;
   preparationRotations: RotationStep[];
 }

@@ -18,7 +18,10 @@ const axisByFace: Record<RotationStep["face"], THREE.Vector3> = {
   d: new THREE.Vector3(0, -1, 0),
   l: new THREE.Vector3(-1, 0, 0),
   r: new THREE.Vector3(1, 0, 0),
-  f: new THREE.Vector3(0, 0, 1)
+  f: new THREE.Vector3(0, 0, 1),
+  x: new THREE.Vector3(1, 0, 0),
+  y: new THREE.Vector3(0, 1, 0),
+  z: new THREE.Vector3(0, 0, 1)
 };
 
 const layerByFace: Record<RotationStep["face"], "x" | "y" | "z"> = {
@@ -34,7 +37,10 @@ const layerByFace: Record<RotationStep["face"], "x" | "y" | "z"> = {
   d: "y",
   l: "x",
   r: "x",
-  f: "z"
+  f: "z",
+  x: "x",
+  y: "y",
+  z: "z"
 };
 
 const layerSign: Record<RotationStep["face"], number> = {
@@ -50,8 +56,14 @@ const layerSign: Record<RotationStep["face"], number> = {
   d: -1,
   l: -1,
   r: 1,
-  f: 1
+  f: 1,
+  x: 1,
+  y: 1,
+  z: 1
 };
+
+const isWholeCubeMove = (face: RotationStep["face"]): boolean =>
+  face === "x" || face === "y" || face === "z";
 
 const isWideMove = (face: RotationStep["face"]): face is "u" | "d" | "l" | "r" | "f" =>
   face === "u" || face === "d" || face === "l" || face === "r" || face === "f";
@@ -70,6 +82,9 @@ export const rotateFace = (
   // Invert parser angle sign to match standard cube notation direction.
   const radians = THREE.MathUtils.degToRad(-step.angle);
   const selected = cubies.filter((cubie) => {
+    if (isWholeCubeMove(step.face)) {
+      return true;
+    }
     const coord = cubie.userData.coord[layerAxis];
     if (isWideMove(step.face)) {
       return sign > 0 ? coord > -EPSILON : coord < EPSILON;

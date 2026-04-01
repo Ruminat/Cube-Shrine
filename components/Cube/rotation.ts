@@ -82,7 +82,10 @@ export const applyRotationStep = (cubies: Cubie[], step: RotationStep) => {
     d: { axis: "y", cw: 1, selector: (cubie) => cubie.y <= 0 },
     l: { axis: "x", cw: 1, selector: (cubie) => cubie.x <= 0 },
     r: { axis: "x", cw: -1, selector: (cubie) => cubie.x >= 0 },
-    f: { axis: "z", cw: -1, selector: (cubie) => cubie.z >= 0 }
+    f: { axis: "z", cw: -1, selector: (cubie) => cubie.z >= 0 },
+    x: { axis: "x", cw: -1, selector: () => true },
+    y: { axis: "y", cw: -1, selector: () => true },
+    z: { axis: "z", cw: -1, selector: () => true }
   };
 
   const config = faceConfig[step.face];

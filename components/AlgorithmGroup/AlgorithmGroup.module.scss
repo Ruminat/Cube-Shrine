@@ -4,10 +4,81 @@
   margin: 0;
 }
 
+.disclosure {
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius-3);
+  background: var(--card-bg);
+  backdrop-filter: blur(var(--blur-amount));
+}
+
+.subDisclosure {
+  border: 1px solid var(--gray-a6);
+  border-radius: var(--radius-2);
+  background: var(--color-panel);
+}
+
+.categorySummary,
+.subSummary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-3);
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+
+  &::-webkit-details-marker {
+    display: none;
+  }
+}
+
+.subSummary {
+  padding: var(--space-2) var(--space-3);
+}
+
+.summaryChevron,
+.subSummaryChevron {
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  color: var(--gray-11);
+  transition: transform 0.15s ease;
+}
+
+.disclosure[open] > .categorySummary .summaryChevron {
+  transform: rotate(180deg);
+}
+
+.subDisclosure[open] > .subSummary .subSummaryChevron {
+  transform: rotate(180deg);
+}
+
 .groupTitle {
-  margin: 0 0 var(--space-3);
+  margin: 0;
   font-weight: 600;
   letter-spacing: -0.02em;
+}
+
+.subgroupTitle {
+  margin: 0;
+  font-size: var(--font-size-3);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  color: var(--gray-12);
+}
+
+.disclosureBody {
+  padding: 0 var(--space-3) var(--space-3);
+}
+
+.subDisclosureBody {
+  padding: 0 var(--space-3) var(--space-3);
+}
+
+.subgroups {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
 }
 
 .grid {

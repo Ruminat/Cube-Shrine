@@ -1,10 +1,13 @@
 import type { RotationStep } from "@/types/cube";
 
 const toAngle = (token: string): RotationStep["angle"] => {
-  if (token.endsWith("2")) return 180;
+  if (token.includes("2")) return 180;
   if (token.endsWith("'")) return -90;
   return 90;
 };
+
+const normalizeMoveToken = (raw: string): string =>
+  raw.replace(/^\(+/, "").replace(/\)+$/g, "");
 
 const invertAngle = (angle: RotationStep["angle"]): RotationStep["angle"] => {
   if (angle === 180) return 180;
@@ -36,7 +39,8 @@ export const parseNotation = (notation: string): RotationStep[] =>
     .split(" ")
     .map((chunk) => chunk.trim())
     .filter(Boolean)
-    .map((token) => {
+    .map((raw) => {
+      const token = normalizeMoveToken(raw);
       const face = token[0] as RotationStep["face"];
       return { face, angle: toAngle(token) };
     });
