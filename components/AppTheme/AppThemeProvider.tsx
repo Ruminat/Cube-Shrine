@@ -2,6 +2,7 @@
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import { Theme } from "@radix-ui/themes";
+import { CubePaletteProvider } from "@/components/Cube/CubePaletteContext";
 
 type ThemeMode = "light" | "dark";
 
@@ -50,7 +51,7 @@ export function AppThemeProvider({ children }: AppThemeProviderProps) {
   return (
     <AppThemeContext.Provider value={contextValue}>
       <Theme appearance={theme} accentColor="violet" grayColor="slate" radius="medium">
-        {children}
+        <CubePaletteProvider>{children}</CubePaletteProvider>
       </Theme>
     </AppThemeContext.Provider>
   );

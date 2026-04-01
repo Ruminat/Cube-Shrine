@@ -10,10 +10,12 @@ import { getPaletteFromCSS } from "./utils";
 export const useCubeSceneLifecycle = ({
   size,
   preparationRotations,
+  interactive,
   refs
 }: {
   size: number;
   preparationRotations: RotationStep[];
+  interactive: boolean;
   refs: CubeRendererRefs;
 }) => {
   const { mountRef, cubiesRef, redrawRef } = refs;
@@ -23,7 +25,7 @@ export const useCubeSceneLifecycle = ({
     if (!mountNode) return;
 
     const canvas = document.createElement("canvas");
-    const dpr = Math.min(window.devicePixelRatio || 1, 2);
+    const dpr = interactive ? Math.min(window.devicePixelRatio || 1, 2) : 1;
     canvas.width = Math.floor(size * dpr);
     canvas.height = Math.floor(size * dpr);
     canvas.style.width = `${size}px`;
@@ -44,7 +46,7 @@ export const useCubeSceneLifecycle = ({
 
     const redraw = () => {
       const palette = getPaletteFromCSS();
-      drawCube(context, cubiesRef.current, size, palette);
+      drawCube(context, cubiesRef.current, size, palette, { compactFill: !interactive });
     };
     redrawRef.current = redraw;
     redraw();
@@ -54,7 +56,7 @@ export const useCubeSceneLifecycle = ({
       cubiesRef.current = [];
       mountNode.removeChild(canvas);
     };
-  }, [size, preparationRotations, mountRef, cubiesRef, redrawRef]);
+  }, [size, preparationRotations, interactive, mountRef, cubiesRef, redrawRef]);
 };
 
 export const useCubePaletteSync = ({

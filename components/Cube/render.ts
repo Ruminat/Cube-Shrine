@@ -15,7 +15,8 @@ const drawStickerFace = ({
   normal,
   color,
   tile,
-  size
+  size,
+  compactFill
 }: {
   context: CanvasRenderingContext2D;
   cubie: Cubie;
@@ -23,6 +24,7 @@ const drawStickerFace = ({
   color: string;
   tile: number;
   size: number;
+  compactFill: boolean;
 }) => {
   const normalVector = normalToVector(normal);
   const center = {
@@ -57,22 +59,27 @@ const drawStickerFace = ({
   const shadeAmount = 0.2 - lightStrength * 0.08;
   const topGlowAmount = 0.12 + lightStrength * 0.18;
 
-  const gradient = context.createLinearGradient(
-    projected[0].x,
-    projected[0].y,
-    projected[2].x,
-    projected[2].y
-  );
-  gradient.addColorStop(0, tintColor(color, topGlowAmount));
-  gradient.addColorStop(1, shadeColor(color, shadeAmount));
-
   context.beginPath();
   context.moveTo(projected[0].x, projected[0].y);
   context.lineTo(projected[1].x, projected[1].y);
   context.lineTo(projected[2].x, projected[2].y);
   context.lineTo(projected[3].x, projected[3].y);
   context.closePath();
-  context.fillStyle = gradient;
+
+  if (compactFill) {
+    context.fillStyle = shadeColor(tintColor(color, topGlowAmount * 0.55), shadeAmount * 0.65);
+  } else {
+    const gradient = context.createLinearGradient(
+      projected[0].x,
+      projected[0].y,
+      projected[2].x,
+      projected[2].y
+    );
+    gradient.addColorStop(0, tintColor(color, topGlowAmount));
+    gradient.addColorStop(1, shadeColor(color, shadeAmount));
+    context.fillStyle = gradient;
+  }
+
   context.fill();
   context.lineJoin = "round";
   context.lineCap = "round";
@@ -81,12 +88,18 @@ const drawStickerFace = ({
   context.stroke();
 };
 
+type DrawCubeOptions = {
+  compactFill?: boolean;
+};
+
 export const drawCube = (
   context: CanvasRenderingContext2D,
   cubies: Cubie[],
   size: number,
-  palette: Record<PaletteKey, string>
+  palette: Record<PaletteKey, string>,
+  options?: DrawCubeOptions
 ) => {
+  const compactFill = options?.compactFill ?? false;
   context.clearRect(0, 0, size, size);
   const tile = size / 7.2;
   const visibleFaces: NormalKey[] = ["y+", "x+", "z+"];
@@ -111,7 +124,8 @@ export const drawCube = (
       normal: surface.normal,
       color: palette[surface.colorKey],
       tile,
-      size
+      size,
+      compactFill
     });
   });
 };

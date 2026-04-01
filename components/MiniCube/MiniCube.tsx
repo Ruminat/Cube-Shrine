@@ -44,7 +44,8 @@ function MiniCubeScene({
       style={{
         width: resolvedSize,
         height: resolvedSize,
-        cursor: interactive ? "grab" : "default"
+        cursor: interactive ? "grab" : "default",
+        pointerEvents: interactive ? undefined : "none"
       }}
     />
   );

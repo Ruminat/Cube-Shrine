@@ -1,80 +1,62 @@
 # Cube Shrine
 
-Interactive Rubik's Cube algorithm visualizer built with Next.js App Router, TypeScript, SCSS Modules, and Three.js.
+Static [Next.js](https://nextjs.org/) app for browsing CFOP-style algorithms with **isometric cube previews** (Canvas 2D). TypeScript, SCSS modules, and [Radix Themes](https://www.radix-ui.com/themes) for layout and UI.
 
 ## Features
 
-- 3D mini-cube rendering per algorithm card (independent Three.js scene per cube)
-- Algorithm gallery with categories (`PLL`, `OLL`, `F2L`)
-- Modal with enlarged cube preview and detailed algorithm info
-- Live settings panel:
-  - face color pickers (CSS variables)
-  - cube size control
-  - glassmorphism toggle
-  - light/dark theme switch with `localStorage` persistence
-- CSS-variable driven theming and visual tokens
-- Strict TypeScript + functional components + hooks
+- **Algorithm gallery** grouped by category (`OLL`, `PLL`; `F2L` reserved for future data). OLL and PLL use **named subgroups** (shapes, perm types, etc.).
+- **Per-card preview**: small cube drawn from parsed notation; **reverse notation** toggle, **copy**, and **open details**.
+- **Modal** with description, notation, and a larger cube preview.
+- **Theme**: light/dark toggle with `localStorage` and `data-theme` on `:root`.
+- **Performance**: list cubes mount only when **near the viewport**; static card renders use **lower DPR**, **simpler fills**, and a **single** root observer for cube colors (`CubePaletteProvider`).
 
-## Tech Stack
+## Tech stack
 
-- `next@16` (App Router)
+- `next@16` (App Router, **`output: "export"`** for static hosting)
 - `react@19`
-- `typescript`
-- `three`
-- `sass` (SCSS + CSS Modules)
+- `@radix-ui/themes`, `@radix-ui/react-icons`
+- `typescript`, `sass`
 
-## Getting Started
+Cube graphics are custom **2D canvas** code under `components/Cube/`.
 
-### Install
+## Getting started
 
 ```bash
 npm install
-```
-
-### Run in development
-
-```bash
 npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
 
-### Build for production
-
 ```bash
-npm run build
-npm run start
+npm run build   # emits `out/` — serve that folder with any static host (e.g. `npx serve out`)
 ```
 
-## Styling and Theming
+```bash
+npm run lint
+```
 
-All visual customization is controlled through CSS variables in `styles/variables.scss`.
+## Styling and theming
 
-Key tokens include:
+Design tokens live in `styles/variables.scss` (cube colors, size, surfaces, motion, etc.). Cube face colors are read at draw time from CSS variables such as `--cube-color-*`. Theme changes are observed once in `components/Cube/CubePaletteContext.tsx` and propagate to all cube redraws.
 
-- cube face colors (`--cube-color-*`)
-- cube dimensions (`--cube-size`, `--cube-element-size`, `--cube-gap`)
-- UI colors (`--bg-*`, `--text-*`, `--card-*`, `--accent`)
-- effects and motion (`--blur-amount`, `--transition-*`)
+## Cube rendering
 
-The app supports:
+- **Model**: 27 cubies with stickers; preparation moves come from parsed notation (`lib/notation`).
+- **`useCubeRenderer`**: creates a canvas, applies preparation rotations, exposes redraw/cleanup.
+- **Interactive vs static**: modal cube uses full quality; **card cubes** use `interactive={false}` (cheaper pixels and fills, `pointer-events: none`).
 
-- automatic color-scheme defaults via `prefers-color-scheme`
-- explicit theme override through `data-theme="light|dark"` on `:root`
+## Deployment
 
-## Cube Rendering Notes
+GitHub Actions (`.github/workflows/deploy-pages.yml`) builds with `GITHUB_ACTIONS=true` so `next.config.ts` can set `basePath` / `assetPrefix` for **GitHub Pages** project sites. User/org `*.github.io` repos skip the extra base path.
 
-- Cubes are created as 27 cubies with spacing.
-- Face materials are derived from CSS variables.
-- `useCSSVariables` tracks root style/theme changes with `MutationObserver`.
-- `useCubeRenderer` manages scene lifecycle, controls, preparation rotations, and cleanup.
+## Data
+
+- `data/oll.algs.ts`, `data/pll.algs.ts` — algorithm records.
+- `data/algorithms.ts` — merged list, category order, and subgroup grouping helpers.
+
+Extend types in `types/algorithm.ts` and add sources the same way.
 
 ## Conventions
 
-Project conventions are persisted in `.cursor/rules`.
-
-## Data Source
-
-Algorithms are currently stored in `data/algorithms.ts` as typed static data.
-
-You can expand this list or replace it with a backend/API source later.
+See `.cursor/rules/project-conventions.mdc`.
