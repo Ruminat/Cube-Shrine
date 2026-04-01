@@ -15,33 +15,21 @@ export type AlgorithmCategoryGroup =
   | { category: AlgorithmCategory; variant: "flat"; algorithms: Algorithm[] }
   | { category: AlgorithmCategory; variant: "subgroups"; subgroups: AlgorithmSubgroupSection[] };
 
-function buildPllSubgroups(algorithms: Algorithm[]): AlgorithmSubgroupSection[] {
-  const bucket = new Map<string, Algorithm[]>(pllSubgroupOrder.map((id) => [id, []]));
+function buildSubgroups(
+  algorithms: Algorithm[],
+  subgroupOrder: readonly string[],
+  subgroupLabels: Record<string, string>
+): AlgorithmSubgroupSection[] {
+  const bucket = new Map<string, Algorithm[]>(subgroupOrder.map((id) => [id, []]));
   for (const algorithm of algorithms) {
     const id = algorithm.subgroupId;
     if (!id) continue;
     bucket.get(id)?.push(algorithm);
   }
-  return pllSubgroupOrder
+  return subgroupOrder
     .map((id) => ({
       id,
-      title: pllSubgroupLabels[id],
-      algorithms: bucket.get(id) ?? []
-    }))
-    .filter((section) => section.algorithms.length > 0);
-}
-
-function buildOllSubgroups(algorithms: Algorithm[]): AlgorithmSubgroupSection[] {
-  const bucket = new Map<string, Algorithm[]>(ollSubgroupOrder.map((id) => [id, []]));
-  for (const algorithm of algorithms) {
-    const id = algorithm.subgroupId;
-    if (!id) continue;
-    bucket.get(id)?.push(algorithm);
-  }
-  return ollSubgroupOrder
-    .map((id) => ({
-      id,
-      title: ollSubgroupLabels[id],
+      title: subgroupLabels[id],
       algorithms: bucket.get(id) ?? []
     }))
     .filter((section) => section.algorithms.length > 0);
@@ -61,9 +49,17 @@ export function getAlgorithmGroupsByCategory(source: Algorithm[]): AlgorithmCate
     if (list.length === 0) continue;
 
     if (category === "PLL" && list.every((a) => a.subgroupId)) {
-      groups.push({ category, variant: "subgroups", subgroups: buildPllSubgroups(list) });
+      groups.push({
+        category,
+        variant: "subgroups",
+        subgroups: buildSubgroups(list, pllSubgroupOrder, pllSubgroupLabels)
+      });
     } else if (category === "OLL" && list.every((a) => a.subgroupId)) {
-      groups.push({ category, variant: "subgroups", subgroups: buildOllSubgroups(list) });
+      groups.push({
+        category,
+        variant: "subgroups",
+        subgroups: buildSubgroups(list, ollSubgroupOrder, ollSubgroupLabels)
+      });
     } else {
       groups.push({ category, variant: "flat", algorithms: list });
     }
