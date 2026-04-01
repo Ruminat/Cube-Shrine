@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppThemeProvider } from "@/components/AppTheme/AppThemeProvider";
+import { SiteFooter } from "@/components/SiteFooter/SiteFooter";
 import "@radix-ui/themes/styles.css";
 import "./globals.scss";
 
@@ -14,7 +15,10 @@ export function RootLayout({
   return (
     <html lang="en">
       <body>
-        <AppThemeProvider>{children}</AppThemeProvider>
+        <AppThemeProvider>
+          {children}
+          <SiteFooter />
+        </AppThemeProvider>
       </body>
     </html>
   );
