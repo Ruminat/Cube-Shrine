@@ -1,9 +1,14 @@
 "use client";
 
-import { Box, Button, Dialog, Flex, Text } from "@radix-ui/themes";
+import { useCallback, useMemo, useState } from "react";
+import { CheckIcon, ClipboardCopyIcon } from "@radix-ui/react-icons";
+import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
+import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { parseNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
+
+const MODAL_CUBE_SIZE = 240;
 
 interface AlgorithmModalProps {
   algorithm: Algorithm | null;
@@ -11,9 +16,20 @@ interface AlgorithmModalProps {
 }
 
 export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
-  if (!algorithm) return null;
+  const [isCopied, setIsCopied] = useState(false);
+  const notation = algorithm?.notation ?? "";
+  const notationRotations = useMemo(() => parseNotation(notation), [notation]);
+  const handleCopyNotation = useCallback(async () => {
+    if (!navigator?.clipboard?.writeText) {
+      return;
+    }
 
-  const notationRotations = parseNotation(algorithm.notation);
+    await navigator.clipboard.writeText(notation);
+    setIsCopied(true);
+    window.setTimeout(() => setIsCopied(false), 1400);
+  }, [notation]);
+
+  if (!algorithm) return null;
 
   return (
     <Dialog.Root open onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}>
@@ -23,18 +39,28 @@ export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
             <Dialog.Title>{algorithm.name}</Dialog.Title>
             <Dialog.Description>
               <Text as="span" size="2" color="gray">
-                {algorithm.notation}
+                {algorithm.description}
               </Text>
             </Dialog.Description>
           </Box>
 
-          <Flex justify="center" align="center">
-            <CubeRenderer size={500} preparationRotations={notationRotations} />
+          <Flex align="center" justify="center" gap="2">
+            <AlgorithmNotation notation={algorithm.notation} />
+            <IconButton
+              onClick={handleCopyNotation}
+              type="button"
+              aria-label={`Copy ${algorithm.name} notation`}
+              size="1"
+              variant="soft"
+              highContrast
+            >
+              {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
+            </IconButton>
           </Flex>
 
-          <Text as="p" size="2">
-            {algorithm.description}
-          </Text>
+          <Flex justify="center" align="center">
+            <CubeRenderer size={MODAL_CUBE_SIZE} preparationRotations={notationRotations} />
+          </Flex>
 
           <Flex justify="end">
             <Dialog.Close>

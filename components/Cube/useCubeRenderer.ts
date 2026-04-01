@@ -9,8 +9,7 @@ import { applyRotationStep, createSolvedCubies } from "./rotation";
 
 export const useCubeRenderer = ({
   size,
-  preparationRotations,
-  interactive: _interactive = true
+  preparationRotations
 }: UseCubeRendererOptions) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
   const cubiesRef = useRef(createSolvedCubies());

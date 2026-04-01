@@ -76,8 +76,8 @@ const drawStickerFace = ({
   context.fill();
   context.lineJoin = "round";
   context.lineCap = "round";
-  context.lineWidth = clamp(tile * 0.03, 0.8, 2);
-  context.strokeStyle = "rgba(15, 23, 42, 0.22)";
+  context.lineWidth = clamp(tile * 0.045, 1.2, 2.8);
+  context.strokeStyle = "rgba(31, 41, 55, 0.85)";
   context.stroke();
 };
 
