@@ -85,7 +85,8 @@
 }
 
 .copyButton:focus-visible,
-.reverseButton:focus-visible {
+.reverseButton:focus-visible,
+.openButton:focus-visible {
   opacity: 1;
   pointer-events: auto;
 }

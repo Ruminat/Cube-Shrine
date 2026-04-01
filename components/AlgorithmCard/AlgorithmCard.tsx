@@ -1,5 +1,5 @@
 import { memo, useCallback, useMemo, useState } from "react";
-import { Button, Card, Flex, IconButton, Text } from "@radix-ui/themes";
+import { Card, Flex, IconButton, Text, Tooltip } from "@radix-ui/themes";
 import {
   CheckIcon,
   ClipboardCopyIcon,
@@ -49,40 +49,46 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
         <Flex className={styles.header} align="center" justify="between" gap="2">
           <h3 className={styles.title}>{algorithm.name}</h3>
           <Flex align="center" gap="1" className={styles.toolbar}>
-            <IconButton
-              className={styles.reverseButton}
-              onClick={onToggleReverse}
-              type="button"
-              aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
-              aria-pressed={isReversed}
-              size="1"
-              variant={isReversed ? "solid" : "soft"}
-              highContrast
-            >
-              <DoubleArrowLeftIcon />
-            </IconButton>
-            <IconButton
-              className={styles.copyButton}
-              onClick={handleCopyNotation}
-              type="button"
-              aria-label={`Copy ${algorithm.name} notation`}
-              size="1"
-              variant="soft"
-              highContrast
-            >
-              {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
-            </IconButton>
-            <Button
-              className={styles.openButton}
-              onClick={handleOpenDialog}
-              type="button"
-              aria-label={`Open ${algorithm.name} details`}
-              size="1"
-              variant="soft"
-            >
-              <OpenInNewWindowIcon />
-              View
-            </Button>
+            <Tooltip content={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}>
+              <IconButton
+                className={styles.reverseButton}
+                onClick={onToggleReverse}
+                type="button"
+                aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
+                aria-pressed={isReversed}
+                size="1"
+                variant={isReversed ? "solid" : "soft"}
+                highContrast
+              >
+                <DoubleArrowLeftIcon />
+              </IconButton>
+            </Tooltip>
+            <Tooltip content={isCopied ? "Copied!" : "Copy notation"}>
+              <IconButton
+                className={styles.copyButton}
+                onClick={handleCopyNotation}
+                type="button"
+                aria-label={`Copy ${algorithm.name} notation`}
+                size="1"
+                variant="soft"
+                highContrast
+              >
+                {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
+              </IconButton>
+            </Tooltip>
+            <Tooltip content="View details">
+              <IconButton
+                className={styles.openButton}
+                onClick={handleOpenDialog}
+                type="button"
+                aria-label={`Open ${algorithm.name} details`}
+                size="1"
+                variant="soft"
+                highContrast
+              >
+                <OpenInNewWindowIcon />
+              </IconButton>
+            </Tooltip>
           </Flex>
         </Flex>
 

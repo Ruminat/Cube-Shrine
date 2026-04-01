@@ -1,4 +1,5 @@
 import type { Algorithm, AlgorithmCategory } from "@/types/algorithm";
+import { ollAlgorithms, ollSubgroupLabels, ollSubgroupOrder } from "@/data/oll.algs";
 import { pllAlgorithms, pllSubgroupLabels, pllSubgroupOrder } from "@/data/pll.algs";
 
 /** Display order for grouped sections on the home page. */
@@ -30,6 +31,22 @@ function buildPllSubgroups(algorithms: Algorithm[]): AlgorithmSubgroupSection[] 
     .filter((section) => section.algorithms.length > 0);
 }
 
+function buildOllSubgroups(algorithms: Algorithm[]): AlgorithmSubgroupSection[] {
+  const bucket = new Map<string, Algorithm[]>(ollSubgroupOrder.map((id) => [id, []]));
+  for (const algorithm of algorithms) {
+    const id = algorithm.subgroupId;
+    if (!id) continue;
+    bucket.get(id)?.push(algorithm);
+  }
+  return ollSubgroupOrder
+    .map((id) => ({
+      id,
+      title: ollSubgroupLabels[id],
+      algorithms: bucket.get(id) ?? []
+    }))
+    .filter((section) => section.algorithms.length > 0);
+}
+
 export function getAlgorithmGroupsByCategory(source: Algorithm[]): AlgorithmCategoryGroup[] {
   const byCategory = new Map<AlgorithmCategory, Algorithm[]>(
     ALGORITHM_CATEGORY_ORDER.map((category) => [category, []])
@@ -45,6 +62,8 @@ export function getAlgorithmGroupsByCategory(source: Algorithm[]): AlgorithmCate
 
     if (category === "PLL" && list.every((a) => a.subgroupId)) {
       groups.push({ category, variant: "subgroups", subgroups: buildPllSubgroups(list) });
+    } else if (category === "OLL" && list.every((a) => a.subgroupId)) {
+      groups.push({ category, variant: "subgroups", subgroups: buildOllSubgroups(list) });
     } else {
       groups.push({ category, variant: "flat", algorithms: list });
     }
@@ -52,4 +71,4 @@ export function getAlgorithmGroupsByCategory(source: Algorithm[]): AlgorithmCate
   return groups;
 }
 
-export const algorithms: Algorithm[] = pllAlgorithms;
+export const algorithms: Algorithm[] = [...pllAlgorithms, ...ollAlgorithms];
