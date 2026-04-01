@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo, useState } from "react";
 import { Badge, Button, Card, Flex, IconButton, Text } from "@radix-ui/themes";
 import { CheckIcon, ClipboardCopyIcon, OpenInNewWindowIcon } from "@radix-ui/react-icons";
 import { MiniCube } from "@/components/MiniCube/MiniCube";
-import { parseNotation } from "@/lib/notation/parser";
+import { parseReversedNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 import styles from "./AlgorithmCard.module.scss";
 
@@ -14,7 +14,10 @@ interface AlgorithmCardProps {
 }
 
 function AlgorithmCardComponent({ algorithm, onClick }: AlgorithmCardProps) {
-  const notationRotations = useMemo(() => parseNotation(algorithm.notation), [algorithm.notation]);
+  const notationRotations = useMemo(
+    () => parseReversedNotation(algorithm.notation),
+    [algorithm.notation]
+  );
   const [isCopied, setIsCopied] = useState(false);
 
   const handleOpenDialog = useCallback(() => onClick(algorithm), [algorithm, onClick]);

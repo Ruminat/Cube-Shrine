@@ -5,7 +5,7 @@ import { CheckIcon, ClipboardCopyIcon } from "@radix-ui/react-icons";
 import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
-import { parseNotation } from "@/lib/notation/parser";
+import { parseReversedNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
@@ -18,7 +18,7 @@ interface AlgorithmModalProps {
 export function AlgorithmModal({ algorithm, onClose }: AlgorithmModalProps) {
   const [isCopied, setIsCopied] = useState(false);
   const notation = algorithm?.notation ?? "";
-  const notationRotations = useMemo(() => parseNotation(notation), [notation]);
+  const notationRotations = useMemo(() => parseReversedNotation(notation), [notation]);
   const handleCopyNotation = useCallback(async () => {
     if (!navigator?.clipboard?.writeText) {
       return;
