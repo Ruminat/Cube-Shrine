@@ -6,9 +6,6 @@ const toAngle = (token: string): RotationStep["angle"] => {
   return 90;
 };
 
-const normalizeMoveToken = (raw: string): string =>
-  raw.replace(/^\(+/, "").replace(/\)+$/g, "");
-
 const invertAngle = (angle: RotationStep["angle"]): RotationStep["angle"] => {
   if (angle === 180) return 180;
   return (angle * -1) as RotationStep["angle"];
@@ -25,25 +22,76 @@ const formatRotationStep = (step: RotationStep): string => {
   return `${face}`;
 };
 
-/** Inverse move sequence (undo order, invert each turn), formatted like the source notation. */
-export const invertNotationSequence = (notation: string): string =>
-  parseNotation(notation)
-    .slice()
-    .reverse()
-    .map((step) => ({ ...step, angle: invertAngle(step.angle) }))
-    .map(formatRotationStep)
-    .join(" ");
+/** Top-level tokens: parenthesized chunks or single moves (spaces separate tokens; spaces inside `(...)` stay inside the chunk). */
+const tokenizeNotation = (notation: string): string[] => {
+  const tokens: string[] = [];
+  let index = 0;
+  const source = notation.trim();
+
+  while (index < source.length) {
+    while (index < source.length && source[index] === " ") {
+      index += 1;
+    }
+    if (index >= source.length) break;
+
+    if (source[index] === "(") {
+      let depth = 0;
+      const start = index;
+      while (index < source.length) {
+        const char = source[index];
+        if (char === "(") depth += 1;
+        else if (char === ")") {
+          depth -= 1;
+          if (depth === 0) {
+            index += 1;
+            break;
+          }
+        }
+        index += 1;
+      }
+      tokens.push(source.slice(start, index));
+      continue;
+    }
+
+    const start = index;
+    while (index < source.length && source[index] !== " " && source[index] !== "(") {
+      index += 1;
+    }
+    tokens.push(source.slice(start, index));
+  }
+
+  return tokens;
+};
+
+const parseAtomicMove = (raw: string): RotationStep => {
+  const token = raw.trim();
+  const face = token[0] as RotationStep["face"];
+  return { face, angle: toAngle(token) };
+};
 
 export const parseNotation = (notation: string): RotationStep[] =>
-  notation
-    .split(" ")
-    .map((chunk) => chunk.trim())
-    .filter(Boolean)
-    .map((raw) => {
-      const token = normalizeMoveToken(raw);
-      const face = token[0] as RotationStep["face"];
-      return { face, angle: toAngle(token) };
+  tokenizeNotation(notation).flatMap((token) => {
+    if (token.startsWith("(") && token.endsWith(")")) {
+      return parseNotation(token.slice(1, -1));
+    }
+    return [parseAtomicMove(token)];
+  });
+
+/** Inverse move sequence (undo order, invert each turn), preserving top-level bracket groups. */
+export const invertNotationSequence = (notation: string): string => {
+  const inverted = tokenizeNotation(notation)
+    .slice()
+    .reverse()
+    .map((token) => {
+      if (token.startsWith("(") && token.endsWith(")")) {
+        const inner = token.slice(1, -1);
+        return `(${invertNotationSequence(inner)})`;
+      }
+      const step = parseAtomicMove(token);
+      return formatRotationStep({ ...step, angle: invertAngle(step.angle) });
     });
+  return inverted.join(" ");
+};
 
 export const parseReversedNotation = (notation: string): RotationStep[] =>
   parseNotation(notation)

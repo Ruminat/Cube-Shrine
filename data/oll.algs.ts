@@ -536,7 +536,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-17-slash",
     name: "Slash",
-    notation: "(R U R' U) (R' F R F') U2' (R' F R F')",
+    notation: "(F R' F' R) M U (R U' R') U' M'",
     description: "OLL case 17 — Slash.",
     category: "OLL",
     subgroupId: "oll-dot",
