@@ -45,6 +45,10 @@ Design tokens live in `styles/variables.scss` (cube colors, size, surfaces, moti
 - **Model**: 27 cubies with stickers; preparation moves come from parsed notation (`lib/notation`).
 - **`useCubeRenderer`**: creates a canvas, applies preparation rotations, exposes redraw/cleanup.
 - **Size-based canvas quality**: below `CUBE_FULL_QUALITY_MIN_SIZE_PX` (`components/Cube/definitions.ts`), drawing uses `CUBE_PREVIEW_DPR_CAP`, compact sticker fills, and `pointer-events: none` on the mount (card thumbnails). Larger cubes use `CUBE_DETAIL_DPR_CAP` and full gradients.
+- **Viewport-aware mounting** – Cube canvases render only when near the visible area
+- **Adaptive canvas quality** – Thumbnails use lower DPR caps (1.5x) and simpler fills; modals render at full quality (2.0x)
+- **Single palette observer** – Theme changes trigger one redraw pass across all visible cubes
+- **`pointer-events: none`** – Thumbnail canvases don't intercept mouse events, reducing compositing overhead
 
 ## Deployment
 
