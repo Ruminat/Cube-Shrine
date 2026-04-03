@@ -1,5 +1,11 @@
 import type { PaletteKey } from "@/components/Cube/definitions";
-import { clamp, shadeColor, tintColor } from "@/components/Cube/utils";
+import { shadeColor, tintColor } from "@/components/Cube/utils";
+import {
+  faceCellOrigin,
+  fillGradientQuad,
+  getTopFlatGridLayout,
+  type FlatPoint
+} from "@/lib/draw/topFlatGridLayout";
 import type { OllTopPattern } from "@/lib/oll/extractOllTopPattern";
 
 const STROKE = "rgba(31, 41, 55, 0.85)";
@@ -39,25 +45,76 @@ function drawFlatCell(
   context.stroke();
 }
 
-function drawFlatBar(
-  context: CanvasRenderingContext2D,
-  x: number,
-  y: number,
-  w: number,
-  h: number,
-  yellowHex: string,
-  lineWidth: number
-) {
-  const gradient = context.createLinearGradient(x, y, x + w, y + h);
-  gradient.addColorStop(0, tintColor(yellowHex, 0.12));
-  gradient.addColorStop(1, shadeColor(yellowHex, 0.1));
-  context.fillStyle = gradient;
-  context.beginPath();
-  context.rect(x, y, w, h);
-  context.fill();
-  context.lineWidth = lineWidth;
-  context.strokeStyle = STROKE;
-  context.stroke();
+function outerTopTrap(
+  colBarLeft: (col: number) => number,
+  topBarY: number,
+  barAlong: number,
+  barThick: number,
+  trapSkew: number,
+  col: number
+): FlatPoint[] {
+  const x0 = colBarLeft(col);
+  const y0 = topBarY;
+  return [
+    { x: x0 + trapSkew, y: y0 },
+    { x: x0 + barAlong - trapSkew, y: y0 },
+    { x: x0 + barAlong, y: y0 + barThick },
+    { x: x0, y: y0 + barThick }
+  ];
+}
+
+function outerBottomTrap(
+  colBarLeft: (col: number) => number,
+  botBarY: number,
+  barAlong: number,
+  barThick: number,
+  trapSkew: number,
+  col: number
+): FlatPoint[] {
+  const x0 = colBarLeft(col);
+  const y0 = botBarY;
+  return [
+    { x: x0, y: y0 },
+    { x: x0 + barAlong, y: y0 },
+    { x: x0 + barAlong - trapSkew, y: y0 + barThick },
+    { x: x0 + trapSkew, y: y0 + barThick }
+  ];
+}
+
+function outerLeftTrap(
+  rowBarTop: (row: number) => number,
+  leftBarX: number,
+  barAlong: number,
+  barThick: number,
+  trapSkew: number,
+  row: number
+): FlatPoint[] {
+  const x0 = leftBarX;
+  const y0 = rowBarTop(row);
+  return [
+    { x: x0, y: y0 + trapSkew },
+    { x: x0 + barThick, y: y0 },
+    { x: x0 + barThick, y: y0 + barAlong },
+    { x: x0, y: y0 + barAlong - trapSkew }
+  ];
+}
+
+function outerRightTrap(
+  rowBarTop: (row: number) => number,
+  rightBarX: number,
+  barAlong: number,
+  barThick: number,
+  trapSkew: number,
+  row: number
+): FlatPoint[] {
+  const x0 = rightBarX;
+  const y0 = rowBarTop(row);
+  return [
+    { x: x0, y: y0 },
+    { x: x0 + barThick, y: y0 + trapSkew },
+    { x: x0 + barThick, y: y0 + barAlong - trapSkew },
+    { x: x0, y: y0 + barAlong }
+  ];
 }
 
 export function drawOllTopPatternOnCanvas(
@@ -66,16 +123,23 @@ export function drawOllTopPatternOnCanvas(
   pattern: OllTopPattern,
   palette: Record<PaletteKey, string>
 ) {
-  const s = canvasCssSize;
-  const margin = s * 0.05;
-  const band = Math.max(2.5, s * 0.082);
-  const gap = s * 0.05;
-  const inner = s - 2 * margin - 2 * band;
-  const cell = (inner - 2 * gap) / 3;
-  const lineWidth = clamp(s * 0.014, 0.55, 1.05);
-
-  const faceX = margin + band;
-  const faceY = margin + band;
+  const {
+    s,
+    gap,
+    cell,
+    faceX,
+    faceY,
+    lineWidthThin,
+    barAlong,
+    barThick,
+    trapSkew,
+    topBarY,
+    botBarY,
+    leftBarX,
+    rightBarX,
+    colBarLeft,
+    rowBarTop
+  } = getTopFlatGridLayout(canvasCssSize);
 
   context.clearRect(0, 0, s, s);
 
@@ -85,107 +149,96 @@ export function drawOllTopPatternOnCanvas(
   for (let row = 0; row < 3; row += 1) {
     for (let col = 0; col < 3; col += 1) {
       const index = row * 3 + col;
-      const cx = faceX + col * (cell + gap);
-      const cy = faceY + row * (cell + gap);
-      drawFlatCell(context, cx, cy, cell, cell, pattern.face[index], yellowHex, whiteHex, lineWidth);
+      const { x: cx, y: cy } = faceCellOrigin(faceX, faceY, cell, gap, row, col);
+      drawFlatCell(context, cx, cy, cell, cell, pattern.face[index], yellowHex, whiteHex, lineWidthThin);
     }
   }
 
   const { corners: c, edgeMids: e } = pattern;
-  const barAlong = cell * 0.72;
-  const barThick = Math.max(2, band * 0.62);
-  const inset = (cell - barAlong) / 2;
-  const colOffset = (col: number) => faceX + col * (cell + gap) + inset;
-
-  const topBarY = margin + (band - barThick) / 2;
-  const botBarY = s - margin - band + (band - barThick) / 2;
-  const leftBarX = margin + (band - barThick) / 2;
-  const rightBarX = s - margin - band + (band - barThick) / 2;
-  const rowOffset = (row: number) => faceY + row * (cell + gap) + inset;
 
   if (c.topLeft.top) {
-    drawFlatBar(context, colOffset(0), topBarY, barAlong, barThick, yellowHex, lineWidth);
+    fillGradientQuad(
+      context,
+      outerTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, 0),
+      yellowHex
+    );
   }
   if (c.topRight.top) {
-    drawFlatBar(
+    fillGradientQuad(
       context,
-      colOffset(2),
-      topBarY,
-      barAlong,
-      barThick,
-      yellowHex,
-      lineWidth
+      outerTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, 2),
+      yellowHex
     );
   }
   if (e.topCenter) {
-    drawFlatBar(context, colOffset(1), topBarY, barAlong, barThick, yellowHex, lineWidth);
+    fillGradientQuad(
+      context,
+      outerTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, 1),
+      yellowHex
+    );
   }
   if (c.bottomLeft.bottom) {
-    drawFlatBar(context, colOffset(0), botBarY, barAlong, barThick, yellowHex, lineWidth);
+    fillGradientQuad(
+      context,
+      outerBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, 0),
+      yellowHex
+    );
   }
   if (c.bottomRight.bottom) {
-    drawFlatBar(
+    fillGradientQuad(
       context,
-      colOffset(2),
-      botBarY,
-      barAlong,
-      barThick,
-      yellowHex,
-      lineWidth
+      outerBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, 2),
+      yellowHex
     );
   }
   if (e.bottomCenter) {
-    drawFlatBar(context, colOffset(1), botBarY, barAlong, barThick, yellowHex, lineWidth);
+    fillGradientQuad(
+      context,
+      outerBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, 1),
+      yellowHex
+    );
   }
 
   if (c.topLeft.left) {
-    drawFlatBar(
+    fillGradientQuad(
       context,
-      leftBarX,
-      rowOffset(0),
-      barThick,
-      barAlong,
-      yellowHex,
-      lineWidth
+      outerLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, 0),
+      yellowHex
     );
   }
   if (c.bottomLeft.left) {
-    drawFlatBar(
+    fillGradientQuad(
       context,
-      leftBarX,
-      rowOffset(2),
-      barThick,
-      barAlong,
-      yellowHex,
-      lineWidth
+      outerLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, 2),
+      yellowHex
     );
   }
   if (e.leftMiddle) {
-    drawFlatBar(context, leftBarX, rowOffset(1), barThick, barAlong, yellowHex, lineWidth);
+    fillGradientQuad(
+      context,
+      outerLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, 1),
+      yellowHex
+    );
   }
   if (c.topRight.right) {
-    drawFlatBar(
+    fillGradientQuad(
       context,
-      rightBarX,
-      rowOffset(0),
-      barThick,
-      barAlong,
-      yellowHex,
-      lineWidth
+      outerRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, 0),
+      yellowHex
     );
   }
   if (c.bottomRight.right) {
-    drawFlatBar(
+    fillGradientQuad(
       context,
-      rightBarX,
-      rowOffset(2),
-      barThick,
-      barAlong,
-      yellowHex,
-      lineWidth
+      outerRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, 2),
+      yellowHex
     );
   }
   if (e.rightMiddle) {
-    drawFlatBar(context, rightBarX, rowOffset(1), barThick, barAlong, yellowHex, lineWidth);
+    fillGradientQuad(
+      context,
+      outerRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, 1),
+      yellowHex
+    );
   }
 }

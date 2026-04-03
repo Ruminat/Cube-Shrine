@@ -14,7 +14,7 @@ interface MiniCubeProps {
   deferUntilVisible?: boolean;
 }
 
-const FALLBACK_CUBE_SIZE = 75;
+const FALLBACK_CUBE_SIZE = 100;
 
 const getCubeSizeFromCSS = () => {
   const cssValue = getComputedStyle(document.documentElement).getPropertyValue("--cube-size");

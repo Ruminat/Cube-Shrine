@@ -28,7 +28,7 @@ export interface CubeRendererRefs {
 export const CUBE_FULL_QUALITY_MIN_SIZE_PX = 120;
 
 /** Device DPR is clamped to this for small on-card previews (below `CUBE_FULL_QUALITY_MIN_SIZE_PX`). */
-export const CUBE_PREVIEW_DPR_CAP = 1.5;
+export const CUBE_PREVIEW_DPR_CAP = 2;
 
 /** Device DPR is clamped to this for larger cubes (e.g. modal). */
 export const CUBE_DETAIL_DPR_CAP = 2;

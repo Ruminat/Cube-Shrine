@@ -13,6 +13,7 @@ export function HomePage() {
   const [selected, setSelected] = useState<Algorithm | null>(null);
   const [reversedById, setReversedById] = useState<Record<string, boolean>>({});
   const [ollSpecialTopView, setOllSpecialTopView] = useState(true);
+  const [pllSpecialTopView, setPllSpecialTopView] = useState(true);
 
   const handleCloseModal = useCallback(() => {
     setSelected(null);
@@ -47,6 +48,10 @@ export function HomePage() {
               ollSpecialTopView={group.category === "OLL" ? ollSpecialTopView : undefined}
               onOllSpecialTopViewChange={
                 group.category === "OLL" ? setOllSpecialTopView : undefined
+              }
+              pllSpecialTopView={group.category === "PLL" ? pllSpecialTopView : undefined}
+              onPllSpecialTopViewChange={
+                group.category === "PLL" ? setPllSpecialTopView : undefined
               }
             />
           ))}

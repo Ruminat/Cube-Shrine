@@ -8,12 +8,14 @@ import {
 } from "@radix-ui/react-icons";
 import { MiniCube } from "@/components/MiniCube/MiniCube";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
+import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll/getOllTopPatternFromNotation";
+import { getPllTopViewFromNotation } from "@/lib/pll/getPllTopViewFromNotation";
 import { invertNotationSequence, parseReversedNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 import styles from "./AlgorithmCard.module.scss";
 
-const CARD_CUBE_SIZE = 75;
+const CARD_CUBE_SIZE = 100;
 
 interface AlgorithmCardProps {
   algorithm: Algorithm;
@@ -21,6 +23,7 @@ interface AlgorithmCardProps {
   onClick: (algorithm: Algorithm) => void;
   onToggleReverse: () => void;
   useOllSpecialTopView?: boolean;
+  usePllSpecialTopView?: boolean;
 }
 
 function AlgorithmCardComponent({
@@ -28,7 +31,8 @@ function AlgorithmCardComponent({
   isReversed,
   onClick,
   onToggleReverse,
-  useOllSpecialTopView = false
+  useOllSpecialTopView = false,
+  usePllSpecialTopView = false
 }: AlgorithmCardProps) {
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(algorithm.notation) : algorithm.notation),
@@ -41,6 +45,12 @@ function AlgorithmCardComponent({
     }
     return getCanonicalOllTopPatternFromNotation(displayNotation);
   }, [algorithm.category, displayNotation, useOllSpecialTopView]);
+  const pllTopModel = useMemo(() => {
+    if (algorithm.category !== "PLL" || !usePllSpecialTopView) {
+      return null;
+    }
+    return getPllTopViewFromNotation(algorithm.id, displayNotation);
+  }, [algorithm.category, algorithm.id, displayNotation, usePllSpecialTopView]);
   const [isCopied, setIsCopied] = useState(false);
 
   const handleOpenDialog = useCallback(() => onClick(algorithm), [algorithm, onClick]);
@@ -59,6 +69,8 @@ function AlgorithmCardComponent({
       <div className={styles.cubeWrapper}>
         {ollTopPattern ? (
           <OllTopView pattern={ollTopPattern} label={algorithm.name} size={CARD_CUBE_SIZE} />
+        ) : pllTopModel ? (
+          <PllTopView model={pllTopModel} label={algorithm.name} size={CARD_CUBE_SIZE} />
         ) : (
           <MiniCube deferUntilVisible size={CARD_CUBE_SIZE} preparationRotations={notationRotations} />
         )}

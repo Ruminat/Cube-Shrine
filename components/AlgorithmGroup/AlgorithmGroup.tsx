@@ -14,6 +14,8 @@ export interface AlgorithmGroupProps {
   onToggleAlgorithmReverse: (algorithmId: string) => void;
   ollSpecialTopView?: boolean;
   onOllSpecialTopViewChange?: (value: boolean) => void;
+  pllSpecialTopView?: boolean;
+  onPllSpecialTopViewChange?: (value: boolean) => void;
 }
 
 function AlgorithmCardGrid({
@@ -22,12 +24,14 @@ function AlgorithmCardGrid({
   isAlgorithmReversed,
   onToggleAlgorithmReverse,
   useOllSpecialTopView,
+  usePllSpecialTopView,
 }: {
   algorithms: Algorithm[];
   onOpenAlgorithm: (algorithm: Algorithm) => void;
   isAlgorithmReversed: (algorithmId: string) => boolean;
   onToggleAlgorithmReverse: (algorithmId: string) => void;
   useOllSpecialTopView: boolean;
+  usePllSpecialTopView: boolean;
 }) {
   return (
     <div className={styles.grid}>
@@ -39,6 +43,7 @@ function AlgorithmCardGrid({
           onClick={onOpenAlgorithm}
           onToggleReverse={() => onToggleAlgorithmReverse(algorithm.id)}
           useOllSpecialTopView={useOllSpecialTopView}
+          usePllSpecialTopView={usePllSpecialTopView}
         />
       ))}
     </div>
@@ -52,32 +57,58 @@ export function AlgorithmGroup({
   onToggleAlgorithmReverse,
   ollSpecialTopView = false,
   onOllSpecialTopViewChange,
+  pllSpecialTopView = false,
+  onPllSpecialTopViewChange,
 }: AlgorithmGroupProps) {
   const headingId = `alg-group-${group.category}`;
   const isOll = group.category === "OLL";
+  const isPll = group.category === "PLL";
   const useOllSpecialTopView = isOll && ollSpecialTopView;
-  const categorySummaryClass =
-    isOll && onOllSpecialTopViewChange
-      ? `${styles.categorySummary} ${styles.categorySummaryWithOllToggle}`
-      : styles.categorySummary;
+  const usePllSpecialTopView = isPll && pllSpecialTopView;
+  const hasFlatViewToggle =
+    (isOll && onOllSpecialTopViewChange) || (isPll && onPllSpecialTopViewChange);
+  const categorySummaryClass = hasFlatViewToggle
+    ? `${styles.categorySummary} ${styles.categorySummaryWithFlatViewToggle}`
+    : styles.categorySummary;
 
   const ollToggle =
     isOll && onOllSpecialTopViewChange ? (
       <div
-        className={styles.ollViewToggle}
+        className={styles.topFlatViewToggle}
         onClick={(event) => {
           event.preventDefault();
           event.stopPropagation();
         }}
         onKeyDown={(event) => event.stopPropagation()}
       >
-        <Text size='1' color='gray' weight='medium' as='span'>
+        <Text size="1" color="gray" weight="medium" as="span">
           Top flat view
         </Text>
         <Switch
           checked={ollSpecialTopView}
           onCheckedChange={onOllSpecialTopViewChange}
-          aria-label='Toggle OLL flat top view with side yellow indicators'
+          aria-label="Toggle OLL flat top view with side yellow indicators"
+        />
+      </div>
+    ) : null;
+
+  const pllToggle =
+    isPll && onPllSpecialTopViewChange ? (
+      <div
+        className={styles.topFlatViewToggle}
+        onClick={(event) => {
+          event.preventDefault();
+          event.stopPropagation();
+        }}
+        onKeyDown={(event) => event.stopPropagation()}
+      >
+        <Text size="1" color="gray" weight="medium" as="span">
+          Top flat view
+        </Text>
+        <Switch
+          checked={pllSpecialTopView}
+          onCheckedChange={onPllSpecialTopViewChange}
+          aria-label="Toggle PLL flat top view with side colors and permutation arrows"
         />
       </div>
     ) : null;
@@ -92,6 +123,7 @@ export function AlgorithmGroup({
               {group.category}
             </Heading>
             {ollToggle}
+            {pllToggle}
           </summary>
           <div className={styles.disclosureBody}>
             <AlgorithmCardGrid
@@ -100,6 +132,7 @@ export function AlgorithmGroup({
               isAlgorithmReversed={isAlgorithmReversed}
               onToggleAlgorithmReverse={onToggleAlgorithmReverse}
               useOllSpecialTopView={useOllSpecialTopView}
+              usePllSpecialTopView={usePllSpecialTopView}
             />
           </div>
         </details>
@@ -116,6 +149,7 @@ export function AlgorithmGroup({
             {group.category}
           </Heading>
           {ollToggle}
+          {pllToggle}
         </summary>
         <div className={styles.disclosureBody}>
           <div className={styles.subgroups}>
@@ -136,6 +170,7 @@ export function AlgorithmGroup({
                       isAlgorithmReversed={isAlgorithmReversed}
                       onToggleAlgorithmReverse={onToggleAlgorithmReverse}
                       useOllSpecialTopView={useOllSpecialTopView}
+                      usePllSpecialTopView={usePllSpecialTopView}
                     />
                   </div>
                 </details>
