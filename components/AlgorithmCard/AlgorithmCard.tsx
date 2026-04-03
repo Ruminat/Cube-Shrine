@@ -7,6 +7,8 @@ import {
   OpenInNewWindowIcon
 } from "@radix-ui/react-icons";
 import { MiniCube } from "@/components/MiniCube/MiniCube";
+import { OllTopView } from "@/components/OllTopView/OllTopView";
+import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll/getOllTopPatternFromNotation";
 import { invertNotationSequence, parseReversedNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 import styles from "./AlgorithmCard.module.scss";
@@ -18,14 +20,27 @@ interface AlgorithmCardProps {
   isReversed: boolean;
   onClick: (algorithm: Algorithm) => void;
   onToggleReverse: () => void;
+  useOllSpecialTopView?: boolean;
 }
 
-function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleReverse }: AlgorithmCardProps) {
+function AlgorithmCardComponent({
+  algorithm,
+  isReversed,
+  onClick,
+  onToggleReverse,
+  useOllSpecialTopView = false
+}: AlgorithmCardProps) {
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(algorithm.notation) : algorithm.notation),
     [algorithm.notation, isReversed]
   );
   const notationRotations = useMemo(() => parseReversedNotation(displayNotation), [displayNotation]);
+  const ollTopPattern = useMemo(() => {
+    if (algorithm.category !== "OLL" || !useOllSpecialTopView) {
+      return null;
+    }
+    return getCanonicalOllTopPatternFromNotation(displayNotation);
+  }, [algorithm.category, displayNotation, useOllSpecialTopView]);
   const [isCopied, setIsCopied] = useState(false);
 
   const handleOpenDialog = useCallback(() => onClick(algorithm), [algorithm, onClick]);
@@ -42,7 +57,11 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
   return (
     <Card className={styles.card} size="1">
       <div className={styles.cubeWrapper}>
-        <MiniCube deferUntilVisible size={CARD_CUBE_SIZE} preparationRotations={notationRotations} />
+        {ollTopPattern ? (
+          <OllTopView pattern={ollTopPattern} label={algorithm.name} size={CARD_CUBE_SIZE} />
+        ) : (
+          <MiniCube deferUntilVisible size={CARD_CUBE_SIZE} preparationRotations={notationRotations} />
+        )}
       </div>
 
       <Flex className={styles.content} direction="column" gap="2">

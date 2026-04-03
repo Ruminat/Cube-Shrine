@@ -12,6 +12,7 @@ import styles from "./page.module.scss";
 export function HomePage() {
   const [selected, setSelected] = useState<Algorithm | null>(null);
   const [reversedById, setReversedById] = useState<Record<string, boolean>>({});
+  const [ollSpecialTopView, setOllSpecialTopView] = useState(true);
 
   const handleCloseModal = useCallback(() => {
     setSelected(null);
@@ -43,6 +44,10 @@ export function HomePage() {
               onOpenAlgorithm={setSelected}
               isAlgorithmReversed={isAlgorithmReversed}
               onToggleAlgorithmReverse={handleToggleAlgorithmReverse}
+              ollSpecialTopView={group.category === "OLL" ? ollSpecialTopView : undefined}
+              onOllSpecialTopViewChange={
+                group.category === "OLL" ? setOllSpecialTopView : undefined
+              }
             />
           ))}
         </div>
