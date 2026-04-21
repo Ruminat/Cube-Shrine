@@ -36,7 +36,7 @@ export function getTopFlatGridLayout(canvasCssSize: number) {
   const s = canvasCssSize;
   const margin = s * 0.05;
   const band = Math.max(2.5, s * 0.082);
-  const gap = s * 0.05;
+  const gap = 0;
   const inner = s - 2 * margin - 2 * band;
   const cell = (inner - 2 * gap) / 3;
   const faceX = margin + band;

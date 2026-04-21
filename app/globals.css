@@ -156,4 +156,49 @@
   body {
     @apply bg-background text-foreground;
   }
+
+  /*
+   * Pointer on interactive controls. @radix-ui/themes has no global "cursor" setting:
+   * <Theme> only supports appearance, accentColor, grayColor, radius, scaling, etc.
+   * Override cursors here (or on specific components) as needed.
+   */
+  button:not(:disabled):not([data-disabled]),
+  input:not(:disabled):where(
+    [type="button"],
+    [type="submit"],
+    [type="reset"],
+    [type="checkbox"],
+    [type="radio"],
+    [type="range"],
+    [type="file"],
+    [type="image"]
+  ),
+  select:not(:disabled),
+  summary,
+  a[href] {
+    cursor: pointer;
+  }
+
+  label:where(
+    :has(input[type="checkbox"]:not(:disabled)),
+    :has(input[type="radio"]:not(:disabled)),
+    :has(select:not(:disabled))
+  ) {
+    cursor: pointer;
+  }
+
+  [role="button"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="checkbox"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="radio"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="switch"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="menuitem"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="menuitemcheckbox"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="menuitemradio"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="tab"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="option"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="combobox"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="slider"]:where(:not([aria-disabled="true"]):not([data-disabled])),
+  [role="spinbutton"]:where(:not([aria-disabled="true"]):not([data-disabled])) {
+    cursor: pointer;
+  }
 }

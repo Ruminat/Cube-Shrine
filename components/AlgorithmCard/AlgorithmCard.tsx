@@ -80,7 +80,7 @@ function AlgorithmCardComponent({
     [handleOpenDialog]
   );
 
-  const iconButtonClass = "size-8 shrink-0 cursor-pointer";
+  const iconButtonClass = "size-8 shrink-0";
 
   return (
     <div

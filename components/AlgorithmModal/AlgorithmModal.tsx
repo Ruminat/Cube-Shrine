@@ -13,7 +13,7 @@ import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
 
-const iconButtonClass = "size-8 shrink-0 cursor-pointer";
+const iconButtonClass = "size-8 shrink-0";
 
 interface AlgorithmModalProps {
   algorithm: Algorithm | null;
