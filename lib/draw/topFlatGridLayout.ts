@@ -30,28 +30,29 @@ export function fillGradientQuad(
 }
 
 /**
- * Band-based layout: 3×3 face with margin bands for thin side indicators (lines / trapezoids).
+ * Top-flat OLL/PLL layout: 3×3 face (no inter-cell gap) with outer strip “cubies”.
+ * Each outer piece spans `cell` along the face edge and `cell/4` perpendicular, flush with the face.
  */
 export function getTopFlatGridLayout(canvasCssSize: number) {
   const s = canvasCssSize;
-  const margin = s * 0.05;
-  const band = Math.max(2.5, s * 0.082);
+  const margin = clamp(s * 0.02, 1, s * 0.08);
   const gap = 0;
-  const inner = s - 2 * margin - 2 * band;
-  const cell = (inner - 2 * gap) / 3;
-  const faceX = margin + band;
-  const faceY = margin + band;
+
+  const cell = (s - 2 * margin) / 3.5;
+  const barThick = cell * 0.25;
+  const barAlong = cell;
+  const barInset = 0;
+
+  const faceX = margin + barThick;
+  const faceY = margin + barThick;
   const lineWidthThin = clamp(s * 0.007, 0.28, 0.52);
 
-  const barAlong = cell * 0.72;
-  const barThick = Math.max(2.2, band * 0.58);
-  const barInset = (cell - barAlong) / 2;
   const trapSkew = Math.min(barThick * 0.5, barAlong * 0.07);
 
-  const topBarY = margin + (band - barThick) / 2;
-  const botBarY = s - margin - band + (band - barThick) / 2;
-  const leftBarX = margin + (band - barThick) / 2;
-  const rightBarX = s - margin - band + (band - barThick) / 2;
+  const topBarY = margin;
+  const botBarY = faceY + 3 * cell;
+  const leftBarX = margin;
+  const rightBarX = faceX + 3 * cell;
 
   const colBarLeft = (col: number) => faceX + col * (cell + gap) + barInset;
   const rowBarTop = (row: number) => faceY + row * (cell + gap) + barInset;
