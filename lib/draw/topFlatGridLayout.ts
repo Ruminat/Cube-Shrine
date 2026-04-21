@@ -1,5 +1,13 @@
 import { clamp, shadeColor, tintColor } from "@/components/Cube/utils";
 
+/** Same stroke as top-flat cubie edges (`drawFlatCell` / `drawPaletteCell`). */
+export const TOP_FLAT_CUBIE_STROKE = "rgba(31, 41, 55, 0.85)";
+
+/** Per-quad outline for strip trapezoids (same weight/color as face cubies). */
+export function topFlatQuadStrokeOptions(lineWidth: number) {
+  return { stroke: true as const, lineWidth, strokeStyle: TOP_FLAT_CUBIE_STROKE };
+}
+
 export type FlatPoint = { x: number; y: number };
 
 /** Filled quad (trapezoid) with subtle gradient; optional thin outline. */
@@ -23,6 +31,8 @@ export function fillGradientQuad(
   context.fillStyle = g;
   context.fill();
   if (options?.stroke && options.lineWidth && options.strokeStyle) {
+    context.lineJoin = "miter";
+    context.lineCap = "butt";
     context.lineWidth = options.lineWidth;
     context.strokeStyle = options.strokeStyle;
     context.stroke();

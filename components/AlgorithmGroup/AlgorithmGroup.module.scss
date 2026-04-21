@@ -4,11 +4,11 @@
   margin: 0;
 }
 
+/* OLL / PLL category shell: no panel chrome (subgroups keep their own surface). */
 .disclosure {
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius-3);
-  background: var(--card-bg);
-  backdrop-filter: blur(var(--blur-amount));
+  border: none;
+  background: transparent;
+  backdrop-filter: none;
 }
 
 .subDisclosure {

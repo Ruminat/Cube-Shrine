@@ -4,11 +4,11 @@ import {
   faceCellOrigin,
   fillGradientQuad,
   getTopFlatGridLayout,
+  topFlatQuadStrokeOptions,
+  TOP_FLAT_CUBIE_STROKE,
   type FlatPoint
 } from "@/lib/draw/topFlatGridLayout";
 import type { PllGridCell, PllTopViewModel } from "@/lib/pll/pllTopTypes";
-
-const STROKE = "rgba(31, 41, 55, 0.85)";
 const ARROW_COLOR = "#7c7c7d";
 const ARROW_SHAFT_WIDTH_CSS_PX = 2;
 
@@ -33,7 +33,7 @@ function drawPaletteCell(
   context.lineJoin = "miter";
   context.lineCap = "butt";
   context.lineWidth = lineWidth;
-  context.strokeStyle = STROKE;
+  context.strokeStyle = TOP_FLAT_CUBIE_STROKE;
   context.stroke();
 }
 
@@ -191,6 +191,8 @@ export function drawPllTopPatternOnCanvas(
   model: PllTopViewModel,
   palette: Record<PaletteKey, string>
 ) {
+  const layout = getTopFlatGridLayout(canvasCssSize);
+  const quadStroke = topFlatQuadStrokeOptions(layout.lineWidthThin);
   const {
     s,
     gap,
@@ -207,28 +209,28 @@ export function drawPllTopPatternOnCanvas(
     rightBarX,
     colBarLeft,
     rowBarTop
-  } = getTopFlatGridLayout(canvasCssSize);
+  } = layout;
 
   context.clearRect(0, 0, s, s);
 
   for (let col = 0; col < 3; col += 1) {
     const hex = palette[model.topStrip[col]] ?? palette.white;
-    fillGradientQuad(context, pllTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, col), hex);
+    fillGradientQuad(context, pllTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, col), hex, quadStroke);
   }
 
   for (let col = 0; col < 3; col += 1) {
     const hex = palette[model.bottomStrip[col]] ?? palette.white;
-    fillGradientQuad(context, pllBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, col), hex);
+    fillGradientQuad(context, pllBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, col), hex, quadStroke);
   }
 
   for (let row = 0; row < 3; row += 1) {
     const hex = palette[model.leftStrip[row]] ?? palette.white;
-    fillGradientQuad(context, pllLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, row), hex);
+    fillGradientQuad(context, pllLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, row), hex, quadStroke);
   }
 
   for (let row = 0; row < 3; row += 1) {
     const hex = palette[model.rightStrip[row]] ?? palette.white;
-    fillGradientQuad(context, pllRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, row), hex);
+    fillGradientQuad(context, pllRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, row), hex, quadStroke);
   }
 
   for (let row = 0; row < 3; row += 1) {

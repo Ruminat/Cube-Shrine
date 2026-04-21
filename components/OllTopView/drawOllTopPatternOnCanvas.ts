@@ -4,11 +4,11 @@ import {
   faceCellOrigin,
   fillGradientQuad,
   getTopFlatGridLayout,
+  topFlatQuadStrokeOptions,
+  TOP_FLAT_CUBIE_STROKE,
   type FlatPoint
 } from "@/lib/draw/topFlatGridLayout";
 import type { OllTopPattern } from "@/lib/oll/extractOllTopPattern";
-
-const STROKE = "rgba(31, 41, 55, 0.85)";
 
 function drawFlatCell(
   context: CanvasRenderingContext2D,
@@ -41,7 +41,7 @@ function drawFlatCell(
   context.lineJoin = "miter";
   context.lineCap = "butt";
   context.lineWidth = lineWidth;
-  context.strokeStyle = STROKE;
+  context.strokeStyle = TOP_FLAT_CUBIE_STROKE;
   context.stroke();
 }
 
@@ -123,6 +123,8 @@ export function drawOllTopPatternOnCanvas(
   pattern: OllTopPattern,
   palette: Record<PaletteKey, string>
 ) {
+  const layout = getTopFlatGridLayout(canvasCssSize);
+  const quadStroke = topFlatQuadStrokeOptions(layout.lineWidthThin);
   const {
     s,
     gap,
@@ -139,7 +141,7 @@ export function drawOllTopPatternOnCanvas(
     rightBarX,
     colBarLeft,
     rowBarTop
-  } = getTopFlatGridLayout(canvasCssSize);
+  } = layout;
 
   context.clearRect(0, 0, s, s);
 
@@ -160,42 +162,48 @@ export function drawOllTopPatternOnCanvas(
     fillGradientQuad(
       context,
       outerTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, 0),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (c.topRight.top) {
     fillGradientQuad(
       context,
       outerTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, 2),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (e.topCenter) {
     fillGradientQuad(
       context,
       outerTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, 1),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (c.bottomLeft.bottom) {
     fillGradientQuad(
       context,
       outerBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, 0),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (c.bottomRight.bottom) {
     fillGradientQuad(
       context,
       outerBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, 2),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (e.bottomCenter) {
     fillGradientQuad(
       context,
       outerBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, 1),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
 
@@ -203,42 +211,48 @@ export function drawOllTopPatternOnCanvas(
     fillGradientQuad(
       context,
       outerLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, 0),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (c.bottomLeft.left) {
     fillGradientQuad(
       context,
       outerLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, 2),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (e.leftMiddle) {
     fillGradientQuad(
       context,
       outerLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, 1),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (c.topRight.right) {
     fillGradientQuad(
       context,
       outerRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, 0),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (c.bottomRight.right) {
     fillGradientQuad(
       context,
       outerRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, 2),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
   if (e.rightMiddle) {
     fillGradientQuad(
       context,
       outerRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, 1),
-      yellowHex
+      yellowHex,
+      quadStroke
     );
   }
 }
