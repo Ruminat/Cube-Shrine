@@ -1,24 +1,32 @@
 import type { Metadata } from "next";
-import { AppThemeProvider } from "@/components/AppTheme/AppThemeProvider";
-import { SiteFooter } from "@/components/SiteFooter/SiteFooter";
+import { Analytics } from "@vercel/analytics/next";
 import "@radix-ui/themes/styles.css";
-import "./globals.scss";
+import { RadixCubeProviders } from "@/components/radix-cube-providers";
+import { ThemeProvider } from "@/components/theme-provider";
+import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Cube Shrine",
-  description: "Rubik's cube algorithm visualizer"
+  title: "Cube Shrine — CFOP algorithm gallery",
+  description:
+    "Interactive Rubik's Cube algorithm gallery for the CFOP method. Explore OLL and PLL with accurate visualizations.",
+  icons: {
+    icon: [{ url: "/icon.png", type: "image/png" }],
+    apple: "/apple-icon.png",
+  },
 };
 
 export function RootLayout({
-  children
-}: Readonly<{ children: React.ReactNode }>) {
+  children,
+}: Readonly<{
+  children: React.ReactNode;
+}>) {
   return (
-    <html lang="en">
-      <body>
-        <AppThemeProvider>
-          {children}
-          <SiteFooter />
-        </AppThemeProvider>
+    <html lang="en" suppressHydrationWarning>
+      <body className="font-sans antialiased">
+        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+          <RadixCubeProviders>{children}</RadixCubeProviders>
+        </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );

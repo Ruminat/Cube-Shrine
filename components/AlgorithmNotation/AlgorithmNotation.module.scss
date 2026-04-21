@@ -1,12 +1,9 @@
 .notation {
   margin: 0;
   font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
-  color: var(--text-primary);
+  color: var(--foreground);
   font-size: 0.95rem;
   font-weight: 600;
-  min-height: 3rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
+  line-height: 1.35;
+  text-align: start;
 }

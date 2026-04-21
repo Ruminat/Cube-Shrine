@@ -1,6 +1,4 @@
 import { Fragment, type ReactNode } from "react";
-import { Container } from "@/components/UI/Container/Container";
-import styles from "./SiteFooter.module.scss";
 
 type FooterLink = { readonly label: string; readonly href: string };
 type FooterSite = { readonly name: string; readonly links: readonly FooterLink[] };
@@ -13,22 +11,27 @@ const FOOTER_SITES: readonly FooterSite[] = [
     links: [
       { label: "Home", href: "https://cubingcheatsheet.com" },
       { label: "OLL", href: "https://cubingcheatsheet.com/algs3x_oll.html" },
-      { label: "PLL", href: "https://cubingcheatsheet.com/algs3x_pll.html" }
-    ]
+      { label: "PLL", href: "https://cubingcheatsheet.com/algs3x_pll.html" },
+    ],
   },
   {
     name: "SpeedCubeDB",
     links: [
       { label: "3×3", href: "https://www.speedcubedb.com/a/3x3" },
       { label: "OLL", href: "https://www.speedcubedb.com/a/3x3/OLL" },
-      { label: "PLL", href: "https://www.speedcubedb.com/a/3x3/PLL" }
-    ]
-  }
+      { label: "PLL", href: "https://www.speedcubedb.com/a/3x3/PLL" },
+    ],
+  },
 ];
 
 function renderExternalLink(link: FooterLink): ReactNode {
   return (
-    <a className={styles.link} href={link.href} target="_blank" rel={EXTERNAL_REL}>
+    <a
+      className="text-primary underline-offset-2 transition-colors hover:text-primary/90 hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:ring-offset-background"
+      href={link.href}
+      target="_blank"
+      rel={EXTERNAL_REL}
+    >
       {link.label}
     </a>
   );
@@ -38,7 +41,7 @@ function renderLinkRow(links: readonly FooterLink[]): ReactNode {
   return links.map((link, index) => (
     <Fragment key={link.href}>
       {index > 0 ? (
-        <span className={styles.sep} aria-hidden>
+        <span className="select-none text-muted-foreground" aria-hidden>
           ·
         </span>
       ) : null}
@@ -47,24 +50,24 @@ function renderLinkRow(links: readonly FooterLink[]): ReactNode {
   ));
 }
 
-function renderSiteBlock(site: FooterSite): ReactNode {
-  return (
-    <div key={site.name} className={styles.siteBlock}>
-      <p className={styles.siteName}>{site.name}</p>
-      <div className={styles.links}>{renderLinkRow(site.links)}</div>
-    </div>
-  );
-}
-
 export function SiteFooter() {
   return (
-    <footer className={styles.footer}>
-      <Container>
-        <div className={styles.inner}>
-          <p className={styles.title}>Useful sites</p>
-          <div className={styles.sites}>{FOOTER_SITES.map((site) => renderSiteBlock(site))}</div>
+    <footer className="mt-12 border-t border-border bg-muted/30 py-8">
+      <div className="container mx-auto px-4">
+        <div className="flex flex-col gap-6">
+          <p className="m-0 text-xs font-semibold uppercase tracking-wider text-muted-foreground">Useful sites</p>
+          <div className="flex flex-col gap-6 sm:flex-row sm:flex-wrap sm:gap-x-10 sm:gap-y-6">
+            {FOOTER_SITES.map((site) => (
+              <div key={site.name} className="flex min-w-[min(100%,16rem)] flex-col gap-1">
+                <p className="m-0 text-[0.9375rem] font-semibold text-foreground">{site.name}</p>
+                <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm leading-relaxed text-muted-foreground">
+                  {renderLinkRow(site.links)}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
-      </Container>
+      </div>
     </footer>
   );
 }

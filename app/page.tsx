@@ -1,69 +1,45 @@
-"use client";
-
-import { useCallback, useState } from "react";
-import { AlgorithmGroup } from "@/components/AlgorithmGroup/AlgorithmGroup";
-import { AlgorithmModal } from "@/components/AlgorithmModal/AlgorithmModal";
-import { TopNav } from "@/components/TopNav/TopNav";
-import { Container } from "@/components/UI/Container/Container";
-import { algorithms, getAlgorithmGroupsByCategory } from "@/data/algorithms";
-import type { Algorithm } from "@/types/algorithm";
-import styles from "./page.module.scss";
+import { Header } from "@/components/header";
+import { AlgorithmGallery } from "@/components/algorithm-gallery";
+import { SiteFooter } from "@/components/SiteFooter/SiteFooter";
 
 export function HomePage() {
-  const [selected, setSelected] = useState<Algorithm | null>(null);
-  const [reversedById, setReversedById] = useState<Record<string, boolean>>({});
-  const [ollSpecialTopView, setOllSpecialTopView] = useState(true);
-  const [pllSpecialTopView, setPllSpecialTopView] = useState(true);
-
-  const handleCloseModal = useCallback(() => {
-    setSelected(null);
-  }, []);
-
-  const isAlgorithmReversed = useCallback(
-    (algorithmId: string) => Boolean(reversedById[algorithmId]),
-    [reversedById]
-  );
-
-  const handleToggleAlgorithmReverse = useCallback((algorithmId: string) => {
-    setReversedById((prev) => ({ ...prev, [algorithmId]: !prev[algorithmId] }));
-  }, []);
-
-  const handleToggleSelectedReverse = useCallback(() => {
-    if (!selected) return;
-    handleToggleAlgorithmReverse(selected.id);
-  }, [handleToggleAlgorithmReverse, selected]);
-
   return (
-    <>
-      <TopNav />
-      <Container>
-        <div className={styles.groups}>
-          {getAlgorithmGroupsByCategory(algorithms).map((group) => (
-            <AlgorithmGroup
-              key={group.category}
-              group={group}
-              onOpenAlgorithm={setSelected}
-              isAlgorithmReversed={isAlgorithmReversed}
-              onToggleAlgorithmReverse={handleToggleAlgorithmReverse}
-              ollSpecialTopView={group.category === "OLL" ? ollSpecialTopView : undefined}
-              onOllSpecialTopViewChange={
-                group.category === "OLL" ? setOllSpecialTopView : undefined
-              }
-              pllSpecialTopView={group.category === "PLL" ? pllSpecialTopView : undefined}
-              onPllSpecialTopViewChange={
-                group.category === "PLL" ? setPllSpecialTopView : undefined
-              }
-            />
-          ))}
+    <div className="min-h-screen bg-background">
+      <Header />
+
+      <main className="container mx-auto px-4 py-8">
+        <div className="mb-10 text-center">
+          <h1 className="text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            Master the CFOP Method
+          </h1>
+
+          <div className="mx-auto mt-8 grid max-w-3xl gap-4 sm:grid-cols-2">
+            <div className="rounded-lg border border-border bg-card p-4">
+              <div className="mb-2 flex items-center justify-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-yellow-500" />
+                <span className="font-semibold text-foreground">OLL</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Orientation of the last layer — optional flat top view with side yellow indicators for recognition.
+              </p>
+            </div>
+            <div className="rounded-lg border border-border bg-card p-4">
+              <div className="mb-2 flex items-center justify-center gap-2">
+                <span className="h-3 w-3 rounded-full bg-blue-500" />
+                <span className="font-semibold text-foreground">PLL</span>
+              </div>
+              <p className="text-sm text-muted-foreground">
+                Permutation of the last layer — optional flat top view with side colors and permutation cues.
+              </p>
+            </div>
+          </div>
         </div>
-      </Container>
-      <AlgorithmModal
-        algorithm={selected}
-        isReversed={selected ? isAlgorithmReversed(selected.id) : false}
-        onClose={handleCloseModal}
-        onToggleReverse={handleToggleSelectedReverse}
-      />
-    </>
+
+        <AlgorithmGallery />
+      </main>
+
+      <SiteFooter />
+    </div>
   );
 }
 

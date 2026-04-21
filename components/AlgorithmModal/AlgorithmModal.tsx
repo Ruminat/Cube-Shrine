@@ -1,14 +1,19 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { CheckIcon, ClipboardCopyIcon, DoubleArrowLeftIcon } from "@radix-ui/react-icons";
-import { Box, Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
+import { Copy, RotateCcw } from "lucide-react";
+import { Tooltip } from "@radix-ui/themes";
+import { Box, Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
+import { Button as UiButton } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { invertNotationSequence, parseReversedNotation } from "@/lib/notation/parser";
 import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
+
+const iconButtonClass = "size-8 shrink-0 cursor-pointer";
 
 interface AlgorithmModalProps {
   algorithm: Algorithm | null;
@@ -53,27 +58,31 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
           <Flex align="center" justify="center" gap="2" wrap="wrap">
             <AlgorithmNotation notation={displayNotation} />
             <Flex align="center" gap="1">
-              <IconButton
-                onClick={onToggleReverse}
-                type="button"
-                aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
-                aria-pressed={isReversed}
-                size="1"
-                variant={isReversed ? "solid" : "soft"}
-                highContrast
-              >
-                <DoubleArrowLeftIcon />
-              </IconButton>
-              <IconButton
-                onClick={handleCopyNotation}
-                type="button"
-                aria-label={`Copy ${algorithm.name} notation`}
-                size="1"
-                variant="soft"
-                highContrast
-              >
-                {isCopied ? <CheckIcon /> : <ClipboardCopyIcon />}
-              </IconButton>
+              <Tooltip content={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}>
+                <UiButton
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={cn(iconButtonClass, isReversed && "bg-accent")}
+                  aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
+                  aria-pressed={isReversed}
+                  onClick={onToggleReverse}
+                >
+                  <RotateCcw className="size-4" />
+                </UiButton>
+              </Tooltip>
+              <Tooltip content={isCopied ? "Copied!" : "Copy notation"}>
+                <UiButton
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={iconButtonClass}
+                  aria-label={`Copy ${algorithm.name} notation`}
+                  onClick={handleCopyNotation}
+                >
+                  <Copy className={cn("size-4", isCopied && "text-green-600 dark:text-green-500")} />
+                </UiButton>
+              </Tooltip>
             </Flex>
           </Flex>
 
