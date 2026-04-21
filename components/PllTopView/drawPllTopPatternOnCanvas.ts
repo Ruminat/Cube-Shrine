@@ -72,6 +72,7 @@ function drawArrowHead(
   context.fill();
 }
 
+/** Double arrow whose tips sit exactly on the two cubie centers; shaft joins the head bases. */
 function drawDoubleArrow(
   context: CanvasRenderingContext2D,
   x1: number,
@@ -85,23 +86,17 @@ function drawDoubleArrow(
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len;
   const uy = dy / len;
-  const headLen = Math.max(5, cell * 0.14);
-  const shaftHalf = ARROW_SHAFT_WIDTH_CSS_PX / 2;
-  const endRoom = headLen + shaftHalf + 1;
-  const halfLen = len / 2;
-  const insetDesired = cell * 0.22;
-  const maxInsetByShaft = Math.max(0, halfLen - endRoom);
-  const maxInsetByTips = Math.max(0, halfLen - headLen - 0.5);
-  const useInset = Math.min(insetDesired, maxInsetByShaft, maxInsetByTips);
-  const sx = x1 + ux * useInset;
-  const sy = y1 + uy * useInset;
-  const ex = x2 - ux * useInset;
-  const ey = y2 - uy * useInset;
+  const headLen = Math.min(Math.max(4, cell * 0.14), len / 2 - 0.5);
 
-  const bx1 = sx + ux * headLen;
-  const by1 = sy + uy * headLen;
-  const bx2 = ex - ux * headLen;
-  const by2 = ey - uy * headLen;
+  const tip1x = x1;
+  const tip1y = y1;
+  const tip2x = x2;
+  const tip2y = y2;
+
+  const sx = tip1x + ux * headLen;
+  const sy = tip1y + uy * headLen;
+  const ex = tip2x - ux * headLen;
+  const ey = tip2y - uy * headLen;
 
   context.save();
   context.strokeStyle = ARROW_COLOR;
@@ -109,12 +104,12 @@ function drawDoubleArrow(
   context.lineCap = "butt";
   context.lineJoin = "miter";
   context.beginPath();
-  context.moveTo(bx1, by1);
-  context.lineTo(bx2, by2);
+  context.moveTo(sx, sy);
+  context.lineTo(ex, ey);
   context.stroke();
 
-  drawArrowHead(context, ex, ey, -ux, -uy, headLen);
-  drawArrowHead(context, sx, sy, ux, uy, headLen);
+  drawArrowHead(context, tip1x, tip1y, ux, uy, headLen);
+  drawArrowHead(context, tip2x, tip2y, -ux, -uy, headLen);
   context.restore();
 }
 

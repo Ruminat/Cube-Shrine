@@ -1,3 +1,7 @@
+/*
+ * Cube + layout tokens. Surfaces (--card-bg, etc.) follow <html class="light|dark"> set by
+ * `public/theme-init.js` and `ThemeProvider`, not OS media alone, so stored theme matches panels.
+ */
 :root {
   --cube-color-white: #e3e3d6;
   --cube-color-yellow: #e5e100;
@@ -17,13 +21,6 @@
   --cube-size: 100px;
   --cube-element-size: 0.94;
   --cube-gap: 0.06;
-  --bg-primary: #0f172a;
-  --bg-secondary: #1e293b;
-  --card-bg: rgba(30, 41, 59, 0.7);
-  --card-border: rgba(255, 255, 255, 0.1);
-  --text-primary: #f1f5f9;
-  --text-secondary: #94a3b8;
-  --accent: #818cf8;
   --transition-fast: 150ms ease;
   --transition-normal: 300ms ease;
   --blur-amount: 12px;
@@ -35,28 +32,18 @@
   --radius-lg: 1.25rem;
 }
 
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg-primary: #e2e8f0;
-    --bg-secondary: #f8fafc;
-    --card-bg: rgba(255, 255, 255, 0.75);
-    --card-border: rgba(15, 23, 42, 0.1);
-    --text-primary: #0f172a;
-    --text-secondary: #334155;
-    --accent: #4f46e5;
-  }
-}
-
-:root[data-theme="dark"] {
+@mixin theme-surfaces-dark {
   --bg-primary: #0f172a;
   --bg-secondary: #1e293b;
   --card-bg: rgba(30, 41, 59, 0.7);
   --card-border: rgba(255, 255, 255, 0.1);
+  /* Nested panels (AlgorithmGroup subgroups): not Radix `--color-panel` — that lags behind `html.light|dark`. */
+  --subgroup-bg: rgba(15, 23, 42, 0.55);
+  --subgroup-border: rgba(255, 255, 255, 0.1);
   --text-primary: #f1f5f9;
   --text-secondary: #94a3b8;
   --accent: #818cf8;
 
-  /* Radix custom accent scale driven by cube palette */
   --accent-1: #150f08;
   --accent-2: #211609;
   --accent-3: #382006;
@@ -71,16 +58,17 @@
   --accent-12: #fff4d4;
 }
 
-:root[data-theme="light"] {
+@mixin theme-surfaces-light {
   --bg-primary: #e2e8f0;
   --bg-secondary: #f8fafc;
   --card-bg: rgba(255, 255, 255, 0.75);
   --card-border: rgba(15, 23, 42, 0.1);
+  --subgroup-bg: rgba(248, 250, 252, 0.88);
+  --subgroup-border: rgba(15, 23, 42, 0.12);
   --text-primary: #0f172a;
   --text-secondary: #334155;
   --accent: #4f46e5;
 
-  /* Radix custom accent scale driven by cube palette */
   --accent-1: #fffaf2;
   --accent-2: #fff4e3;
   --accent-3: #ffe7c1;
@@ -93,4 +81,24 @@
   --accent-10: #f08300;
   --accent-11: #a64f00;
   --accent-12: #4e2a00;
+}
+
+html.dark {
+  @include theme-surfaces-dark;
+}
+
+html.light {
+  @include theme-surfaces-light;
+}
+
+@media (prefers-color-scheme: light) {
+  html:not(.dark):not(.light) {
+    @include theme-surfaces-light;
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.dark):not(.light) {
+    @include theme-surfaces-dark;
+  }
 }

@@ -5,6 +5,7 @@ import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotat
 import { MiniCube } from "@/components/MiniCube/MiniCube";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
+import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll/getOllTopPatternFromNotation";
 import { getPllTopViewFromNotation } from "@/lib/pll/getPllTopViewFromNotation";
 import { invertNotationSequence, parseReversedNotation } from "@/lib/notation/parser";
@@ -12,25 +13,22 @@ import type { Algorithm } from "@/types/algorithm";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
-const CARD_CUBE_SIZE = 100;
+const CARD_MINI_CUBE_PX = 100;
+const CARD_TOP_FLAT_PX = 60;
 
 interface AlgorithmCardProps {
   algorithm: Algorithm;
   isReversed: boolean;
   onClick: (algorithm: Algorithm) => void;
   onToggleReverse: () => void;
-  useOllSpecialTopView?: boolean;
-  usePllSpecialTopView?: boolean;
 }
 
-function AlgorithmCardComponent({
-  algorithm,
-  isReversed,
-  onClick,
-  onToggleReverse,
-  useOllSpecialTopView = false,
-  usePllSpecialTopView = false,
-}: AlgorithmCardProps) {
+function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleReverse }: AlgorithmCardProps) {
+  const ollTopFlat = useOllTopFlatViewEnabled();
+  const pllTopFlat = usePllTopFlatViewEnabled();
+  const useOllSpecialTopView = algorithm.category === "OLL" && ollTopFlat;
+  const usePllSpecialTopView = algorithm.category === "PLL" && pllTopFlat;
+
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(algorithm.notation) : algorithm.notation),
     [algorithm.notation, isReversed]
@@ -48,6 +46,8 @@ function AlgorithmCardComponent({
     }
     return getPllTopViewFromNotation(algorithm.id, displayNotation);
   }, [algorithm.category, algorithm.id, displayNotation, usePllSpecialTopView]);
+  const useTopFlatCanvas = Boolean(ollTopPattern ?? pllTopModel);
+  const previewSlotPx = useTopFlatCanvas ? CARD_TOP_FLAT_PX : CARD_MINI_CUBE_PX;
   const [isCopied, setIsCopied] = useState(false);
 
   const handleOpenDialog = useCallback(() => onClick(algorithm), [algorithm, onClick]);
@@ -89,17 +89,25 @@ function AlgorithmCardComponent({
         "shadow-sm transition-[border-color,box-shadow] hover:border-primary/50 hover:shadow-md"
       )}
     >
-      <div className="flex size-[100px] shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/50">
+      <div
+        className="flex shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/50"
+        style={{
+          width: previewSlotPx,
+          height: previewSlotPx,
+          minWidth: previewSlotPx,
+          minHeight: previewSlotPx
+        }}
+      >
         {ollTopPattern ? (
-          <OllTopView pattern={ollTopPattern} label={algorithm.name} size={CARD_CUBE_SIZE} />
+          <OllTopView pattern={ollTopPattern} label={algorithm.name} size={CARD_TOP_FLAT_PX} />
         ) : pllTopModel ? (
-          <PllTopView model={pllTopModel} label={algorithm.name} size={CARD_CUBE_SIZE} />
+          <PllTopView model={pllTopModel} label={algorithm.name} size={CARD_TOP_FLAT_PX} />
         ) : (
-          <MiniCube deferUntilVisible size={CARD_CUBE_SIZE} preparationRotations={notationRotations} />
+          <MiniCube deferUntilVisible size={CARD_MINI_CUBE_PX} preparationRotations={notationRotations} />
         )}
       </div>
 
-      <div className="flex min-h-[100px] min-w-0 flex-1 flex-col justify-center gap-2">
+      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2" style={{ minHeight: previewSlotPx }}>
         <div className="flex items-center justify-between gap-2">
           <h3 className="m-0 min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground">{algorithm.name}</h3>
           <div className="flex shrink-0 items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">

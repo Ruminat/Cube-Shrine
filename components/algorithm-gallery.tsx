@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 import { AlgorithmGroup } from "@/components/AlgorithmGroup/AlgorithmGroup";
 import { AlgorithmModal } from "@/components/AlgorithmModal/AlgorithmModal";
@@ -18,19 +18,6 @@ const categories: Array<AlgorithmCategory | "All"> = [
   "PLL",
 ];
 
-const LS_OLL_TOP_FLAT = "cube-shrine:oll-top-flat-view";
-const LS_PLL_TOP_FLAT = "cube-shrine:pll-top-flat-view";
-
-function parseToggle(raw: string | null, fallback: boolean): boolean {
-  if (raw === "true") {
-    return true;
-  }
-  if (raw === "false") {
-    return false;
-  }
-  return fallback;
-}
-
 function filterBySubgroup(list: Algorithm[], subgroupId: string | null) {
   if (!subgroupId) {
     return list;
@@ -44,41 +31,6 @@ export function AlgorithmGallery() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selected, setSelected] = useState<Algorithm | null>(null);
   const [reversedById, setReversedById] = useState<Record<string, boolean>>({});
-  const [ollSpecialTopView, setOllSpecialTopView] = useState(true);
-  const [pllSpecialTopView, setPllSpecialTopView] = useState(true);
-  const [topFlatPrefsHydrated, setTopFlatPrefsHydrated] = useState(false);
-
-  useEffect(() => {
-    try {
-      setOllSpecialTopView(parseToggle(localStorage.getItem(LS_OLL_TOP_FLAT), true));
-      setPllSpecialTopView(parseToggle(localStorage.getItem(LS_PLL_TOP_FLAT), true));
-    } catch {
-      /* ignore */
-    }
-    setTopFlatPrefsHydrated(true);
-  }, []);
-
-  useEffect(() => {
-    if (!topFlatPrefsHydrated) {
-      return;
-    }
-    try {
-      localStorage.setItem(LS_OLL_TOP_FLAT, String(ollSpecialTopView));
-    } catch {
-      /* ignore */
-    }
-  }, [ollSpecialTopView, topFlatPrefsHydrated]);
-
-  useEffect(() => {
-    if (!topFlatPrefsHydrated) {
-      return;
-    }
-    try {
-      localStorage.setItem(LS_PLL_TOP_FLAT, String(pllSpecialTopView));
-    } catch {
-      /* ignore */
-    }
-  }, [pllSpecialTopView, topFlatPrefsHydrated]);
 
   const handleCloseModal = useCallback(() => {
     setSelected(null);
@@ -211,10 +163,6 @@ export function AlgorithmGallery() {
               onOpenAlgorithm={setSelected}
               isAlgorithmReversed={isAlgorithmReversed}
               onToggleAlgorithmReverse={handleToggleAlgorithmReverse}
-              ollSpecialTopView={group.category === "OLL" ? ollSpecialTopView : undefined}
-              onOllSpecialTopViewChange={group.category === "OLL" ? setOllSpecialTopView : undefined}
-              pllSpecialTopView={group.category === "PLL" ? pllSpecialTopView : undefined}
-              onPllSpecialTopViewChange={group.category === "PLL" ? setPllSpecialTopView : undefined}
             />
           ))}
         </div>

@@ -1,11 +1,13 @@
 "use client";
 
-import { useTheme } from "next-themes";
+import { useTheme } from "@/components/theme-provider";
+import { useDocumentAppearance } from "@/lib/document-appearance";
 import { Moon, Sun, Box } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export function Header() {
-  const { resolvedTheme, setTheme } = useTheme();
+  const appearance = useDocumentAppearance();
+  const { setTheme } = useTheme();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -24,7 +26,7 @@ export function Header() {
           <Button
             variant="ghost"
             size="sm"
-            onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+            onClick={() => setTheme(appearance === "dark" ? "light" : "dark")}
             className="relative h-9 w-9 p-0"
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />

@@ -9,6 +9,9 @@ const pagesBasePath =
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  env: {
+    NEXT_PUBLIC_SITE_BASE_PATH: pagesBasePath,
+  },
   output: "export",
   trailingSlash: true,
   images: {

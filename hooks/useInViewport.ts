@@ -10,7 +10,8 @@ type UseInViewportOptions = {
 
 export function useInViewport<T extends HTMLElement>(options?: UseInViewportOptions) {
   const ref = useRef<T | null>(null);
-  const [isIntersecting, setIsIntersecting] = useState(false);
+  /** Start `true` so SSR + first client paint match; observer may turn off once measured. */
+  const [isIntersecting, setIsIntersecting] = useState(true);
   const { root = null, rootMargin = "120px 0px" } = options ?? {};
 
   useEffect(() => {

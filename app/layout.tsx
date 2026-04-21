@@ -3,7 +3,10 @@ import { Analytics } from "@vercel/analytics/next";
 import "@radix-ui/themes/styles.css";
 import { RadixCubeProviders } from "@/components/radix-cube-providers";
 import { ThemeProvider } from "@/components/theme-provider";
+import "@/styles/variables.scss";
 import "./globals.css";
+
+const themeInitSrc = `${process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? ""}/theme-init.js`;
 
 export const metadata: Metadata = {
   title: "Cube Shrine — CFOP algorithm gallery",
@@ -22,7 +25,11 @@ export function RootLayout({
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className="font-sans antialiased">
+      <head>
+        {/* eslint-disable-next-line @next/next/no-sync-scripts -- blocking theme init; see `public/theme-init.js` */}
+        <script src={themeInitSrc} />
+      </head>
+      <body className="font-sans antialiased" suppressHydrationWarning>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           <RadixCubeProviders>{children}</RadixCubeProviders>
         </ThemeProvider>
