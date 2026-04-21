@@ -6,10 +6,14 @@ export type PllGridCell = {
   col: 0 | 1 | 2;
 };
 
-/** Straight double-headed arrow between two U-layer piece slots (corners or edges). */
+/**
+ * Arrow between two U-layer piece slots (corners or edges).
+ * `doubleHeaded` defaults to true; set false for one-way (head at `to`, e.g. U / A cycle diagrams).
+ */
 export type PllTopArrow = {
   from: PllGridCell;
   to: PllGridCell;
+  doubleHeaded?: boolean;
 };
 
 export type PllTopColorPattern = {

@@ -8,7 +8,7 @@ import {
   TOP_FLAT_CUBIE_STROKE,
   type FlatPoint
 } from "@/lib/draw/topFlatGridLayout";
-import type { PllGridCell, PllTopViewModel } from "@/lib/pll/pllTopTypes";
+import type { PllGridCell, PllTopArrow, PllTopViewModel } from "@/lib/pll/pllTopTypes";
 const ARROW_COLOR = "#7c7c7d";
 const ARROW_SHAFT_WIDTH_CSS_PX = 2;
 
@@ -72,6 +72,10 @@ function drawArrowHead(
   context.fill();
 }
 
+function arrowHeadLength(cell: number, segmentLen: number): number {
+  return Math.min(Math.max(4, cell * 0.14) + 1, segmentLen / 2 - 0.5);
+}
+
 /** Double arrow whose tips sit exactly on the two cubie centers; shaft joins the head bases. */
 function drawDoubleArrow(
   context: CanvasRenderingContext2D,
@@ -86,7 +90,7 @@ function drawDoubleArrow(
   const len = Math.hypot(dx, dy) || 1;
   const ux = dx / len;
   const uy = dy / len;
-  const headLen = Math.min(Math.max(4, cell * 0.14), len / 2 - 0.5);
+  const headLen = arrowHeadLength(cell, len);
 
   const tip1x = x1;
   const tip1y = y1;
@@ -111,6 +115,57 @@ function drawDoubleArrow(
   drawArrowHead(context, tip1x, tip1y, ux, uy, headLen);
   drawArrowHead(context, tip2x, tip2y, -ux, -uy, headLen);
   context.restore();
+}
+
+/** Single arrow from first center to second; head at `(x2, y2)`. */
+function drawSingleArrow(
+  context: CanvasRenderingContext2D,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  cell: number
+) {
+  const dx = x2 - x1;
+  const dy = y2 - y1;
+  const len = Math.hypot(dx, dy) || 1;
+  const ux = dx / len;
+  const uy = dy / len;
+  const headLen = arrowHeadLength(cell, len);
+
+  const sx = x1 + ux * headLen;
+  const sy = y1 + uy * headLen;
+  const ex = x2 - ux * headLen;
+  const ey = y2 - uy * headLen;
+
+  context.save();
+  context.strokeStyle = ARROW_COLOR;
+  context.lineWidth = ARROW_SHAFT_WIDTH_CSS_PX;
+  context.lineCap = "butt";
+  context.lineJoin = "miter";
+  context.beginPath();
+  context.moveTo(sx, sy);
+  context.lineTo(ex, ey);
+  context.stroke();
+
+  drawArrowHead(context, x2, y2, -ux, -uy, headLen);
+  context.restore();
+}
+
+function drawPllArrowSegment(
+  context: CanvasRenderingContext2D,
+  arrow: PllTopArrow,
+  x1: number,
+  y1: number,
+  x2: number,
+  y2: number,
+  cell: number
+) {
+  if (arrow.doubleHeaded === false) {
+    drawSingleArrow(context, x1, y1, x2, y2, cell);
+  } else {
+    drawDoubleArrow(context, x1, y1, x2, y2, cell);
+  }
 }
 
 function pllTopTrap(
@@ -244,6 +299,6 @@ export function drawPllTopPatternOnCanvas(
   for (const arrow of model.arrows) {
     const p1 = cellCenter(faceX, faceY, cell, gap, arrow.from);
     const p2 = cellCenter(faceX, faceY, cell, gap, arrow.to);
-    drawDoubleArrow(context, p1.x, p1.y, p2.x, p2.y, cell);
+    drawPllArrowSegment(context, arrow, p1.x, p1.y, p2.x, p2.y, cell);
   }
 }
