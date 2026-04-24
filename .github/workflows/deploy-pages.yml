@@ -37,6 +37,25 @@ jobs:
       - name: Build static export
         run: npm run build
 
+      - name: Build Storybook for GitHub Pages
+        env:
+          GITHUB_REPOSITORY: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+          repo_name="${GITHUB_REPOSITORY##*/}"
+          if [[ "$repo_name" == *.github.io ]]; then
+            export STORYBOOK_BASE_PATH="/storybook/"
+          else
+            export STORYBOOK_BASE_PATH="/${repo_name}/storybook/"
+          fi
+          npm run build-storybook -w @shreklabs/cube-shrine
+
+      - name: Copy Storybook into static export
+        run: |
+          set -euo pipefail
+          mkdir -p apps/web/out/storybook
+          cp -r packages/cube-shrine/storybook-static/. apps/web/out/storybook/
+
       - name: Disable Jekyll
         run: touch apps/web/out/.nojekyll
 

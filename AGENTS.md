@@ -106,7 +106,7 @@ World-axis palette (tests depend on it):
 ## CI / known gotchas
 
 - **GitHub Actions** builds with `npm run build` and deploys **`apps/web/out`** (see `.github/workflows/deploy-pages.yml`).
-- **Library `npm run build`** can fail on some machines with **`ajv/dist/core`** (api-extractor / `vite-plugin-dts`) — environment-specific; fixing may mean aligning `ajv` / `@microsoft/api-extractor` versions.
+- **Library `npm run build`**: JS via Vite; **`.d.ts`** via `tsc -p tsconfig.build-dts.json` (no `vite-plugin-dts` / api-extractor).
 
 ## Human docs
 

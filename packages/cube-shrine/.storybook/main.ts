@@ -7,6 +7,10 @@ const dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(dirname, "..");
 const webAppRoot = path.resolve(packageRoot, "../../apps/web");
 
+/** Vite asset base for static Storybook builds (e.g. GitHub Pages project site). */
+const storybookStaticBase =
+  process.env.STORYBOOK_BASE_PATH?.replace(/\/?$/, "/") ?? "/";
+
 const config: StorybookConfig = {
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(ts|tsx)"],
   addons: ["@storybook/addon-essentials"],
@@ -16,6 +20,7 @@ const config: StorybookConfig = {
   },
   viteFinal: async (viteConfig) =>
     mergeConfig(viteConfig, {
+      base: storybookStaticBase,
       resolve: {
         // Longer subpaths first — otherwise `@shreklabs/cube-shrine` swallows `/react`.
         alias: [

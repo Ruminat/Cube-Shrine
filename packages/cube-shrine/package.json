@@ -27,7 +27,7 @@
     }
   },
   "scripts": {
-    "build": "vite build --config vite.core.config.ts && vite build --config vite.render.config.ts && vite build --config vite.react.config.ts && vite build --config vite.index.config.ts",
+    "build": "vite build --config vite.core.config.ts && vite build --config vite.render.config.ts && vite build --config vite.react.config.ts && vite build --config vite.index.config.ts && tsc -p tsconfig.build-dts.json",
     "lint": "eslint . --max-warnings=0",
     "codecheck": "npm run typecheck && npm run lint",
     "typecheck": "tsc -p tsconfig.json --noEmit",
@@ -62,7 +62,6 @@
     "typescript": "^5.8.3",
     "typescript-eslint": "^8.46.2",
     "vite": "^6.3.5",
-    "vite-plugin-dts": "^4.5.4",
     "vitest": "^2.1.9"
   }
 }

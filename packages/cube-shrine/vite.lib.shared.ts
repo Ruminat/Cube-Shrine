@@ -1,7 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { PluginOption, UserConfig } from "vite";
-import dts from "vite-plugin-dts";
+import type { UserConfig } from "vite";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
 
@@ -13,19 +12,9 @@ export const externalReact = (id: string) =>
 
 export function libConfig(
   name: "index" | "core" | "render" | "react",
-  emptyOutDir: boolean,
-  dtsInclude: string[]
+  emptyOutDir: boolean
 ): UserConfig {
   return {
-    plugins: [
-      dts({
-        include: dtsInclude,
-        exclude: ["**/*.test.ts"],
-        entryRoot: "src",
-        copyDtsFiles: true,
-        compilerOptions: { noEmitOnError: true }
-      }) as PluginOption
-    ],
     build: {
       emptyOutDir,
       lib: {

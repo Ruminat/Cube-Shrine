@@ -1,5 +1,8 @@
 # Cube Shrine
 
+[![Cube Shrine — live site](https://img.shields.io/badge/Cube_Shrine-live-111827?style=for-the-badge&logo=githubpages&logoColor=white)](https://ruminat.github.io/Cube-Shrine/)
+[![Storybook](https://img.shields.io/badge/Storybook-docs-FF4785?style=for-the-badge&logo=storybook&logoColor=white)](https://ruminat.github.io/Cube-Shrine/storybook/)
+
 Static [Next.js](https://nextjs.org/) app for browsing CFOP-style algorithms with **isometric cube previews** (Canvas 2D). TypeScript, SCSS modules, and [Radix Themes](https://www.radix-ui.com/themes) for layout and UI.
 
 Cube modeling, notation parsing, canvas drawing, and optional React helpers live in the workspace package **`@shreklabs/cube-shrine`** (`packages/cube-shrine`), built with **Vite** and tested with **Vitest**.
@@ -118,7 +121,7 @@ Design tokens live in `apps/web/styles/variables.scss` (cube colors, size, surfa
 
 ## Deployment
 
-GitHub Actions (`.github/workflows/deploy-pages.yml`) runs `npm ci` and `npm run build`, then uploads **`apps/web/out`** as the Pages artifact. With `GITHUB_ACTIONS=true`, `apps/web/next.config.mjs` sets `basePath` / `assetPrefix` for **GitHub Pages** project sites. User/org `*.github.io` repos skip the extra base path.
+GitHub Actions (`.github/workflows/deploy-pages.yml`) runs `npm ci` and `npm run build`, then builds **Storybook** with a Pages-aware Vite `base` (`STORYBOOK_BASE_PATH`) and copies it to **`apps/web/out/storybook/`**, then uploads **`apps/web/out`** as the Pages artifact. With `GITHUB_ACTIONS=true`, `apps/web/next.config.mjs` sets `basePath` / `assetPrefix` for **GitHub Pages** project sites. User/org `*.github.io` repos skip the extra base path; Storybook is served from **`/storybook/`** on those repos.
 
 ## Data
 
