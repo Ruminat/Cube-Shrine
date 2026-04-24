@@ -3,6 +3,7 @@ import { useMemo, useState } from "react";
 import {
   Badge,
   Box,
+  Button,
   Card,
   Flex,
   Grid,
@@ -18,6 +19,8 @@ import {
   parseNotation,
   parseReversedNotation,
   validateAlgorithm,
+  validateOLLAlgorithm,
+  validatePLLAlgorithm,
   type RotationStep
 } from "@shreklabs/cube-shrine/core";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
@@ -215,4 +218,77 @@ function ValidateNormalizePanel() {
 export const ValidateAndNormalize: StoryObj = {
   name: "Validate & normalize",
   render: () => <ValidateNormalizePanel />
+};
+
+const SUNE = "(R U R' U) (R U2 R')";
+const T_PERM = "(R U R' U') R' F R2 U' R' U' R U R' F'";
+const ANTI_SUNE = "(L' U' L U') (L' U2 L)";
+
+function CaseValidatorRow({ label, error }: { label: string; error: string | undefined }) {
+  const ok = error === undefined;
+  return (
+    <Card
+      size="2"
+      style={{
+        borderLeftWidth: 4,
+        borderLeftStyle: "solid",
+        borderLeftColor: ok ? "var(--green-9)" : "var(--red-9)",
+        background: ok ? "var(--green-a2)" : "var(--red-a2)"
+      }}
+    >
+      <Flex align="center" justify="between" gap="3" wrap="wrap">
+        <Text size="2" weight="bold">
+          {label}
+        </Text>
+        <Badge color={ok ? "green" : "red"} variant="solid" size="2" highContrast>
+          {ok ? "Pass" : "Fail"}
+        </Badge>
+      </Flex>
+      {!ok ? (
+        <Text size="1" color="gray" mt="2" style={{ fontFamily: "ui-monospace, Menlo, monospace", wordBreak: "break-word" }}>
+          {error}
+        </Text>
+      ) : null}
+    </Card>
+  );
+}
+
+function ValidateCaseAlgorithmsPanel() {
+  const [notation, setNotation] = useState(SUNE);
+  const pllError = validatePLLAlgorithm(notation);
+  const ollError = validateOLLAlgorithm(notation);
+
+  return (
+    <Flex direction="column" gap="3" style={{ maxWidth: 720 }}>
+      <Heading size="5">PLL / OLL case validation</Heading>
+      <Text size="2" color="gray">
+        Green and red rows summarize the cube after <code>parseReversedNotation</code> (same prep as <code>MiniCube</code>{" "}
+        cards). Failed checks show the message under the row.
+      </Text>
+      <TextArea
+        value={notation}
+        onChange={(e) => setNotation(e.target.value)}
+        rows={4}
+        style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", fontSize: 13 }}
+      />
+      <Flex gap="2" wrap="wrap">
+        <Button type="button" size="1" variant="soft" color="blue" onClick={() => setNotation(SUNE)}>
+          Apply Sune example
+        </Button>
+        <Button type="button" size="1" variant="soft" color="blue" onClick={() => setNotation(ANTI_SUNE)}>
+          Apply Anti-Sune example
+        </Button>
+        <Button type="button" size="1" variant="soft" color="orange" onClick={() => setNotation(T_PERM)}>
+          Apply T perm example
+        </Button>
+      </Flex>
+      <CaseValidatorRow label="validatePLLAlgorithm" error={pllError} />
+      <CaseValidatorRow label="validateOLLAlgorithm" error={ollError} />
+    </Flex>
+  );
+}
+
+export const ValidatePllOllCases: StoryObj = {
+  name: "Validate · PLL / OLL cases",
+  render: () => <ValidateCaseAlgorithmsPanel />
 };

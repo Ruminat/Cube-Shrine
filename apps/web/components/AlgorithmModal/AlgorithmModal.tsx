@@ -6,9 +6,14 @@ import { Tooltip } from "@radix-ui/themes";
 import { Box, Button, Dialog, Flex, Text } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
+import { OllTopView } from "@/components/OllTopView/OllTopView";
+import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { Button as UiButton } from "@/components/ui/button";
+import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { cn } from "@/lib/utils";
 import {
+  getCanonicalOllTopPatternFromNotation,
+  getPllTopViewFromNotation,
   invertNotationSequence,
   parseNotation,
   parseReversedNotation,
@@ -17,6 +22,7 @@ import {
 import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
+const MODAL_TOP_FLAT_PX = 168;
 
 const iconButtonClass = "size-8 shrink-0";
 
@@ -29,6 +35,8 @@ interface AlgorithmModalProps {
 
 export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse }: AlgorithmModalProps) {
   const [isCopied, setIsCopied] = useState(false);
+  const ollTopFlat = useOllTopFlatViewEnabled();
+  const pllTopFlat = usePllTopFlatViewEnabled();
   const baseNotation = algorithm?.notation ?? "";
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(baseNotation) : baseNotation),
@@ -43,6 +51,20 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
         : parseReversedNotation(displayNotation),
     [displayNotation, pllForwardMoves]
   );
+  const ollTopPattern = useMemo(() => {
+    if (!algorithm || algorithm.category !== "OLL" || !ollTopFlat) {
+      return null;
+    }
+    return getCanonicalOllTopPatternFromNotation(displayNotation);
+  }, [algorithm, displayNotation, ollTopFlat]);
+  const pllTopModel = useMemo(() => {
+    if (!algorithm || algorithm.category !== "PLL" || !pllTopFlat) {
+      return null;
+    }
+    return getPllTopViewFromNotation(algorithm.id, displayNotation, {
+      applyMoves: pllForwardMoves ? "forward" : undefined
+    });
+  }, [algorithm, displayNotation, pllForwardMoves, pllTopFlat]);
   const handleCopyNotation = useCallback(async () => {
     if (!navigator?.clipboard?.writeText) {
       return;
@@ -98,6 +120,17 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
               </Tooltip>
             </Flex>
           </Flex>
+
+          {ollTopPattern ? (
+            <Flex justify="center" align="center">
+              <OllTopView pattern={ollTopPattern} label={algorithm.name} size={MODAL_TOP_FLAT_PX} />
+            </Flex>
+          ) : null}
+          {pllTopModel ? (
+            <Flex justify="center" align="center">
+              <PllTopView model={pllTopModel} label={algorithm.name} size={MODAL_TOP_FLAT_PX} />
+            </Flex>
+          ) : null}
 
           <Flex justify="center" align="center">
             <CubeRenderer size={MODAL_CUBE_SIZE} preparationRotations={notationRotations} />

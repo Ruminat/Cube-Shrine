@@ -4,7 +4,6 @@ import { Tooltip } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
-import { pllTopDiagramArrows } from "@/data/pll.diagrams";
 import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import {
   getCanonicalOllTopPatternFromNotation,
@@ -20,7 +19,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const CARD_MINI_CUBE_PX = 100;
-const CARD_TOP_FLAT_PX = 60;
+const CARD_TOP_FLAT_PX = 76;
 
 interface AlgorithmCardProps {
   algorithm: Algorithm;
@@ -58,8 +57,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
       return null;
     }
     return getPllTopViewFromNotation(algorithm.id, displayNotation, {
-      applyMoves: pllForwardMoves ? "forward" : undefined,
-      getArrows: (id) => pllTopDiagramArrows[id] ?? []
+      applyMoves: pllForwardMoves ? "forward" : undefined
     });
   }, [algorithm.category, algorithm.id, displayNotation, pllForwardMoves, usePllSpecialTopView]);
   const useTopFlatCanvas = Boolean(ollTopPattern ?? pllTopModel);

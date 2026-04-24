@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` (diagram arrows omitted here). Cases are **Ua, Ub, H, Ja, Jb, T** from `apps/web/data/pll.algs.ts`."
+          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` with cubie-derived permutation arrows. Cases are **Ua, Ub, H, Ja, Jb, T** from `apps/web/data/pll.algs.ts`."
       }
     }
   }
@@ -42,9 +42,7 @@ function PllFlatCanvas({ algorithmId, notation }: { algorithmId: string; notatio
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const model = getPllTopViewFromNotation(algorithmId, notation, {
-      getArrows: () => []
-    });
+    const model = getPllTopViewFromNotation(algorithmId, notation);
     drawPllTopPatternOnCanvas(ctx, size, model, getPaletteFromCSS());
   }, [algorithmId, notation]);
 
@@ -86,7 +84,7 @@ function PllCasesGrid() {
           PLL views
         </Heading>
         <Text size="2" color="gray" mb="3">
-          <strong>Top flat</strong> is the default diagram layout (arrows not shown in Storybook). Switch to{" "}
+          <strong>Top flat</strong> shows the same diagram and arrows as the library default. Switch to{" "}
           <strong>Isometric</strong> for the same reversed-notation preparation as PLL cards on the site.
         </Text>
         <IsoFlatToggle value={mode} onChange={setMode} />

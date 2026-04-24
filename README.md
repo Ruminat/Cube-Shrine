@@ -127,7 +127,7 @@ Under **`apps/web`**:
 - `data/oll.algs.ts`, `data/pll.algs.ts` — algorithm records.
 - `data/algorithms.ts` — merged list, category order, and subgroup grouping helpers.
 
-Extend types in `apps/web/types/algorithm.ts` and add sources the same way. PLL diagram arrows for flat views are passed into `getPllTopViewFromNotation` via `getArrows` (see `apps/web/components/AlgorithmCard/AlgorithmCard.tsx` and `data/pll.diagrams.ts`).
+Extend types in `apps/web/types/algorithm.ts` and add sources the same way. PLL top-flat arrows are computed inside `getPllTopViewFromNotation` when the reversed prep is a valid PLL case (`AlgorithmCard` uses that model for previews).
 
 ## Conventions
 

@@ -6,7 +6,7 @@ export const pllSubgroupOrder = [
   "pll-corners",
   "pll-adjacent",
   "pll-diagonal",
-  "pll-g"
+  "pll-g",
 ] as const;
 
 export type PllSubgroupId = (typeof pllSubgroupOrder)[number];
@@ -17,7 +17,7 @@ export const pllSubgroupLabels: Record<PllSubgroupId, string> = {
   "pll-corners": "A/E-perms (Corners Only)",
   "pll-adjacent": "R/J/T/F (Swap Adjacent Corners)",
   "pll-diagonal": "V/Y/N (Swap Diagonal Corners)",
-  "pll-g": "G-perms (Double Cycles)"
+  "pll-g": "G-perms (Double Cycles)",
 };
 
 /** Standard PLL cases and common algorithm memorization forms. */
@@ -30,7 +30,7 @@ export const pllAlgorithms: Algorithm[] = [
     category: "PLL",
     subgroupId: "pll-test",
     pllTopFlatApplyMoves: "forward",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "test-u",
@@ -40,7 +40,7 @@ export const pllAlgorithms: Algorithm[] = [
     category: "PLL",
     subgroupId: "pll-test",
     pllTopFlatApplyMoves: "forward",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "test-u2",
@@ -50,7 +50,7 @@ export const pllAlgorithms: Algorithm[] = [
     category: "PLL",
     subgroupId: "pll-test",
     pllTopFlatApplyMoves: "forward",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "test-uprime",
@@ -60,7 +60,7 @@ export const pllAlgorithms: Algorithm[] = [
     category: "PLL",
     subgroupId: "pll-test",
     pllTopFlatApplyMoves: "forward",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "ua-perm",
@@ -69,7 +69,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL edge 3-cycle (A variant on the U layer).",
     category: "PLL",
     subgroupId: "pll-edges",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "ub-perm",
@@ -78,7 +78,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL edge 3-cycle (B variant on the U layer).",
     category: "PLL",
     subgroupId: "pll-edges",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "z-perm",
@@ -87,7 +87,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Z permutation: swaps two adjacent edges and mirrors the other pair.",
     category: "PLL",
     subgroupId: "pll-edges",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "h-perm",
@@ -96,7 +96,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL H permutation: swaps opposite edge pairs on the last layer.",
     category: "PLL",
     subgroupId: "pll-edges",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "aa-perm",
@@ -105,7 +105,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL corner 3-cycle (A variant).",
     category: "PLL",
     subgroupId: "pll-corners",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "ab-perm",
@@ -114,7 +114,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL corner 3-cycle (B variant).",
     category: "PLL",
     subgroupId: "pll-corners",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "e-perm",
@@ -123,7 +123,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL E permutation: swaps two opposite corner pairs.",
     category: "PLL",
     subgroupId: "pll-corners",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "ra-perm",
@@ -132,7 +132,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Ra permutation (diagonal corner swap with edge cycle).",
     category: "PLL",
     subgroupId: "pll-adjacent",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "rb-perm",
@@ -141,16 +141,16 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Rb permutation (mirror of Ra).",
     category: "PLL",
     subgroupId: "pll-adjacent",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "ja-perm",
     name: "Ja Perm",
-    notation: "y' (L' U' L F) (L' U' L U) L F' L2' U L U",
+    notation: "(L' U' L F) (L' U' L U) L F' L2' U L U",
     description: "PLL Ja permutation (adjacent corner–edge swap, J-family).",
     category: "PLL",
     subgroupId: "pll-adjacent",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "jb-perm",
@@ -159,7 +159,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Jb permutation (mirror of Ja).",
     category: "PLL",
     subgroupId: "pll-adjacent",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "t-perm",
@@ -168,7 +168,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL T permutation: swaps one adjacent edge pair and one corner pair.",
     category: "PLL",
     subgroupId: "pll-adjacent",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "f-perm",
@@ -177,7 +177,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL F permutation (four-cycle of corners and edges).",
     category: "PLL",
     subgroupId: "pll-adjacent",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "v-perm",
@@ -186,7 +186,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL V permutation (diagonal corner swap pattern).",
     category: "PLL",
     subgroupId: "pll-diagonal",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "y-perm",
@@ -195,7 +195,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Y permutation: cycles three corners while swapping edges.",
     category: "PLL",
     subgroupId: "pll-diagonal",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "na-perm",
@@ -204,7 +204,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Na permutation (N-perm family, A orientation).",
     category: "PLL",
     subgroupId: "pll-diagonal",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "nb-perm",
@@ -213,7 +213,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL Nb permutation (N-perm family, B orientation).",
     category: "PLL",
     subgroupId: "pll-diagonal",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "ga-perm",
@@ -222,7 +222,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL G-permutation (A variant): three-corner cycle with edge setup.",
     category: "PLL",
     subgroupId: "pll-g",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "gb-perm",
@@ -231,7 +231,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL G-permutation (B variant).",
     category: "PLL",
     subgroupId: "pll-g",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "gc-perm",
@@ -240,7 +240,7 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL G-permutation (C variant).",
     category: "PLL",
     subgroupId: "pll-g",
-    preparationRotations: []
+    preparationRotations: [],
   },
   {
     id: "gd-perm",
@@ -249,6 +249,6 @@ export const pllAlgorithms: Algorithm[] = [
     description: "PLL G-permutation (D variant).",
     category: "PLL",
     subgroupId: "pll-g",
-    preparationRotations: []
-  }
+    preparationRotations: [],
+  },
 ];

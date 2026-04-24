@@ -31,3 +31,5 @@ export type {
 } from "./core/oll/extractOllTopPattern";
 export { extractOllTopPatternFromCubies } from "./core/oll/extractOllTopPattern";
 export { getCanonicalOllTopPatternFromNotation } from "./core/oll/getOllTopPatternFromNotation";
+export { validateOLLAlgorithm } from "./core/oll/validateOllAlgorithm";
+export { validatePLLAlgorithm } from "./core/pll/validatePllAlgorithm";
