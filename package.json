@@ -6,7 +6,9 @@
     "build": "npm run build -w @shreklabs/cube-shrine && npm run build -w web",
     "dev": "npm run dev -w web",
     "lint": "npm run lint -w web && npm run lint -w @shreklabs/cube-shrine",
+    "codecheck": "npm run codecheck -w @shreklabs/cube-shrine && npm run codecheck -w web",
     "test": "npm run test -w @shreklabs/cube-shrine",
+    "typecheck": "npm run typecheck -w @shreklabs/cube-shrine && npm run typecheck -w web",
     "start": "npm run start -w web",
     "storybook": "npm run storybook -w @shreklabs/cube-shrine",
     "build-storybook": "npm run build-storybook -w @shreklabs/cube-shrine"

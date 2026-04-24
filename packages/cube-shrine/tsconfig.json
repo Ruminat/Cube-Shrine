@@ -15,7 +15,11 @@
     "noUnusedParameters": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["../../apps/web/*"]
+      "@/*": ["../../apps/web/*"],
+      "@shreklabs/cube-shrine": ["./src/entry-index.ts"],
+      "@shreklabs/cube-shrine/core": ["./src/entry-core.ts"],
+      "@shreklabs/cube-shrine/render": ["./src/entry-render.ts"],
+      "@shreklabs/cube-shrine/react": ["./src/entry-react.ts"]
     }
   },
   "include": [

@@ -1,6 +1,6 @@
 import path from "node:path";
 import { fileURLToPath } from "node:url";
-import type { UserConfig } from "vite";
+import type { PluginOption, UserConfig } from "vite";
 import dts from "vite-plugin-dts";
 
 const root = path.dirname(fileURLToPath(import.meta.url));
@@ -24,7 +24,7 @@ export function libConfig(
         entryRoot: "src",
         copyDtsFiles: true,
         compilerOptions: { noEmitOnError: true }
-      })
+      }) as PluginOption
     ],
     build: {
       emptyOutDir,

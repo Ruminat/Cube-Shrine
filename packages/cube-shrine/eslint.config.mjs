@@ -10,6 +10,23 @@ const reactPkgs = [
   "react-dom/server"
 ];
 
+const radixThemesRestricted = {
+  paths: [
+    {
+      name: "@radix-ui/themes",
+      message:
+        "@radix-ui/themes is Storybook-only in this package. Import it only from stories/ or .storybook/."
+    }
+  ],
+  patterns: [
+    {
+      group: ["@radix-ui/themes/**"],
+      message:
+        "@radix-ui/themes is Storybook-only in this package. Import it only from stories/ or .storybook/."
+    }
+  ]
+};
+
 export default tseslint.config(
   { ignores: ["dist/**", "node_modules/**", "storybook-static/**"] },
   eslint.configs.recommended,
@@ -30,20 +47,37 @@ export default tseslint.config(
       "no-restricted-imports": [
         "error",
         {
-          paths: reactPkgs.map((name) => ({
-            name,
-            message:
-              "React may only be imported from packages/cube-shrine/src/react (Storybook and .storybook may import React)."
-          })),
+          paths: [
+            ...reactPkgs.map((name) => ({
+              name,
+              message:
+                "React may only be imported from packages/cube-shrine/src/react (Storybook and .storybook may import React)."
+            })),
+            ...radixThemesRestricted.paths
+          ],
           patterns: [
             {
               group: ["react/*", "react-dom/*"],
               message:
                 "React may only be imported from packages/cube-shrine/src/react (Storybook and .storybook may import React)."
-            }
+            },
+            ...radixThemesRestricted.patterns
           ]
         }
       ]
+    }
+  },
+  {
+    files: ["src/react/**/*.{ts,tsx}"],
+    rules: {
+      "no-restricted-imports": ["error", radixThemesRestricted]
+    }
+  },
+  {
+    files: ["**/*.{ts,tsx}"],
+    ignores: ["src/**", "stories/**", ".storybook/**", "node_modules/**", "dist/**", "storybook-static/**"],
+    rules: {
+      "no-restricted-imports": ["error", radixThemesRestricted]
     }
   }
 );

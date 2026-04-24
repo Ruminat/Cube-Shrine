@@ -29,6 +29,8 @@
   "scripts": {
     "build": "vite build --config vite.core.config.ts && vite build --config vite.render.config.ts && vite build --config vite.react.config.ts && vite build --config vite.index.config.ts",
     "lint": "eslint . --max-warnings=0",
+    "codecheck": "npm run typecheck && npm run lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static"
