@@ -68,28 +68,25 @@ const assertArrowCellsOnGrid = (notation: string, id: string) => {
 
 describe("getPllTopViewFromNotation computed arrows", () => {
   it("derives several arrows for V perm from cubie homes", () => {
-    const m = assertArrowCellsOnGrid(
-      "(R' U R' U') y (R' F' R2 U') (R' U R' F) R F",
-      "v-perm"
-    );
+    const m = assertArrowCellsOnGrid("R' U R' U' y R' F' R2 U' R' U R' F R F", "v-perm");
     expect(m.arrows.length).toBeGreaterThanOrEqual(2);
   });
 
   it("derives several arrows for Ja perm from cubie homes", () => {
-    const m = assertArrowCellsOnGrid("y' (L' U' L F) (L' U' L U) L F' L2' U L U", "ja-perm");
+    const m = assertArrowCellsOnGrid("x R2 F R F' R U2 r' U r U2 x'", "ja-perm");
     expect(m.arrows.length).toBeGreaterThanOrEqual(2);
   });
 
   it("derives exactly two arrows for F perm from cubie homes", () => {
     const m = assertArrowCellsOnGrid(
-      "(R' U' F') (R U R' U') (R' F R2 U') (R' U' R U) (R' U R)",
+      "R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R",
       "f-perm"
     );
     expect(m.arrows).toHaveLength(2);
   });
 
   it("H perm arrows run between opposite edge mids (not diagonal corners)", () => {
-    const m = getPllTopViewFromNotation("h-perm", "(M2' U M2') U2 (M2' U M2')");
+    const m = getPllTopViewFromNotation("h-perm", "M2 U M2 U2 M2 U M2");
     expect(m.arrows).toHaveLength(2);
     for (const a of m.arrows) {
       const dr = Math.abs(a.from.row - a.to.row);

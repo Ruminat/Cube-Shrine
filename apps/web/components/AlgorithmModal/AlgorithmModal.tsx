@@ -9,7 +9,7 @@ import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { Button as UiButton } from "@/components/ui/button";
-import { useOllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
+import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { cn } from "@/lib/utils";
 import { invertNotationSequence, parseReversedNotation } from "@shreklabs/cube-shrine/core";
 import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
@@ -31,6 +31,7 @@ interface AlgorithmModalProps {
 export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse }: AlgorithmModalProps) {
   const [isCopied, setIsCopied] = useState(false);
   const ollTopFlat = useOllTopFlatViewEnabled();
+  const pllTopFlat = usePllTopFlatViewEnabled();
   const baseNotation = algorithm?.notation ?? "";
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(baseNotation) : baseNotation),
@@ -127,7 +128,7 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
               <OllTopView pattern={ollTopPattern} label={algorithm.name} size={MODAL_TOP_FLAT_PX} />
             </Flex>
           ) : null}
-          {pllTopModel ? (
+          {pllTopModel && pllTopFlat ? (
             <Flex justify="center" align="center">
               <PllTopView model={pllTopModel} label={algorithm.name} size={MODAL_TOP_FLAT_PX} />
             </Flex>

@@ -2,8 +2,7 @@ import { describe, expect, it } from "vitest";
 import { validatePLLAlgorithm } from "./validatePllAlgorithm";
 import { getPllTopViewFromNotation } from "./getPllTopViewFromNotation";
 
-const T_PERM =
-  "(R U R' U') R' F R2 U' R' U' R U R' F'";
+const T_PERM = "R U R' U' R' F R2 U' R' U' R U R' F'";
 
 describe("validatePLLAlgorithm", () => {
   it("rejects invalid notation before cube checks", () => {
@@ -20,7 +19,7 @@ describe("validatePLLAlgorithm", () => {
   });
 
   it("accepts H perm", () => {
-    expect(validatePLLAlgorithm("(M2' U M2') U2 (M2' U M2')")).toBeUndefined();
+    expect(validatePLLAlgorithm("M2 U M2 U2 M2 U M2")).toBeUndefined();
   });
 });
 

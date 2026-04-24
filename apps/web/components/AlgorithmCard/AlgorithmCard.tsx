@@ -4,7 +4,7 @@ import { Tooltip } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
-import { useOllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
+import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { invertNotationSequence, parseReversedNotation } from "@shreklabs/cube-shrine/core";
 import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
@@ -25,7 +25,9 @@ interface AlgorithmCardProps {
 
 function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleReverse }: AlgorithmCardProps) {
   const ollTopFlat = useOllTopFlatViewEnabled();
+  const pllTopFlat = usePllTopFlatViewEnabled();
   const useOllSpecialTopView = algorithm.category === "OLL" && ollTopFlat;
+  const usePllSpecialTopView = algorithm.category === "PLL" && pllTopFlat;
 
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(algorithm.notation) : algorithm.notation),
@@ -61,7 +63,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
     }
     return ollCanon.pattern;
   }, [algorithm.category, useOllSpecialTopView, ollCanon]);
-  const useTopFlatCanvas = Boolean(ollTopPattern ?? pllTopModel);
+  const useTopFlatCanvas = Boolean(ollTopPattern ?? (usePllSpecialTopView && pllTopModel));
   const previewSlotPx = useTopFlatCanvas ? CARD_TOP_FLAT_PX : CARD_MINI_CUBE_PX;
   const [isCopied, setIsCopied] = useState(false);
 
@@ -115,7 +117,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
       >
         {ollTopPattern ? (
           <OllTopView pattern={ollTopPattern} label={algorithm.name} size={CARD_TOP_FLAT_PX} />
-        ) : pllTopModel ? (
+        ) : usePllSpecialTopView && pllTopModel ? (
           <PllTopView model={pllTopModel} label={algorithm.name} size={CARD_TOP_FLAT_PX} />
         ) : (
           <MiniCube deferUntilVisible size={CARD_MINI_CUBE_PX} preparationRotations={notationRotations} />
