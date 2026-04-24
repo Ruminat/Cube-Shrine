@@ -17,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` with cubie-derived permutation arrows. Cases are **Ua, Ub, H, Ja, Jb, T** from `apps/web/data/pll.algs.ts`."
+          "Inverse notation plus the same whole-cube `y` quarter-turns as the top-flat canonical frame drive the isometric cube; **top-flat** uses `getPllTopViewFromNotation` with cubie-derived permutation arrows. Cases are **Ua, Ub, H, Ja, Jb, T** from `apps/web/data/pll.algs.ts`."
       }
     }
   }
@@ -60,7 +60,12 @@ function PllCasePreview({
   label: string;
   mode: IsoFlatMode;
 }) {
-  const preparationRotations = parseReversedNotation(notation);
+  const model = getPllTopViewFromNotation(algorithmId, notation);
+  const yTail = Array.from({ length: model.pllCanonicalYQuarterTurns }, () => ({
+    face: "y" as const,
+    angle: 90 as const
+  }));
+  const preparationRotations = [...parseReversedNotation(notation), ...yTail];
   const cubeSize = mode === "iso" ? 120 : 100;
 
   return (
@@ -85,7 +90,8 @@ function PllCasesGrid() {
         </Heading>
         <Text size="2" color="gray" mb="3">
           <strong>Top flat</strong> shows the same diagram and arrows as the library default. Switch to{" "}
-          <strong>Isometric</strong> for the same reversed-notation preparation as PLL cards on the site.
+          <strong>Isometric</strong> for the same preparation as PLL cards on the site (reversed moves + canonical{" "}
+          <code>y</code>).
         </Text>
         <IsoFlatToggle value={mode} onChange={setMode} />
       </Box>

@@ -9,16 +9,11 @@ import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { Button as UiButton } from "@/components/ui/button";
-import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
+import { useOllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { cn } from "@/lib/utils";
-import {
-  getCanonicalOllTopPatternFromNotation,
-  getPllTopViewFromNotation,
-  invertNotationSequence,
-  parseNotation,
-  parseReversedNotation,
-  pllSheetAlignYSteps
-} from "@shreklabs/cube-shrine/core";
+import { invertNotationSequence, parseReversedNotation } from "@shreklabs/cube-shrine/core";
+import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
+import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
 import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
@@ -36,35 +31,48 @@ interface AlgorithmModalProps {
 export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse }: AlgorithmModalProps) {
   const [isCopied, setIsCopied] = useState(false);
   const ollTopFlat = useOllTopFlatViewEnabled();
-  const pllTopFlat = usePllTopFlatViewEnabled();
   const baseNotation = algorithm?.notation ?? "";
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(baseNotation) : baseNotation),
     [baseNotation, isReversed]
   );
-  const pllForwardMoves =
-    algorithm?.category === "PLL" && algorithm?.pllTopFlatApplyMoves === "forward";
-  const notationRotations = useMemo(
-    () =>
-      pllForwardMoves
-        ? [...parseNotation(displayNotation), ...pllSheetAlignYSteps]
-        : parseReversedNotation(displayNotation),
-    [displayNotation, pllForwardMoves]
-  );
-  const ollTopPattern = useMemo(() => {
-    if (!algorithm || algorithm.category !== "OLL" || !ollTopFlat) {
+  const ollCanon = useMemo(() => {
+    if (!algorithm || algorithm.category !== "OLL") {
       return null;
     }
     return getCanonicalOllTopPatternFromNotation(displayNotation);
-  }, [algorithm, displayNotation, ollTopFlat]);
+  }, [algorithm, displayNotation]);
   const pllTopModel = useMemo(() => {
-    if (!algorithm || algorithm.category !== "PLL" || !pllTopFlat) {
+    if (!algorithm || algorithm.category !== "PLL") {
       return null;
     }
-    return getPllTopViewFromNotation(algorithm.id, displayNotation, {
-      applyMoves: pllForwardMoves ? "forward" : undefined
-    });
-  }, [algorithm, displayNotation, pllForwardMoves, pllTopFlat]);
+    return getPllTopViewFromNotation(algorithm.id, displayNotation);
+  }, [algorithm, displayNotation]);
+
+  const notationRotations = useMemo(() => {
+    const rev = parseReversedNotation(displayNotation);
+    if (algorithm?.category === "OLL" && ollCanon) {
+      const yTail = Array.from({ length: ollCanon.yQuarterTurns }, () => ({
+        face: "y" as const,
+        angle: 90 as const
+      }));
+      return [...rev, ...yTail];
+    }
+    if (algorithm?.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
+      const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
+        face: "y" as const,
+        angle: 90 as const
+      }));
+      return [...rev, ...yTail];
+    }
+    return rev;
+  }, [algorithm?.category, displayNotation, ollCanon, pllTopModel]);
+  const ollTopPattern = useMemo(() => {
+    if (!algorithm || algorithm.category !== "OLL" || !ollTopFlat || !ollCanon) {
+      return null;
+    }
+    return ollCanon.pattern;
+  }, [algorithm, ollTopFlat, ollCanon]);
   const handleCopyNotation = useCallback(async () => {
     if (!navigator?.clipboard?.writeText) {
       return;

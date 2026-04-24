@@ -1,7 +1,6 @@
 import type { Algorithm } from "@/types/algorithm";
 
 export const pllSubgroupOrder = [
-  "pll-test",
   "pll-edges",
   "pll-corners",
   "pll-adjacent",
@@ -12,7 +11,6 @@ export const pllSubgroupOrder = [
 export type PllSubgroupId = (typeof pllSubgroupOrder)[number];
 
 export const pllSubgroupLabels: Record<PllSubgroupId, string> = {
-  "pll-test": "Test moves (sanity checks)",
   "pll-edges": "U/Z/H-perms (Edges Only)",
   "pll-corners": "A/E-perms (Corners Only)",
   "pll-adjacent": "R/J/T/F (Swap Adjacent Corners)",
@@ -22,46 +20,6 @@ export const pllSubgroupLabels: Record<PllSubgroupId, string> = {
 
 /** Standard PLL cases and common algorithm memorization forms. */
 export const pllAlgorithms: Algorithm[] = [
-  {
-    id: "test-d",
-    name: "Test D (U layer unchanged)",
-    notation: "D",
-    description: "D-layer quarter turn only; PLL top view should match a solved last layer.",
-    category: "PLL",
-    subgroupId: "pll-test",
-    pllTopFlatApplyMoves: "forward",
-    preparationRotations: [],
-  },
-  {
-    id: "test-u",
-    name: "Test U",
-    notation: "U",
-    description: "Single U quarter turn for PLL top view and notation pipeline checks.",
-    category: "PLL",
-    subgroupId: "pll-test",
-    pllTopFlatApplyMoves: "forward",
-    preparationRotations: [],
-  },
-  {
-    id: "test-u2",
-    name: "Test U2",
-    notation: "U2",
-    description: "U double turn for PLL top view checks.",
-    category: "PLL",
-    subgroupId: "pll-test",
-    pllTopFlatApplyMoves: "forward",
-    preparationRotations: [],
-  },
-  {
-    id: "test-uprime",
-    name: "Test U'",
-    notation: "U'",
-    description: "Inverse U quarter turn for PLL top view checks.",
-    category: "PLL",
-    subgroupId: "pll-test",
-    pllTopFlatApplyMoves: "forward",
-    preparationRotations: [],
-  },
   {
     id: "ua-perm",
     name: "Ua Perm",

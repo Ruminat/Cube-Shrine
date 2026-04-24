@@ -4,8 +4,8 @@ import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Heading, Switch, Text } from "@radix-ui/themes";
 import { AlgorithmCard } from "@/components/AlgorithmCard/AlgorithmCard";
 import type { AlgorithmCategoryGroup } from "@/data/algorithms";
-import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
-import { ollTopFlatViewEnabled$, pllTopFlatViewEnabled$ } from "@/lib/top-flat-view-prefs";
+import { useOllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
+import { ollTopFlatViewEnabled$ } from "@/lib/top-flat-view-prefs";
 import type { Algorithm } from "@/types/algorithm";
 import styles from "./AlgorithmGroup.module.scss";
 
@@ -50,11 +50,9 @@ export function AlgorithmGroup({
 }: AlgorithmGroupProps) {
   const headingId = `alg-group-${group.category}`;
   const isOll = group.category === "OLL";
-  const isPll = group.category === "PLL";
   const ollSwitchChecked = useOllTopFlatViewEnabled();
-  const pllSwitchChecked = usePllTopFlatViewEnabled();
 
-  const hasFlatViewToggle = isOll || isPll;
+  const hasFlatViewToggle = isOll;
   const categorySummaryClass = hasFlatViewToggle
     ? `${styles.categorySummary} ${styles.categorySummaryWithFlatViewToggle}`
     : styles.categorySummary;
@@ -79,26 +77,6 @@ export function AlgorithmGroup({
     </div>
   ) : null;
 
-  const pllToggle = isPll ? (
-    <div
-      className={styles.topFlatViewToggle}
-      onClick={(event) => {
-        event.preventDefault();
-        event.stopPropagation();
-      }}
-      onKeyDown={(event) => event.stopPropagation()}
-    >
-      <Text size="1" color="gray" weight="medium" as="span">
-        Top flat view
-      </Text>
-      <Switch
-        checked={pllSwitchChecked}
-        onCheckedChange={pllTopFlatViewEnabled$.set}
-        aria-label="Toggle PLL flat top view with side colors and permutation arrows"
-      />
-    </div>
-  ) : null;
-
   if (group.variant === "flat") {
     return (
       <section className={styles.group} aria-labelledby={headingId}>
@@ -109,7 +87,6 @@ export function AlgorithmGroup({
               {group.category}
             </Heading>
             {ollToggle}
-            {pllToggle}
           </summary>
           <div className={styles.disclosureBody}>
             <AlgorithmCardGrid
@@ -133,7 +110,6 @@ export function AlgorithmGroup({
             {group.category}
           </Heading>
           {ollToggle}
-          {pllToggle}
         </summary>
         <div className={styles.disclosureBody}>
           <div className={styles.subgroups}>

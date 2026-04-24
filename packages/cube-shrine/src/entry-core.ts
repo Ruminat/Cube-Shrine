@@ -18,7 +18,6 @@ export type {
   PllTopViewModel
 } from "./core/pll/pllTopTypes";
 export { extractPllTopColorPatternFromCubies } from "./core/pll/extractPllTopPattern";
-export { pllSheetAlignYSteps } from "./core/pll/pllSheetAlignYSteps";
 export {
   getPllTopViewFromNotation,
   type GetPllTopViewFromNotationOptions
@@ -30,6 +29,9 @@ export type {
   OllTopPattern
 } from "./core/oll/extractOllTopPattern";
 export { extractOllTopPatternFromCubies } from "./core/oll/extractOllTopPattern";
-export { getCanonicalOllTopPatternFromNotation } from "./core/oll/getOllTopPatternFromNotation";
+export {
+  getCanonicalOllTopPatternFromNotation,
+  type CanonicalOllTopPatternFromNotation
+} from "./core/oll/getOllTopPatternFromNotation";
 export { validateOLLAlgorithm } from "./core/oll/validateOllAlgorithm";
 export { validatePLLAlgorithm } from "./core/pll/validatePllAlgorithm";

@@ -3,7 +3,6 @@ import { applyRotationStep, createSolvedCubies } from "../rotation";
 import { parseNotation, parseReversedNotation } from "../notation/parser";
 import { extractPllTopColorPatternFromCubies } from "./extractPllTopPattern";
 import type { PllTopColorPattern, PllTopViewModel } from "./pllTopTypes";
-import { pllSheetAlignYSteps } from "./pllSheetAlignYSteps";
 import { cloneCubies } from "./lastLayerCaseUtils";
 import { computePllArrowsFromCubies } from "./computePllArrowsFromCubies";
 import { validatePLLAlgorithm } from "./validatePllAlgorithm";
@@ -17,16 +16,36 @@ const serializePllColorPattern = (pattern: PllTopColorPattern): string =>
     rightStrip: pattern.rightStrip
   });
 
+/**
+ * Prefer fewer arrow segments, then fewer whole-cube `y` quarter-turns, then lexicographic color
+ * pattern (so e.g. H perm picks edge swaps over an equivalent higher-`y` frame with diagonal arrows).
+ */
+const compareCanonicalCandidates = (
+  a: { arrowCount: number; yTurns: number; key: string },
+  b: { arrowCount: number; yTurns: number; key: string }
+): number => {
+  if (a.arrowCount !== b.arrowCount) {
+    return a.arrowCount - b.arrowCount;
+  }
+  if (a.yTurns !== b.yTurns) {
+    return a.yTurns - b.yTurns;
+  }
+  if (a.key !== b.key) {
+    return a.key < b.key ? -1 : 1;
+  }
+  return 0;
+};
+
 export type GetPllTopViewFromNotationOptions = {
-  /** `"forward"` = apply `notation` from solved (sanity tests). Default = inverse (PLL case). */
+  /** `"forward"` = apply `parseNotation(notation)` from solved (no inverse prep). Default = inverse PLL case. */
   applyMoves?: "forward";
 };
 
 /**
- * `MiniCube` uses the same move list. PLL case mode: inverse of `notation`, then pick one of four
- * whole-cube `y` quarter-turns (lexicographic min). Forward test mode: apply `notation` from solved,
- * then `pllSheetAlignYSteps` (`y2`) so side strips match the package frame (front +z blue, back −z
- * green, R red, L orange around the U layer in the top-flat diagram).
+ * `MiniCube` should append {@link PllTopViewModel.pllCanonicalYQuarterTurns} after `parseReversedNotation`
+ * so the 3D pose matches this top-flat. Inverse mode: pick one of four whole-cube `y` quarter-turns by
+ * **fewest arrow segments**, then smallest `y`, then lexicographic color pattern. **`applyMoves: "forward"`**:
+ * apply `parseNotation(notation)` from solved (`pllCanonicalYQuarterTurns` is `0`; used in Vitest, not site data).
  *
  * Top-flat **arrows** are derived from cubie home slots when the U face is fully yellow. Inverse mode
  * also requires {@link validatePLLAlgorithm} to pass. `applyMoves: "forward"` skips that check (sheet
@@ -43,14 +62,15 @@ export function getPllTopViewFromNotation(
   let best: PllTopColorPattern | null = null;
   let bestCubies: Cubie[] | null = null;
 
+  let pllCanonicalYQuarterTurns = 0;
+
   if (options?.applyMoves === "forward") {
     const cubies = createSolvedCubies();
     steps.forEach((step) => applyRotationStep(cubies, step));
-    pllSheetAlignYSteps.forEach((step) => applyRotationStep(cubies, step));
     best = extractPllTopColorPatternFromCubies(cubies);
     bestCubies = cloneCubies(cubies);
   } else {
-    let bestKey = "\uffff";
+    let bestPick: { arrowCount: number; yTurns: number; key: string } | null = null;
     for (let yTurns = 0; yTurns < 4; yTurns += 1) {
       const cubies = createSolvedCubies();
       steps.forEach((step) => applyRotationStep(cubies, step));
@@ -59,10 +79,13 @@ export function getPllTopViewFromNotation(
       }
       const pattern = extractPllTopColorPatternFromCubies(cubies);
       const key = serializePllColorPattern(pattern);
-      if (key < bestKey) {
-        bestKey = key;
+      const arrowCount = computePllArrowsFromCubies(cloneCubies(cubies)).length;
+      const cand = { arrowCount, yTurns, key };
+      if (!bestPick || compareCanonicalCandidates(cand, bestPick) < 0) {
+        bestPick = cand;
         best = pattern;
         bestCubies = cloneCubies(cubies);
+        pllCanonicalYQuarterTurns = yTurns;
       }
     }
   }
@@ -76,5 +99,5 @@ export function getPllTopViewFromNotation(
   const arrows =
     pllCaseError !== undefined || !uLayerFullyYellow ? [] : computePllArrowsFromCubies(bestCubies);
 
-  return { ...best, arrows };
+  return { ...best, arrows, pllCanonicalYQuarterTurns };
 }

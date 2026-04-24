@@ -91,7 +91,7 @@ npm run build-storybook
 # output: packages/cube-shrine/storybook-static/
 ```
 
-Included groups: **every atomic move** (grid), **OLL / PLL** isometric vs top-flat toggles, **vanilla canvas** (core + render only), and **notation utilities** (parse / invert / reversed steps).
+Included groups: **every atomic move** (grid), **OLL / PLL** views (OLL iso vs top-flat toggle; PLL matches the site’s top-flat + arrows), **vanilla canvas** (core + render only), and **notation utilities** (parse / invert / reversed steps).
 
 **Entry points** (import maps are defined in `packages/cube-shrine/package.json` under `"exports"`):
 

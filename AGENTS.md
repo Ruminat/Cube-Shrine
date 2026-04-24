@@ -18,9 +18,9 @@ Copy this file (or sections) into a new chat when onboarding an agent. Keep it u
 ### UI surfaces
 
 - **Gallery**: `apps/web/components/algorithm-gallery.tsx` → `AlgorithmGroup` → **`AlgorithmCard`**.
-- **Detail modal**: **`AlgorithmModal`** — notation, reverse toggle, copy, **3D `CubeRenderer`**, and (when prefs allow) **OLL/PLL top-flat** previews matching the cards.
-- **Top flat toggles**: `apps/web/lib/client-storage/top-flat-view.ts` + `apps/web/lib/top-flat-view-prefs.ts` — per-category switches in `AlgorithmGroup` for OLL and PLL.
-- **PLL forward sheet mode**: optional `pllTopFlatApplyMoves: "forward"` on `Algorithm` (`apps/web/types/algorithm.ts`). Used for **test** PLL entries in `pll.algs.ts` (`test-d`, `test-u`, …): applies `parseNotation(displayNotation)` then **`pllSheetAlignYSteps`** (`y2`) so the top-flat diagram matches the package frame. Real PLL cases (Ua, T, …) use the default **inverse** path: `parseReversedNotation(displayNotation)` plus lexicographic-min whole-cube `y` in the library.
+- **Detail modal**: **`AlgorithmModal`** — notation, reverse toggle, copy, **3D `CubeRenderer`**, **PLL top-flat** (always), and **OLL top-flat** when the OLL toggle is on.
+- **Top flat toggle (OLL only)**: `apps/web/lib/client-storage/top-flat-view.ts` + `apps/web/lib/top-flat-view-prefs.ts` — switch in `AlgorithmGroup` for OLL. PLL cards always use the canvas top-flat with arrows.
+- **PLL on the site**: `parseReversedNotation(displayNotation)` plus **`pllCanonicalYQuarterTurns`** whole-cube `y` steps on **`MiniCube` / `CubeRenderer`**, matching `getPllTopViewFromNotation` (see library section). Algorithm data lives in **`apps/web/data/pll.algs.ts`** (subgroups: edges, corners, adjacent, diagonal, G — no separate “test” group).
 
 ## `packages/cube-shrine` (`@shreklabs/cube-shrine`)
 
@@ -48,7 +48,10 @@ World-axis palette (tests depend on it):
 - **+z front**: blue · **−z back**: green · **+x right**: red · **−x left**: orange  
 - **+y U**: yellow · **−y D**: white  
 
-`drawCube` shows faces `y+`, `x+`, `z+` (isometric corner). Top-flat diagrams treat **+z as front**.
+`drawCube` shows faces `y+`, `x+`, `z+` (isometric corner). Top-flat U nets use the same axes: **top** = −z (back, green), **bottom** = +z (front, blue), **left** = −x (orange), **right** = +x (red).
+
+- **OLL canonical top-flat** (`getCanonicalOllTopPatternFromNotation` in `src/core/oll/getOllTopPatternFromNotation.ts`): returns `{ pattern, yQuarterTurns }`. **`AlgorithmCard` / `AlgorithmModal`** append that many whole-cube `{ face: "y", angle: 90 }` steps after `parseReversedNotation` on the **3D** preview so the isometric cube matches the flat diagram.
+- **PLL canonical `y` on 3D**: `getPllTopViewFromNotation` returns **`pllCanonicalYQuarterTurns`** (inverse mode). The site appends the same `y` steps after `parseReversedNotation` on **`MiniCube` / `CubeRenderer`** so the isometric cube matches the top-flat diagram.
 
 ### Notation
 
@@ -61,8 +64,8 @@ World-axis palette (tests depend on it):
 ### PLL top-flat view (`getPllTopViewFromNotation`)
 
 - **File**: `src/core/pll/getPllTopViewFromNotation.ts`.
-- **Default (inverse)**: `parseReversedNotation` from solved, try four whole-cube `y` quarter-turns, pick **lexicographic-min** color pattern (`extractPllTopColorPatternFromCubies`).
-- **`applyMoves: "forward"`**: `parseNotation` from solved, then **`pllSheetAlignYSteps`** (no `y` scan).
+- **Default (inverse)**: `parseReversedNotation` from solved, try four whole-cube `y` quarter-turns, pick the candidate with **fewest arrow segments**, then smallest **`y`** index, then **lexicographic-min** color pattern (`extractPllTopColorPatternFromCubies`). **`pllCanonicalYQuarterTurns`** records the winning `y` count for the 3D preview.
+- **`applyMoves: "forward"`** (optional API, not used by site data): `parseNotation` from solved (no `y` scan); Vitest uses this for forward-path coverage.
 - **Arrows**: **`computePllArrowsFromCubies`** maps each U non-center slot to its solved **home** by **`cubieColorBagSignature`**; 2-cycles become double-headed segments. Arrows are drawn only when **`face9`** is all **yellow** (PLL-oriented U). **Inverse** mode also requires **`validatePLLAlgorithm(notation)`** to return `undefined`. **Forward** mode skips that reversed-prep check (sheet strings are not validated as reversed PLL) but still requires an all-yellow U face. There is **no** `getArrows` override anymore (removed `apps/web/data/pll.diagrams.ts`).
 - **PLL validation**: `src/core/pll/validatePllAlgorithm.ts` — syntax, `canWholeCubeYAlignToPllWorldFrame`, **`pllYCanonicalizationIsUnique`** (ambiguous `y` tie → error string).
 - **OLL validation**: `src/core/oll/validateOllAlgorithm.ts` — syntax, reject PLL-phase states, then require **`hasLowerTwoLayersForSomeWholeCubeY`**. Helpers in `src/core/pll/lastLayerCaseUtils.ts`.

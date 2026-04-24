@@ -42,7 +42,7 @@ function OllFlatCanvas({ notation }: { notation: string }) {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const pattern = getCanonicalOllTopPatternFromNotation(notation);
+    const { pattern } = getCanonicalOllTopPatternFromNotation(notation);
     drawOllTopPatternOnCanvas(ctx, size, pattern, getPaletteFromCSS());
   }, [notation]);
 
@@ -50,7 +50,9 @@ function OllFlatCanvas({ notation }: { notation: string }) {
 }
 
 function OllCasePreview({ notation, label, mode }: { notation: string; label: string; mode: IsoFlatMode }) {
-  const preparationRotations = parseReversedNotation(notation);
+  const { yQuarterTurns } = getCanonicalOllTopPatternFromNotation(notation);
+  const yTail = Array.from({ length: yQuarterTurns }, () => ({ face: "y" as const, angle: 90 as const }));
+  const preparationRotations = [...parseReversedNotation(notation), ...yTail];
   const cubeSize = mode === "iso" ? 120 : 100;
 
   return (
@@ -75,7 +77,7 @@ function OllCasesGrid() {
         </Heading>
         <Text size="2" color="gray" mb="3">
           <strong>Top flat</strong> is the default canonical U-face diagram. Switch to <strong>Isometric</strong> for
-          the same reversed-move preparation as the site.
+          the same preparation (reversed moves plus matching whole-cube <code>y</code>).
         </Text>
         <IsoFlatToggle value={mode} onChange={setMode} />
       </Box>

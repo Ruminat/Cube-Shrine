@@ -4,15 +4,10 @@ import { Tooltip } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
-import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
-import {
-  getCanonicalOllTopPatternFromNotation,
-  getPllTopViewFromNotation,
-  invertNotationSequence,
-  parseNotation,
-  parseReversedNotation,
-  pllSheetAlignYSteps
-} from "@shreklabs/cube-shrine/core";
+import { useOllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
+import { invertNotationSequence, parseReversedNotation } from "@shreklabs/cube-shrine/core";
+import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
+import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 import type { Algorithm } from "@/types/algorithm";
 import { Button } from "@/components/ui/button";
@@ -30,36 +25,49 @@ interface AlgorithmCardProps {
 
 function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleReverse }: AlgorithmCardProps) {
   const ollTopFlat = useOllTopFlatViewEnabled();
-  const pllTopFlat = usePllTopFlatViewEnabled();
   const useOllSpecialTopView = algorithm.category === "OLL" && ollTopFlat;
-  const usePllSpecialTopView = algorithm.category === "PLL" && pllTopFlat;
 
   const displayNotation = useMemo(
     () => (isReversed ? invertNotationSequence(algorithm.notation) : algorithm.notation),
     [algorithm.notation, isReversed]
   );
-  const pllForwardMoves = algorithm.category === "PLL" && algorithm.pllTopFlatApplyMoves === "forward";
-  const notationRotations = useMemo(
-    () =>
-      pllForwardMoves
-        ? [...parseNotation(displayNotation), ...pllSheetAlignYSteps]
-        : parseReversedNotation(displayNotation),
-    [displayNotation, pllForwardMoves]
-  );
-  const ollTopPattern = useMemo(() => {
-    if (algorithm.category !== "OLL" || !useOllSpecialTopView) {
+  const ollCanon = useMemo(() => {
+    if (algorithm.category !== "OLL") {
       return null;
     }
     return getCanonicalOllTopPatternFromNotation(displayNotation);
-  }, [algorithm.category, displayNotation, useOllSpecialTopView]);
+  }, [algorithm.category, displayNotation]);
   const pllTopModel = useMemo(() => {
-    if (algorithm.category !== "PLL" || !usePllSpecialTopView) {
+    if (algorithm.category !== "PLL") {
       return null;
     }
-    return getPllTopViewFromNotation(algorithm.id, displayNotation, {
-      applyMoves: pllForwardMoves ? "forward" : undefined
-    });
-  }, [algorithm.category, algorithm.id, displayNotation, pllForwardMoves, usePllSpecialTopView]);
+    return getPllTopViewFromNotation(algorithm.id, displayNotation);
+  }, [algorithm.category, algorithm.id, displayNotation]);
+
+  const notationRotations = useMemo(() => {
+    const rev = parseReversedNotation(displayNotation);
+    if (algorithm.category === "OLL" && ollCanon) {
+      const yTail = Array.from({ length: ollCanon.yQuarterTurns }, () => ({
+        face: "y" as const,
+        angle: 90 as const
+      }));
+      return [...rev, ...yTail];
+    }
+    if (algorithm.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
+      const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
+        face: "y" as const,
+        angle: 90 as const
+      }));
+      return [...rev, ...yTail];
+    }
+    return rev;
+  }, [algorithm.category, displayNotation, ollCanon, pllTopModel]);
+  const ollTopPattern = useMemo(() => {
+    if (algorithm.category !== "OLL" || !useOllSpecialTopView || !ollCanon) {
+      return null;
+    }
+    return ollCanon.pattern;
+  }, [algorithm.category, useOllSpecialTopView, ollCanon]);
   const useTopFlatCanvas = Boolean(ollTopPattern ?? pllTopModel);
   const previewSlotPx = useTopFlatCanvas ? CARD_TOP_FLAT_PX : CARD_MINI_CUBE_PX;
   const [isCopied, setIsCopied] = useState(false);

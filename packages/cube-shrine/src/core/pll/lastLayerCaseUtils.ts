@@ -33,7 +33,7 @@ export const cloneCubies = (cubies: Cubie[]): Cubie[] =>
     stickers: { ...c.stickers }
   }));
 
-/** U-layer slot on the PLL top-flat grid (row 0 = +z front, col 0 = −x left). Excludes U center. */
+/** U-layer slot on the PLL top-flat grid (row 0 = −z back, col 0 = −x left). Excludes U center. */
 export const uLayerDiagramSlots: { x: number; z: number }[] = [
   { x: -1, z: 1 },
   { x: 0, z: 1 },
@@ -46,7 +46,7 @@ export const uLayerDiagramSlots: { x: number; z: number }[] = [
 ];
 
 export const xzToPllGridCell = (x: number, z: number): PllGridCell => ({
-  row: (1 - z) as PllGridCell["row"],
+  row: (z + 1) as PllGridCell["row"],
   col: (x + 1) as PllGridCell["col"]
 });
 

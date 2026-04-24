@@ -19,11 +19,11 @@ describe("getCanonicalOllTopPatternFromNotation", () => {
       "F (R U R' U') (R U R' U') (R U R' U') F'"
     );
     const pi = getCanonicalOllTopPatternFromNotation("R U2 (R2' U' R2 U') (R2' U2 R)");
-    expect(JSON.stringify(h)).not.toBe(JSON.stringify(pi));
+    expect(JSON.stringify(h.pattern)).not.toBe(JSON.stringify(pi.pattern));
   });
 
   it("matches snapshot for OLL 21 (H) canonical pattern", () => {
-    const p = getCanonicalOllTopPatternFromNotation(
+    const { pattern: p } = getCanonicalOllTopPatternFromNotation(
       "F (R U R' U') (R U R' U') (R U R' U') F'"
     );
     expect(p).toMatchInlineSnapshot(`

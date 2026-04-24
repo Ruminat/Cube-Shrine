@@ -12,12 +12,13 @@ describe("extractPllTopColorPatternFromCubies", () => {
 });
 
 describe("getPllTopViewFromNotation canonical y", () => {
-  it("orients solved PLL frame after sheet `y2` (front blue, back green, R red, L orange)", () => {
-    const m = getPllTopViewFromNotation("test-d", "D", { applyMoves: "forward" });
+  it("forward `D` leaves the U layer solved; strips match the world frame", () => {
+    const m = getPllTopViewFromNotation("ua-perm", "D", { applyMoves: "forward" });
+    expect(m.pllCanonicalYQuarterTurns).toBe(0);
     expect(m.topStrip).toEqual(["green", "green", "green"]);
-    expect(m.rightStrip).toEqual(["orange", "orange", "orange"]);
     expect(m.bottomStrip).toEqual(["blue", "blue", "blue"]);
-    expect(m.leftStrip).toEqual(["red", "red", "red"]);
+    expect(m.leftStrip).toEqual(["orange", "orange", "orange"]);
+    expect(m.rightStrip).toEqual(["red", "red", "red"]);
     expect(m.face9.every((c) => c === "yellow")).toBe(true);
   });
 
@@ -33,10 +34,10 @@ describe("getPllTopViewFromNotation canonical y", () => {
 
   it("does not collapse different U-layer test moves to the same canonical pattern", () => {
     const fwd = { applyMoves: "forward" as const };
-    const d = getPllTopViewFromNotation("test-d", "D", fwd);
-    const u = getPllTopViewFromNotation("test-u", "U", fwd);
-    const u2 = getPllTopViewFromNotation("test-u2", "U2", fwd);
-    const up = getPllTopViewFromNotation("test-uprime", "U'", fwd);
+    const d = getPllTopViewFromNotation("a", "D", fwd);
+    const u = getPllTopViewFromNotation("b", "U", fwd);
+    const u2 = getPllTopViewFromNotation("c", "U2", fwd);
+    const up = getPllTopViewFromNotation("d", "U'", fwd);
     const pack = (m: typeof d) =>
       JSON.stringify({
         face9: m.face9,
@@ -87,13 +88,24 @@ describe("getPllTopViewFromNotation computed arrows", () => {
     expect(m.arrows).toHaveLength(2);
   });
 
+  it("H perm arrows run between opposite edge mids (not diagonal corners)", () => {
+    const m = getPllTopViewFromNotation("h-perm", "(M2' U M2') U2 (M2' U M2')");
+    expect(m.arrows).toHaveLength(2);
+    for (const a of m.arrows) {
+      const dr = Math.abs(a.from.row - a.to.row);
+      const dc = Math.abs(a.from.col - a.to.col);
+      expect((dr === 2 && dc === 0) || (dr === 0 && dc === 2)).toBe(true);
+      expect(a.doubleHeaded).toBe(true);
+    }
+  });
+
   it("omits arrows for invalid PLL prep (single face turn)", () => {
     const m = getPllTopViewFromNotation("x", "F");
     expect(m.arrows).toHaveLength(0);
   });
 
-  it("derives arrows in forward sheet mode when U is permuted (Test U)", () => {
-    const m = getPllTopViewFromNotation("test-u", "U", { applyMoves: "forward" });
+  it("derives arrows in forward sheet mode when U is permuted", () => {
+    const m = getPllTopViewFromNotation("ua-perm", "U", { applyMoves: "forward" });
     expect(m.arrows.length).toBeGreaterThan(0);
   });
 });

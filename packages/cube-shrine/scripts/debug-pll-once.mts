@@ -45,7 +45,7 @@ for (const { x, z } of [
 ]) {
   const sc = findCubie(solved, x, 1, z)!;
   homeByStickerSig.set(cubieStickerSignature(sc), {
-    row: 1 - z,
+    row: z + 1,
     col: x + 1
   });
 }
@@ -63,7 +63,7 @@ for (const { x, z } of [
   const cur = findCubie(bestCubies!, x, 1, z)!;
   const sig = cubieStickerSignature(cur);
   const home = homeByStickerSig.get(sig);
-  const here = { row: 1 - z, col: x + 1 };
+  const here = { row: z + 1, col: x + 1 };
   if (!home || (home.row === here.row && home.col === here.col)) continue;
   directed.push({ from: here, to: home });
 }

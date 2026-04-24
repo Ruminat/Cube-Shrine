@@ -1,6 +1,6 @@
 import type { PaletteKey } from "../cubieModel";
 
-/** One cell on the 3×3 U-face grid: row 0 = diagram top (front / +z), col 0 = left (−x). */
+/** One cell on the 3×3 U-face grid: row 0 = diagram top (back −z), col 0 = left (−x). */
 export type PllGridCell = {
   row: 0 | 1 | 2;
   col: 0 | 1 | 2;
@@ -19,16 +19,21 @@ export type PllTopArrow = {
 export type PllTopColorPattern = {
   /** y+ sticker on each U-face position, row-major. */
   face9: PaletteKey[];
-  /** z+ on (−1,1,1), (0,1,1), (1,1,1). */
+  /** z− back strip (diagram top), x from −1 to +1. */
   topStrip: [PaletteKey, PaletteKey, PaletteKey];
-  /** z− on (−1,1,−1), (0,1,−1), (1,1,−1). */
+  /** z+ front strip (diagram bottom). */
   bottomStrip: [PaletteKey, PaletteKey, PaletteKey];
-  /** x− on (−1,1,1), (−1,1,0), (−1,1,−1) — top → bottom of diagram. */
+  /** x− on (−1,1,−1), (−1,1,0), (−1,1,1) — diagram top → bottom. */
   leftStrip: [PaletteKey, PaletteKey, PaletteKey];
-  /** x+ on (1,1,1), (1,1,0), (1,1,−1). */
+  /** x+ on (1,1,−1), (1,1,0), (1,1,1). */
   rightStrip: [PaletteKey, PaletteKey, PaletteKey];
 };
 
 export type PllTopViewModel = PllTopColorPattern & {
   arrows: PllTopArrow[];
+  /**
+   * Inverse PLL mode: whole-cube `y` quarter-turns after `parseReversedNotation` for this top-flat.
+   * Match on the 3D preview. Forward test mode uses `0`.
+   */
+  pllCanonicalYQuarterTurns: number;
 };

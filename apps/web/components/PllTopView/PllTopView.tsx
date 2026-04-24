@@ -1,6 +1,6 @@
 "use client";
 
-import type { PllTopViewModel } from "@shreklabs/cube-shrine/core";
+import type { PllTopViewModel } from "@/lib/pll-top-view-from-source";
 import {
   CUBE_PREVIEW_DPR_CAP,
   drawPllTopPatternOnCanvas,
