@@ -12,7 +12,11 @@
     "jsx": "react-jsx",
     "isolatedModules": true,
     "noUnusedLocals": true,
-    "noUnusedParameters": true
+    "noUnusedParameters": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["../../apps/web/*"]
+    }
   },
   "include": [
     "src/**/*.ts",

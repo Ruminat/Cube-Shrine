@@ -9,13 +9,7 @@ import {
 } from "@shreklabs/cube-shrine/render";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 import { AlgorithmStoryCard, IsoFlatToggle, type IsoFlatMode } from "./storybookUi";
-
-const SAMPLE_PLL: { id: string; label: string; notation: string }[] = [
-  { id: "t", label: "T perm", notation: "R U R' U' R' F R2 U' R' U' R U R' F'" },
-  { id: "jperm", label: "Ja perm", notation: "y' (L' U' L F) (L' U' L U) L F' L2' U L U" },
-  { id: "h", label: "H perm", notation: "M2' U M2' U2 M2' U M2'" },
-  { id: "ua", label: "Ua perm", notation: "R U' R U R U R U' R' U' R2" }
-];
+import { storyPllCases } from "./siteAlgorithmCases";
 
 const meta = {
   title: "The cube/PLL",
@@ -23,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` (diagram arrows omitted here). Cases are shown in a grid like **Basic moves**."
+          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` (diagram arrows omitted here). Cases are **Ua, Ub, H, Ja, Jb, T** from `apps/web/data/pll.algs.ts`."
       }
     }
   }
@@ -104,12 +98,12 @@ function PllCasesGrid() {
           gap: 16
         }}
       >
-        {SAMPLE_PLL.map((sample) => (
+        {storyPllCases.map((alg) => (
           <PllCasePreview
-            key={sample.id}
-            algorithmId={sample.id}
-            notation={sample.notation}
-            label={sample.label}
+            key={alg.id}
+            algorithmId={alg.id}
+            notation={alg.notation}
+            label={alg.name}
             mode={mode}
           />
         ))}

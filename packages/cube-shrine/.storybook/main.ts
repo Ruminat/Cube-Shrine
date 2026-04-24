@@ -5,6 +5,7 @@ import { mergeConfig } from "vite";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 const packageRoot = path.resolve(dirname, "..");
+const webAppRoot = path.resolve(packageRoot, "../../apps/web");
 
 const config: StorybookConfig = {
   stories: ["../stories/**/*.mdx", "../stories/**/*.stories.@(ts|tsx)"],
@@ -18,6 +19,7 @@ const config: StorybookConfig = {
       resolve: {
         // Longer subpaths first — otherwise `@shreklabs/cube-shrine` swallows `/react`.
         alias: [
+          { find: /^@\//, replacement: `${webAppRoot.replace(/\\/g, "/")}/` },
           { find: "@shreklabs/cube-shrine/react", replacement: path.join(packageRoot, "src/entry-react.ts") },
           { find: "@shreklabs/cube-shrine/render", replacement: path.join(packageRoot, "src/entry-render.ts") },
           { find: "@shreklabs/cube-shrine/core", replacement: path.join(packageRoot, "src/entry-core.ts") },

@@ -5,7 +5,7 @@
   "scripts": {
     "build": "npm run build -w @shreklabs/cube-shrine && npm run build -w web",
     "dev": "npm run dev -w web",
-    "lint": "npm run lint -w web",
+    "lint": "npm run lint -w web && npm run lint -w @shreklabs/cube-shrine",
     "test": "npm run test -w @shreklabs/cube-shrine",
     "start": "npm run start -w web",
     "storybook": "npm run storybook -w @shreklabs/cube-shrine",

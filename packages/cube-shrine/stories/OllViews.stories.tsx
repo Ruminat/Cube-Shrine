@@ -9,14 +9,7 @@ import {
 } from "@shreklabs/cube-shrine/render";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 import { AlgorithmStoryCard, IsoFlatToggle, type IsoFlatMode } from "./storybookUi";
-
-const SAMPLE_OLL: { id: string; label: string; notation: string }[] = [
-  { id: "sune", label: "Sune", notation: "R U R' U R U2 R'" },
-  { id: "antisune", label: "Anti-Sune", notation: "R U2 R' U' R U' R'" },
-  { id: "h", label: "OLL 21 (H)", notation: "F (R U R' U') (R U R' U') (R U R' U') F'" },
-  { id: "pi", label: "OLL 22 (Pi)", notation: "R U2 (R2' U' R2 U') (R2' U2 R)" },
-  { id: "headlights", label: "Headlights", notation: "F (R U R' U') R' F' R U R U' R'" }
-];
+import { storyOllCases } from "./siteAlgorithmCases";
 
 const meta = {
   title: "The cube/OLL",
@@ -24,7 +17,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Compare the default isometric cube (same preparation as the site) with the canonical **top-flat** diagram used on OLL cards. Cases are shown in a grid like **Basic moves**."
+          "Compare the default isometric cube (same preparation as the site) with the canonical **top-flat** diagram used on OLL cards. Cases are **Cross** and **Dot** families from `apps/web/data/oll.algs.ts`."
       }
     }
   }
@@ -93,8 +86,8 @@ function OllCasesGrid() {
           gap: 16
         }}
       >
-        {SAMPLE_OLL.map((sample) => (
-          <OllCasePreview key={sample.id} notation={sample.notation} label={sample.label} mode={mode} />
+        {storyOllCases.map((alg) => (
+          <OllCasePreview key={alg.id} notation={alg.notation} label={alg.name} mode={mode} />
         ))}
       </div>
     </Flex>
