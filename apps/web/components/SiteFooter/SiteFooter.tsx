@@ -15,6 +15,13 @@ const FOOTER_SITES: readonly FooterSite[] = [
     ],
   },
   {
+    name: "J Perm",
+    links: [
+      { label: "OLL", href: "https://jperm.net/algs/oll" },
+      { label: "PLL", href: "https://jperm.net/algs/pll" },
+    ],
+  },
+  {
     name: "SpeedCubeDB",
     links: [
       { label: "3×3", href: "https://www.speedcubedb.com/a/3x3" },
