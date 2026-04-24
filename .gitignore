@@ -14,5 +14,6 @@ next.user-config.*
 node_modules
 .next/
 out/
+packages/cube-shrine/dist/
 tsconfig.tsbuildinfo
 .DS_Store
