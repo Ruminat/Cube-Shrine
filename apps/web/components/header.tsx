@@ -1,9 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useTheme } from "@/components/theme-provider";
 import { useDocumentAppearance } from "@/lib/document-appearance";
-import { Moon, Sun, Box } from "lucide-react";
+import { Moon, Sun } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
+const siteIconSrc = `${process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? ""}/icon.png`;
 
 export function Header() {
   const appearance = useDocumentAppearance();
@@ -13,8 +16,15 @@ export function Header() {
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-3">
-          <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-            <Box className="h-5 w-5 text-primary-foreground" />
+          <div className="relative h-9 w-9 shrink-0 overflow-hidden rounded-lg ring-1 ring-border/60">
+            <Image
+              src={siteIconSrc}
+              alt="Cube Shrine"
+              width={36}
+              height={36}
+              className="object-cover"
+              priority
+            />
           </div>
           <div>
             <h1 className="text-lg font-bold tracking-tight text-foreground">Cube Shrine</h1>

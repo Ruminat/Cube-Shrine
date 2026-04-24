@@ -6,15 +6,15 @@ import { ThemeProvider } from "@/components/theme-provider";
 import "@/styles/variables.scss";
 import "./globals.css";
 
-const themeInitSrc = `${process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? ""}/theme-init.js`;
+const siteBase = process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? "";
+const themeInitSrc = `${siteBase}/theme-init.js`;
 
 export const metadata: Metadata = {
   title: "Cube Shrine — CFOP algorithm gallery",
   description:
     "Interactive Rubik's Cube algorithm gallery for the CFOP method. Explore OLL and PLL with accurate visualizations.",
   icons: {
-    icon: [{ url: "/icon.png", type: "image/png" }],
-    apple: "/apple-icon.png",
+    icon: [{ url: `${siteBase}/icon.png`, type: "image/png" }],
   },
 };
 
