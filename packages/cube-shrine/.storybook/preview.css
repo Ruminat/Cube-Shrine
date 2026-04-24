@@ -1,0 +1,13 @@
+:root {
+  --cube-size: 88px;
+  --cube-color-white: #ffffff;
+  --cube-color-yellow: #fcd34d;
+  --cube-color-red: #ef4444;
+  --cube-color-orange: #f97316;
+  --cube-color-green: #22c55e;
+  --cube-color-blue: #3b82f6;
+}
+
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}

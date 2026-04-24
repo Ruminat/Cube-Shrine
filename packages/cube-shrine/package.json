@@ -1,0 +1,68 @@
+{
+  "name": "@shreklabs/cube-shrine",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "sideEffects": false,
+  "types": "./dist/entry-index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "exports": {
+    ".": {
+      "types": "./dist/entry-index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./core": {
+      "types": "./dist/entry-core.d.ts",
+      "import": "./dist/core.js"
+    },
+    "./render": {
+      "types": "./dist/entry-render.d.ts",
+      "import": "./dist/render.js"
+    },
+    "./react": {
+      "types": "./dist/entry-react.d.ts",
+      "import": "./dist/react.js"
+    }
+  },
+  "scripts": {
+    "build": "vite build --config vite.core.config.ts && vite build --config vite.render.config.ts && vite build --config vite.react.config.ts && vite build --config vite.index.config.ts",
+    "lint": "eslint . --max-warnings=0",
+    "codecheck": "npm run typecheck && npm run lint",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "storybook": "storybook dev -p 6006",
+    "build-storybook": "storybook build -o storybook-static"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0",
+    "react-dom": "^18.0.0 || ^19.0.0"
+  },
+  "peerDependenciesMeta": {
+    "react": {
+      "optional": true
+    },
+    "react-dom": {
+      "optional": true
+    }
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.2",
+    "@radix-ui/themes": "^3.3.0",
+    "@storybook/addon-essentials": "^8.6.14",
+    "@storybook/blocks": "^8.6.14",
+    "@storybook/react-vite": "^8.6.14",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "eslint": "^9.39.4",
+    "storybook": "^8.6.14",
+    "typescript": "^5.8.3",
+    "typescript-eslint": "^8.46.2",
+    "vite": "^6.3.5",
+    "vite-plugin-dts": "^4.5.4",
+    "vitest": "^2.1.9"
+  }
+}
