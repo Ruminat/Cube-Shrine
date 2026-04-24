@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useLayoutEffect, useRef, useState } from "react";
+import { Box, Flex, Heading, Text } from "@radix-ui/themes";
 import { getPllTopViewFromNotation, parseReversedNotation } from "@shreklabs/cube-shrine/core";
 import {
   CUBE_PREVIEW_DPR_CAP,
@@ -7,6 +8,7 @@ import {
   getPaletteFromCSS
 } from "@shreklabs/cube-shrine/render";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
+import { AlgorithmStoryCard, IsoFlatToggle, type IsoFlatMode } from "./storybookUi";
 
 const SAMPLE_PLL: { id: string; label: string; notation: string }[] = [
   { id: "t", label: "T perm", notation: "R U R' U' R' F R2 U' R' U' R U R' F'" },
@@ -16,12 +18,12 @@ const SAMPLE_PLL: { id: string; label: string; notation: string }[] = [
 ];
 
 const meta = {
-  title: "PLL / Views",
+  title: "The cube/PLL",
   parameters: {
     docs: {
       description: {
         component:
-          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` (diagram arrows omitted here)."
+          "Same as the site: inverse notation drives the isometric cube; **top-flat** uses `getPllTopViewFromNotation` (diagram arrows omitted here). Cases are shown in a grid like **Basic moves**."
       }
     }
   }
@@ -29,18 +31,15 @@ const meta = {
 
 export default meta;
 
-function PllViewSwitcher() {
-  const [caseId, setCaseId] = useState(SAMPLE_PLL[0].id);
-  const [mode, setMode] = useState<"iso" | "flat">("iso");
-  const sample = SAMPLE_PLL.find((c) => c.id === caseId) ?? SAMPLE_PLL[0];
-  const preparationRotations = parseReversedNotation(sample.notation);
+const FLAT_SIZE = 120;
+
+function PllFlatCanvas({ algorithmId, notation }: { algorithmId: string; notation: string }) {
   const flatRef = useRef<HTMLCanvasElement | null>(null);
 
   useLayoutEffect(() => {
-    if (mode !== "flat") return;
     const canvas = flatRef.current;
     if (!canvas) return;
-    const size = 220;
+    const size = FLAT_SIZE;
     const dpr = Math.min(window.devicePixelRatio || 1, CUBE_PREVIEW_DPR_CAP);
     canvas.width = Math.floor(size * dpr);
     canvas.height = Math.floor(size * dpr);
@@ -49,67 +48,77 @@ function PllViewSwitcher() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const model = getPllTopViewFromNotation(sample.id, sample.notation, {
+    const model = getPllTopViewFromNotation(algorithmId, notation, {
       getArrows: () => []
     });
     drawPllTopPatternOnCanvas(ctx, size, model, getPaletteFromCSS());
-  }, [mode, sample.id, sample.notation]);
+  }, [algorithmId, notation]);
+
+  return <canvas ref={flatRef} role="img" aria-label={`PLL flat: ${notation}`} />;
+}
+
+function PllCasePreview({
+  algorithmId,
+  notation,
+  label,
+  mode
+}: {
+  algorithmId: string;
+  notation: string;
+  label: string;
+  mode: IsoFlatMode;
+}) {
+  const preparationRotations = parseReversedNotation(notation);
+  const cubeSize = mode === "iso" ? 120 : 100;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 480 }}>
-      <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14 }}>
-        <span>PLL case</span>
-        <select
-          value={caseId}
-          onChange={(e) => setCaseId(e.target.value)}
-          style={{ padding: 8, borderRadius: 6, maxWidth: 420 }}
-        >
-          {SAMPLE_PLL.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button
-          type="button"
-          onClick={() => setMode("iso")}
-          style={{
-            padding: "8px 14px",
-            borderRadius: 6,
-            border: mode === "iso" ? "2px solid #3b82f6" : "1px solid #ccc",
-            background: mode === "iso" ? "#eff6ff" : "#fff",
-            cursor: "pointer"
-          }}
-        >
-          Default (isometric)
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("flat")}
-          style={{
-            padding: "8px 14px",
-            borderRadius: 6,
-            border: mode === "flat" ? "2px solid #3b82f6" : "1px solid #ccc",
-            background: mode === "flat" ? "#eff6ff" : "#fff",
-            cursor: "pointer"
-          }}
-        >
-          Top flat
-        </button>
-      </div>
-      <div style={{ fontSize: 13, fontFamily: "ui-monospace, monospace", opacity: 0.85 }}>{sample.notation}</div>
+    <AlgorithmStoryCard title={label} notation={notation}>
       {mode === "iso" ? (
-        <MiniCube size={220} preparationRotations={preparationRotations} deferUntilVisible={false} />
+        <MiniCube size={cubeSize} preparationRotations={preparationRotations} deferUntilVisible={false} />
       ) : (
-        <canvas ref={flatRef} role="img" aria-label={`PLL flat: ${sample.label}`} />
+        <PllFlatCanvas algorithmId={algorithmId} notation={notation} />
       )}
-    </div>
+    </AlgorithmStoryCard>
+  );
+}
+
+function PllCasesGrid() {
+  const [mode, setMode] = useState<IsoFlatMode>("iso");
+
+  return (
+    <Flex direction="column" gap="4" style={{ maxWidth: 1200 }}>
+      <Box>
+        <Heading size="5" mb="2">
+          PLL views
+        </Heading>
+        <Text size="2" color="gray" mb="3">
+          Isometric preparation matches PLL cards (reversed notation). Switch to <strong>Top flat</strong> for the
+          diagram layout (arrows not shown in Storybook).
+        </Text>
+        <IsoFlatToggle value={mode} onChange={setMode} />
+      </Box>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
+          gap: 16
+        }}
+      >
+        {SAMPLE_PLL.map((sample) => (
+          <PllCasePreview
+            key={sample.id}
+            algorithmId={sample.id}
+            notation={sample.notation}
+            label={sample.label}
+            mode={mode}
+          />
+        ))}
+      </div>
+    </Flex>
   );
 }
 
 export const IsoVersusTopFlat: StoryObj = {
-  name: "Isometric vs top-flat",
-  render: () => <PllViewSwitcher />
+  name: "PLL cases (grid)",
+  render: () => <PllCasesGrid />
 };

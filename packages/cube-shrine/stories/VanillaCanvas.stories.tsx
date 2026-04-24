@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import { Box, Flex, Heading, Section, Text, TextField } from "@radix-ui/themes";
 import {
   applyRotationStep,
   createSolvedCubies,
@@ -19,12 +20,12 @@ const STATIC_PALETTE: Record<PaletteKey, string> = {
 };
 
 const meta = {
-  title: "Cube/Vanilla canvas",
+  title: "Examples/VanillaJS (no React)",
   parameters: {
     docs: {
       description: {
         component:
-          "Mount a canvas with `document.createElement`, run `createSolvedCubies` → `parseNotation` → `applyRotationStep`, then `drawCube` from `@shreklabs/cube-shrine/render`. The only React here is Storybook’s wrapper component around `useEffect`."
+          "Mount a canvas with `document.createElement`, run `createSolvedCubies` → `parseNotation` → `applyRotationStep`, then `drawCube` from `@shreklabs/cube-shrine/render`. The only React here is Storybook’s wrapper component around `useEffect`. Use the **Controls** panel or the field below to edit notation."
       }
     }
   }
@@ -64,34 +65,48 @@ function VanillaCubeDemo({ notation }: { notation: string }) {
     };
   }, [notation]);
 
+  return <div ref={hostRef} />;
+}
+
+function VanillaStoryShell({ initialNotation }: { initialNotation: string }) {
+  const [notation, setNotation] = useState(initialNotation);
+
+  useEffect(() => {
+    setNotation(initialNotation);
+  }, [initialNotation]);
+
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 12, maxWidth: 520 }}>
-      <p style={{ margin: 0, fontSize: 14, lineHeight: 1.5 }}>
-        Uses only <code>@shreklabs/cube-shrine/core</code> and <code>@shreklabs/cube-shrine/render</code>. No{" "}
-        <code>MiniCube</code>, <code>useCubeRenderer</code>, or <code>getPaletteFromCSS</code>.
-      </p>
-      <pre
-        style={{
-          margin: 0,
-          padding: 12,
-          borderRadius: 8,
-          background: "#0f172a0d",
-          fontSize: 13,
-          overflow: "auto"
-        }}
-      >
-        {notation}
-      </pre>
-      <div ref={hostRef} />
-    </div>
+    <Flex direction="column" gap="4" style={{ maxWidth: 560 }}>
+      <Section size="1">
+        <Heading size="4" mb="2">
+          Plain canvas
+        </Heading>
+        <Text size="2" color="gray" mb="3">
+          Uses only <code>@shreklabs/cube-shrine/core</code> and <code>@shreklabs/cube-shrine/render</code>. No{" "}
+          <code>MiniCube</code>, <code>useCubeRenderer</code>, or <code>getPaletteFromCSS</code>.
+        </Text>
+        <Box mb="3">
+          <Text as="label" size="2" weight="medium" htmlFor="vanilla-notation-field" mb="1" style={{ display: "block" }}>
+            WCA notation
+          </Text>
+          <TextField.Root
+            id="vanilla-notation-field"
+            value={notation}
+            onChange={(e) => setNotation(e.target.value)}
+            style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}
+          />
+        </Box>
+        <VanillaCubeDemo key={notation} notation={notation} />
+      </Section>
+    </Flex>
   );
 }
 
-export const PlainCanvas: StoryObj = {
+export const PlainCanvas: StoryObj<{ notation: string }> = {
   name: "Plain canvas (no library React)",
   args: { notation: "R U R' U R U2 R'" },
   argTypes: {
-    notation: { control: "text", name: "WCA notation" }
+    notation: { control: "text", name: "WCA notation", description: "Synced when you load the story; edit in Controls or the field." }
   },
-  render: (args) => <VanillaCubeDemo notation={String(args.notation ?? "")} />
+  render: (args) => <VanillaStoryShell initialNotation={String(args.notation ?? "")} />
 };

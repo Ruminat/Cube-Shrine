@@ -25,8 +25,8 @@ export type GetPllTopViewFromNotationOptions = {
 /**
  * `MiniCube` uses the same move list. PLL case mode: inverse of `notation`, then pick one of four
  * whole-cube `y` quarter-turns (lexicographic min). Forward test mode: apply `notation` from solved,
- * then `pllSheetAlignYSteps` (`y2`) so side strips read red → blue → orange → green clockwise from
- * top-left on a solved U layer.
+ * then `pllSheetAlignYSteps` (`y2`) so side strips match the package frame (front +z blue, back −z
+ * green, R red, L orange around the U layer in the top-flat diagram).
  */
 export function getPllTopViewFromNotation(
   algorithmId: string,

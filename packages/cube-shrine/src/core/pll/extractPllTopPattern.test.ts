@@ -29,12 +29,12 @@ describe("extractPllTopColorPatternFromCubies", () => {
 });
 
 describe("getPllTopViewFromNotation canonical y", () => {
-  it("orients solved PLL frame after sheet `y2` (red → blue → orange → green clockwise from top-left)", () => {
+  it("orients solved PLL frame after sheet `y2` (front blue, back green, R red, L orange)", () => {
     const m = getPllTopViewFromNotation("test-d", "D", { applyMoves: "forward" });
-    expect(m.topStrip).toEqual(["red", "red", "red"]);
-    expect(m.rightStrip).toEqual(["blue", "blue", "blue"]);
-    expect(m.bottomStrip).toEqual(["orange", "orange", "orange"]);
-    expect(m.leftStrip).toEqual(["green", "green", "green"]);
+    expect(m.topStrip).toEqual(["green", "green", "green"]);
+    expect(m.rightStrip).toEqual(["orange", "orange", "orange"]);
+    expect(m.bottomStrip).toEqual(["blue", "blue", "blue"]);
+    expect(m.leftStrip).toEqual(["red", "red", "red"]);
     expect(m.face9.every((c) => c === "yellow")).toBe(true);
   });
 

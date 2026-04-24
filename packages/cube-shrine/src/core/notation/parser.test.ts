@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { invertNotationSequence, parseNotation } from "./parser";
+import { invertNotationSequence, parseNotation, parseReversedNotation } from "./parser";
 
 describe("invertNotationSequence", () => {
   it("inverts a single quarter turn", () => {
@@ -54,5 +54,33 @@ describe("parseNotation (bracket-aware)", () => {
     const grouped = parseNotation("(R U R' U) (R U2 R')");
     const flat = parseNotation("R U R' U R U2 R'");
     expect(grouped).toEqual(flat);
+  });
+});
+
+describe("parseNotation (atomic tokens)", () => {
+  it.each([
+    ["R", [{ face: "R", angle: 90 }]],
+    ["R'", [{ face: "R", angle: -90 }]],
+    ["R2", [{ face: "R", angle: 180 }]],
+    ["U2", [{ face: "U", angle: 180 }]],
+    ["M'", [{ face: "M", angle: -90 }]],
+    ["r", [{ face: "r", angle: 90 }]],
+    ["z'", [{ face: "z", angle: -90 }]]
+  ] as const)("parses %s", (token, expected) => {
+    expect(parseNotation(token)).toEqual(expected);
+  });
+});
+
+describe("parseReversedNotation (PLL-style)", () => {
+  it("reverses move order and inverts each turn for a flat sequence", () => {
+    expect(parseReversedNotation("R U")).toEqual(parseNotation("U' R'"));
+  });
+
+  it("matches reversing a parenthesized chunk as a single flattened list", () => {
+    expect(parseReversedNotation("(R U R' U')")).toEqual(parseNotation("U R U' R'"));
+  });
+
+  it("handles double turns without changing angle magnitude sign flip", () => {
+    expect(parseReversedNotation("R2 U2")).toEqual(parseNotation("U2 R2"));
   });
 });

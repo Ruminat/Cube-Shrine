@@ -1,15 +1,14 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useLayoutEffect, useRef, useState } from "react";
-import {
-  getCanonicalOllTopPatternFromNotation,
-  parseReversedNotation
-} from "@shreklabs/cube-shrine/core";
+import { Box, Flex, Heading, Text } from "@radix-ui/themes";
+import { getCanonicalOllTopPatternFromNotation, parseReversedNotation } from "@shreklabs/cube-shrine/core";
 import {
   CUBE_PREVIEW_DPR_CAP,
   drawOllTopPatternOnCanvas,
   getPaletteFromCSS
 } from "@shreklabs/cube-shrine/render";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
+import { AlgorithmStoryCard, IsoFlatToggle, type IsoFlatMode } from "./storybookUi";
 
 const SAMPLE_OLL: { id: string; label: string; notation: string }[] = [
   { id: "sune", label: "Sune", notation: "R U R' U R U2 R'" },
@@ -20,12 +19,12 @@ const SAMPLE_OLL: { id: string; label: string; notation: string }[] = [
 ];
 
 const meta = {
-  title: "OLL / Views",
+  title: "The cube/OLL",
   parameters: {
     docs: {
       description: {
         component:
-          "Compare the default isometric cube (same preparation as the site) with the canonical **top-flat** diagram used on OLL cards."
+          "Compare the default isometric cube (same preparation as the site) with the canonical **top-flat** diagram used on OLL cards. Cases are shown in a grid like **Basic moves**."
       }
     }
   }
@@ -33,18 +32,15 @@ const meta = {
 
 export default meta;
 
-function OllViewSwitcher() {
-  const [caseId, setCaseId] = useState(SAMPLE_OLL[0].id);
-  const [mode, setMode] = useState<"iso" | "flat">("iso");
-  const sample = SAMPLE_OLL.find((c) => c.id === caseId) ?? SAMPLE_OLL[0];
-  const preparationRotations = parseReversedNotation(sample.notation);
+const FLAT_SIZE = 120;
+
+function OllFlatCanvas({ notation }: { notation: string }) {
   const flatRef = useRef<HTMLCanvasElement | null>(null);
 
   useLayoutEffect(() => {
-    if (mode !== "flat") return;
     const canvas = flatRef.current;
     if (!canvas) return;
-    const size = 220;
+    const size = FLAT_SIZE;
     const dpr = Math.min(window.devicePixelRatio || 1, CUBE_PREVIEW_DPR_CAP);
     canvas.width = Math.floor(size * dpr);
     canvas.height = Math.floor(size * dpr);
@@ -53,65 +49,59 @@ function OllViewSwitcher() {
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    const pattern = getCanonicalOllTopPatternFromNotation(sample.notation);
+    const pattern = getCanonicalOllTopPatternFromNotation(notation);
     drawOllTopPatternOnCanvas(ctx, size, pattern, getPaletteFromCSS());
-  }, [mode, sample.notation]);
+  }, [notation]);
+
+  return <canvas ref={flatRef} role="img" aria-label={`OLL flat: ${notation}`} />;
+}
+
+function OllCasePreview({ notation, label, mode }: { notation: string; label: string; mode: IsoFlatMode }) {
+  const preparationRotations = parseReversedNotation(notation);
+  const cubeSize = mode === "iso" ? 120 : 100;
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: 16, maxWidth: 480 }}>
-      <label style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 14 }}>
-        <span>Oll case</span>
-        <select
-          value={caseId}
-          onChange={(e) => setCaseId(e.target.value)}
-          style={{ padding: 8, borderRadius: 6, maxWidth: 360 }}
-        >
-          {SAMPLE_OLL.map((c) => (
-            <option key={c.id} value={c.id}>
-              {c.label}
-            </option>
-          ))}
-        </select>
-      </label>
-      <div style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
-        <button
-          type="button"
-          onClick={() => setMode("iso")}
-          style={{
-            padding: "8px 14px",
-            borderRadius: 6,
-            border: mode === "iso" ? "2px solid #3b82f6" : "1px solid #ccc",
-            background: mode === "iso" ? "#eff6ff" : "#fff",
-            cursor: "pointer"
-          }}
-        >
-          Default (isometric)
-        </button>
-        <button
-          type="button"
-          onClick={() => setMode("flat")}
-          style={{
-            padding: "8px 14px",
-            borderRadius: 6,
-            border: mode === "flat" ? "2px solid #3b82f6" : "1px solid #ccc",
-            background: mode === "flat" ? "#eff6ff" : "#fff",
-            cursor: "pointer"
-          }}
-        >
-          Top flat
-        </button>
-      </div>
-      <div style={{ fontSize: 13, fontFamily: "ui-monospace, monospace", opacity: 0.85 }}>{sample.notation}</div>
+    <AlgorithmStoryCard title={label} notation={notation}>
       {mode === "iso" ? (
-        <MiniCube size={220} preparationRotations={preparationRotations} deferUntilVisible={false} />
+        <MiniCube size={cubeSize} preparationRotations={preparationRotations} deferUntilVisible={false} />
       ) : (
-        <canvas ref={flatRef} role="img" aria-label={`OLL flat: ${sample.label}`} />
+        <OllFlatCanvas notation={notation} />
       )}
-    </div>
+    </AlgorithmStoryCard>
+  );
+}
+
+function OllCasesGrid() {
+  const [mode, setMode] = useState<IsoFlatMode>("iso");
+
+  return (
+    <Flex direction="column" gap="4" style={{ maxWidth: 1200 }}>
+      <Box>
+        <Heading size="5" mb="2">
+          OLL views
+        </Heading>
+        <Text size="2" color="gray" mb="3">
+          Isometric preparation uses the same reversed moves as the site. Switch to <strong>Top flat</strong> for the
+          canonical U-face diagram.
+        </Text>
+        <IsoFlatToggle value={mode} onChange={setMode} />
+      </Box>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
+          gap: 16
+        }}
+      >
+        {SAMPLE_OLL.map((sample) => (
+          <OllCasePreview key={sample.id} notation={sample.notation} label={sample.label} mode={mode} />
+        ))}
+      </div>
+    </Flex>
   );
 }
 
 export const IsoVersusTopFlat: StoryObj = {
-  name: "Isometric vs top-flat",
-  render: () => <OllViewSwitcher />
+  name: "OLL cases (grid)",
+  render: () => <OllCasesGrid />
 };

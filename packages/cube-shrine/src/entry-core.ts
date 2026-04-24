@@ -9,6 +9,7 @@ export {
   parseReversedNotation,
   invertNotationSequence
 } from "./core/notation/parser";
+export { ATOMIC_MOVE_FACES, allAtomicMoveNotations } from "./core/notation/atomicMoves";
 export type {
   PllGridCell,
   PllTopArrow,

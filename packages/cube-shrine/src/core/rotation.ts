@@ -25,12 +25,13 @@ export const createSolvedCubies = (): Cubie[] => {
     for (let y = -1; y <= 1; y += 1) {
       for (let z = -1; z <= 1; z += 1) {
         const stickers: Partial<Record<NormalKey, PaletteKey>> = {};
-        if (x === 1) stickers["x+"] = "green";
-        if (x === -1) stickers["x-"] = "blue";
+        /** White D (−y), yellow U (+y); diagram +z = front: blue F, green B; R red, L orange. */
+        if (x === 1) stickers["x+"] = "red";
+        if (x === -1) stickers["x-"] = "orange";
         if (y === 1) stickers["y+"] = "yellow";
         if (y === -1) stickers["y-"] = "white";
-        if (z === 1) stickers["z+"] = "orange";
-        if (z === -1) stickers["z-"] = "red";
+        if (z === 1) stickers["z+"] = "blue";
+        if (z === -1) stickers["z-"] = "green";
         cubies.push({ x, y, z, stickers });
       }
     }

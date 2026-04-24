@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from "@storybook/react";
+import { Box, Heading, Text } from "@radix-ui/themes";
 import { parseNotation } from "@shreklabs/cube-shrine/core";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 import { allSingleMoveNotations } from "./move-notations";
 
 const meta = {
-  title: "Cube/Single moves",
+  title: "The cube/Basic moves",
   parameters: {
     docs: {
       description: {
@@ -20,14 +21,21 @@ export default meta;
 function MoveGrid() {
   const moves = allSingleMoveNotations();
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))",
-        gap: 16,
-        maxWidth: 1200
-      }}
-    >
+    <Box style={{ maxWidth: 1200 }}>
+      <Heading size="5" mb="2">
+        Atomic moves
+      </Heading>
+      <Text size="2" color="gray" mb="4">
+        One preview per token supported by the model (faces, slices, wide moves, whole-cube <code>x</code>{" "}
+        <code>y</code> <code>z</code>).
+      </Text>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fill, minmax(104px, 1fr))",
+          gap: 16
+        }}
+      >
       {moves.map((notation) => (
         <div key={notation} style={{ textAlign: "center" }}>
           <MiniCube size={88} preparationRotations={parseNotation(notation)} deferUntilVisible={false} />
@@ -36,7 +44,8 @@ function MoveGrid() {
           </div>
         </div>
       ))}
-    </div>
+      </div>
+    </Box>
   );
 }
 
