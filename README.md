@@ -1,7 +1,6 @@
 # Cube Shrine
 
-[![Cube Shrine — live site](https://img.shields.io/badge/Cube_Shrine-live-111827?style=for-the-badge&logo=githubpages&logoColor=white)](https://ruminat.github.io/Cube-Shrine/)
-[![Storybook](https://img.shields.io/badge/Storybook-docs-FF4785?style=for-the-badge&logo=storybook&logoColor=white)](https://ruminat.github.io/Cube-Shrine/storybook/)
+[![Deploy](https://img.shields.io/github/actions/workflow/status/ruminat/Cube-Shrine/.github/workflows/deploy-pages.yml?branch=main&label=Deploy&logo=github)](https://github.com/ruminat/Cube-Shrine/actions/workflows/deploy-pages.yml?query=branch%3Amain) [![Storybook](https://img.shields.io/badge/Storybook-deployed-ff4685?logo=storybook)](https://ruminat.github.io/Cube-Shrine/storybook/) [![Cube Shrine](https://img.shields.io/badge/Cube_Shrine-live-24292f?logo=githubpages)](https://ruminat.github.io/Cube-Shrine/)
 
 Static [Next.js](https://nextjs.org/) app for browsing CFOP-style algorithms with **isometric cube previews** (Canvas 2D). TypeScript, SCSS modules, and [Radix Themes](https://www.radix-ui.com/themes) for layout and UI.
 
