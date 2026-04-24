@@ -17,6 +17,10 @@
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
+    "stories/**/*.ts",
+    "stories/**/*.tsx",
+    ".storybook/**/*.ts",
+    ".storybook/**/*.tsx",
     "vite.*.config.ts",
     "vite.lib.shared.ts",
     "vitest.config.ts"

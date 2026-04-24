@@ -7,6 +7,8 @@
     "dev": "npm run dev -w web",
     "lint": "npm run lint -w web",
     "test": "npm run test -w @shreklabs/cube-shrine",
-    "start": "npm run start -w web"
+    "start": "npm run start -w web",
+    "storybook": "npm run storybook -w @shreklabs/cube-shrine",
+    "build-storybook": "npm run build-storybook -w @shreklabs/cube-shrine"
   }
 }

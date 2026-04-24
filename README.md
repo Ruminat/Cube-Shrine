@@ -25,7 +25,7 @@ The repo root is an **npm workspace** (`package.json` lists `apps/*` and `packag
 
 - **Monorepo**: npm workspaces, `apps/web` + `packages/cube-shrine`
 - **Site**: `next@16` (App Router, **`output: "export"`** for static hosting), `react@19`, `@radix-ui/themes`, `typescript`, `sass`
-- **Library**: Vite (ESM library build), Vitest (Node test environment)
+- **Library**: Vite (ESM library build), Vitest (Node test environment), [Storybook](https://storybook.js.org/) 8 (component / API demos in `packages/cube-shrine`)
 
 ## Getting started (full project)
 
@@ -53,9 +53,11 @@ npx serve apps/web/out
 **Other root scripts**
 
 ```bash
-npm run lint    # ESLint in apps/web
-npm run test    # Vitest in @shreklabs/cube-shrine
-npm run start   # next start in apps/web (after a production build)
+npm run lint             # ESLint in apps/web
+npm run test             # Vitest in @shreklabs/cube-shrine
+npm run start            # next start in apps/web (after a production build)
+npm run storybook        # Storybook for @shreklabs/cube-shrine (port 6006)
+npm run build-storybook  # static Storybook → packages/cube-shrine/storybook-static/
 ```
 
 ## Working on `@shreklabs/cube-shrine` independently
@@ -69,6 +71,27 @@ npm run build        # Vite: emits dist/core.js, dist/render.js, dist/react.js, 
 npm run test         # vitest run
 npx vitest           # watch mode while editing tests
 ```
+
+### Storybook
+
+Stories live under `packages/cube-shrine/stories/` and map package imports to **source** via `packages/cube-shrine/.storybook/main.ts` (Vite aliases), so you can iterate without rebuilding `dist/` first.
+
+```bash
+# from repo root
+npm run storybook
+
+# or from packages/cube-shrine
+npm run storybook
+```
+
+Static bundle (e.g. for hosting docs):
+
+```bash
+npm run build-storybook
+# output: packages/cube-shrine/storybook-static/
+```
+
+Included groups: **every atomic move** (grid), **OLL / PLL** isometric vs top-flat toggles, **vanilla canvas** (core + render only), and **notation utilities** (parse / invert / reversed steps).
 
 **Entry points** (import maps are defined in `packages/cube-shrine/package.json` under `"exports"`):
 
