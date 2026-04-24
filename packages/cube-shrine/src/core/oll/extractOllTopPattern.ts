@@ -1,6 +1,9 @@
 import type { Cubie, NormalKey, PaletteKey } from "../cubieModel";
 
-/** Row-major from diagram top (back / −z) to bottom (front / +z); columns left (−x) to right (+x). */
+/**
+ * Row-major: diagram **top** = back (−z, green), **bottom** = front (+z, blue), **left** = −x (orange),
+ * **right** = +x (red) — same axes as `drawCube` looking down at U.
+ */
 export type OllTopFace9 = [
   boolean,
   boolean,
@@ -49,10 +52,7 @@ const isYellowOn = (stickers: Partial<Record<NormalKey, PaletteKey>>, normal: No
 const findCubie = (cubies: Cubie[], x: number, y: number, z: number): Cubie | undefined =>
   cubies.find((c) => c.x === x && c.y === y && c.z === z);
 
-/**
- * Reads U-face yellow pattern and corner side stickers from the current cubie state.
- * Diagram: back (−z) at the top of the grid, front (+z) at the bottom — same frame as `drawCube`.
- */
+/** Reads U-face yellow pattern and adjacent-side yellow from cubies in the fixed world frame above. */
 export function extractOllTopPatternFromCubies(cubies: Cubie[]): OllTopPattern {
   const face: OllTopFace9 = [false, false, false, false, false, false, false, false, false];
   for (let row = 0; row < 3; row += 1) {

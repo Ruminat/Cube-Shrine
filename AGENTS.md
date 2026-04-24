@@ -50,7 +50,7 @@ World-axis palette (tests depend on it):
 
 `drawCube` shows faces `y+`, `x+`, `z+` (isometric corner). Top-flat U nets use the same axes: **top** = −z (back, green), **bottom** = +z (front, blue), **left** = −x (orange), **right** = +x (red).
 
-- **OLL canonical top-flat** (`getCanonicalOllTopPatternFromNotation` in `src/core/oll/getOllTopPatternFromNotation.ts`): returns `{ pattern, yQuarterTurns }`. **`AlgorithmCard` / `AlgorithmModal`** append that many whole-cube `{ face: "y", angle: 90 }` steps after `parseReversedNotation` on the **3D** preview so the isometric cube matches the flat diagram.
+- **OLL top-flat** (`getCanonicalOllTopPatternFromNotation` in `src/core/oll/getOllTopPatternFromNotation.ts`): inverse prep only — `parseReversedNotation` from solved, then `extractOllTopPatternFromCubies` in a **fixed** world frame (no whole-cube `y` scan; `yQuarterTurns` is always `0`). **`AlgorithmCard` / `AlgorithmModal`** use the same `parseReversedNotation` list for **3D** as for the flat diagram (PLL still appends `pllCanonicalYQuarterTurns` when non-zero).
 - **PLL canonical `y` on 3D**: `getPllTopViewFromNotation` returns **`pllCanonicalYQuarterTurns`** (inverse mode). The site appends the same `y` steps after `parseReversedNotation` on **`MiniCube` / `CubeRenderer`** so the isometric cube matches the top-flat diagram.
 
 ### Notation

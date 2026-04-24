@@ -1,8 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { applyRotationStep, createSolvedCubies } from "../rotation";
-import { parseReversedNotation } from "../notation/parser";
+import { parseNotation, parseReversedNotation } from "../notation/parser";
 import { extractOllTopPatternFromCubies } from "./extractOllTopPattern";
-import { getCanonicalOllTopPatternFromNotation } from "./getOllTopPatternFromNotation";
 
 describe("extractOllTopPatternFromCubies", () => {
   it("reads a solid yellow U face from solved cube", () => {
@@ -11,68 +10,46 @@ describe("extractOllTopPatternFromCubies", () => {
     expect(p.face.every(Boolean)).toBe(true);
     expect(p.corners.topLeft.left).toBe(false);
   });
-});
 
-describe("getCanonicalOllTopPatternFromNotation", () => {
-  it("produces distinct patterns for H (21) and Pi (22)", () => {
-    const h = getCanonicalOllTopPatternFromNotation(
-      "F (R U R' U') (R U R' U') (R U R' U') F'"
-    );
-    const pi = getCanonicalOllTopPatternFromNotation("R U2 (R2' U' R2 U') (R2' U2 R)");
-    expect(JSON.stringify(h.pattern)).not.toBe(JSON.stringify(pi.pattern));
+  it("returns all false when the cubie list is empty (no matches)", () => {
+    const p = extractOllTopPatternFromCubies([]);
+    expect(p.face.every((v) => !v)).toBe(true);
+    expect(p.edgeMids.topCenter).toBe(false);
+    expect(p.corners.bottomRight.right).toBe(false);
   });
 
-  it("matches snapshot for OLL 21 (H) canonical pattern", () => {
-    const { pattern: p } = getCanonicalOllTopPatternFromNotation(
-      "F (R U R' U') (R U R' U') (R U R' U') F'"
-    );
-    expect(p).toMatchInlineSnapshot(`
-      {
-        "corners": {
-          "bottomLeft": {
-            "bottom": false,
-            "left": true,
-          },
-          "bottomRight": {
-            "bottom": false,
-            "right": true,
-          },
-          "topLeft": {
-            "left": true,
-            "top": false,
-          },
-          "topRight": {
-            "right": true,
-            "top": false,
-          },
-        },
-        "edgeMids": {
-          "bottomCenter": false,
-          "leftMiddle": false,
-          "rightMiddle": false,
-          "topCenter": false,
-        },
-        "face": [
-          false,
-          true,
-          false,
-          true,
-          true,
-          true,
-          false,
-          true,
-          false,
-        ],
-      }
-    `);
+  it("maps diagram row 0 to back (−z) and row 2 to front (+z) on the U slice", () => {
+    const cubies = createSolvedCubies();
+    const p = extractOllTopPatternFromCubies(cubies);
+    expect(p.face[0]).toBe(true);
+    expect(p.face[6]).toBe(true);
+    expect(p.corners.topLeft.top).toBe(false);
+    expect(p.corners.bottomLeft.bottom).toBe(false);
   });
 
-  it("includes top/bottom center edge bars for Shoelaces (OLL 33)", () => {
+  it("treats a U turn as a permutation: all nine U stickers stay yellow on the U face", () => {
+    const cubies = createSolvedCubies();
+    applyRotationStep(cubies, { face: "U", angle: 90 });
+    const p = extractOllTopPatternFromCubies(cubies);
+    expect(p.face.every(Boolean)).toBe(true);
+  });
+
+  it("detects back and front edge-mid yellow after Shoelaces inverse prep only", () => {
     const notation = "(R U R' U') (R' F R F')";
     const cubies = createSolvedCubies();
     parseReversedNotation(notation).forEach((step) => applyRotationStep(cubies, step));
     const p = extractOllTopPatternFromCubies(cubies);
     expect(p.edgeMids.topCenter).toBe(true);
     expect(p.edgeMids.bottomCenter).toBe(true);
+    expect(p.edgeMids.leftMiddle).toBe(false);
+    expect(p.edgeMids.rightMiddle).toBe(false);
+  });
+
+  it("after inverse prep + forward alg, matches solved extraction (full round-trip on cubies)", () => {
+    const alg = "F (R U R' U') F'";
+    const cubies = createSolvedCubies();
+    parseReversedNotation(alg).forEach((s) => applyRotationStep(cubies, s));
+    parseNotation(alg).forEach((s) => applyRotationStep(cubies, s));
+    expect(extractOllTopPatternFromCubies(cubies)).toEqual(extractOllTopPatternFromCubies(createSolvedCubies()));
   });
 });

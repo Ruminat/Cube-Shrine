@@ -50,9 +50,7 @@ function OllFlatCanvas({ notation }: { notation: string }) {
 }
 
 function OllCasePreview({ notation, label, mode }: { notation: string; label: string; mode: IsoFlatMode }) {
-  const { yQuarterTurns } = getCanonicalOllTopPatternFromNotation(notation);
-  const yTail = Array.from({ length: yQuarterTurns }, () => ({ face: "y" as const, angle: 90 as const }));
-  const preparationRotations = [...parseReversedNotation(notation), ...yTail];
+  const preparationRotations = parseReversedNotation(notation);
   const cubeSize = mode === "iso" ? 120 : 100;
 
   return (
@@ -76,8 +74,8 @@ function OllCasesGrid() {
           OLL views
         </Heading>
         <Text size="2" color="gray" mb="3">
-          <strong>Top flat</strong> is the default canonical U-face diagram. Switch to <strong>Isometric</strong> for
-          the same preparation (reversed moves plus matching whole-cube <code>y</code>).
+          <strong>Top flat</strong> is the default U-face diagram (fixed world frame). Switch to <strong>Isometric</strong>{" "}
+          for the same preparation (<code>parseReversedNotation</code> only — no whole-cube <code>y</code>).
         </Text>
         <IsoFlatToggle value={mode} onChange={setMode} />
       </Box>

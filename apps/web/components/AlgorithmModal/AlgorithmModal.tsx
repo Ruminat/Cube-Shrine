@@ -51,13 +51,6 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
 
   const notationRotations = useMemo(() => {
     const rev = parseReversedNotation(displayNotation);
-    if (algorithm?.category === "OLL" && ollCanon) {
-      const yTail = Array.from({ length: ollCanon.yQuarterTurns }, () => ({
-        face: "y" as const,
-        angle: 90 as const
-      }));
-      return [...rev, ...yTail];
-    }
     if (algorithm?.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
       const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
         face: "y" as const,
@@ -66,7 +59,7 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
       return [...rev, ...yTail];
     }
     return rev;
-  }, [algorithm?.category, displayNotation, ollCanon, pllTopModel]);
+  }, [algorithm?.category, displayNotation, pllTopModel]);
   const ollTopPattern = useMemo(() => {
     if (!algorithm || algorithm.category !== "OLL" || !ollTopFlat || !ollCanon) {
       return null;

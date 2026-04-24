@@ -46,13 +46,6 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
 
   const notationRotations = useMemo(() => {
     const rev = parseReversedNotation(displayNotation);
-    if (algorithm.category === "OLL" && ollCanon) {
-      const yTail = Array.from({ length: ollCanon.yQuarterTurns }, () => ({
-        face: "y" as const,
-        angle: 90 as const
-      }));
-      return [...rev, ...yTail];
-    }
     if (algorithm.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
       const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
         face: "y" as const,
@@ -61,7 +54,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
       return [...rev, ...yTail];
     }
     return rev;
-  }, [algorithm.category, displayNotation, ollCanon, pllTopModel]);
+  }, [algorithm.category, displayNotation, pllTopModel]);
   const ollTopPattern = useMemo(() => {
     if (algorithm.category !== "OLL" || !useOllSpecialTopView || !ollCanon) {
       return null;
