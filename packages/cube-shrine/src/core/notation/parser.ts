@@ -11,7 +11,7 @@ const invertAngle = (angle: RotationStep["angle"]): RotationStep["angle"] => {
   return (angle * -1) as RotationStep["angle"];
 };
 
-const formatRotationStep = (step: RotationStep): string => {
+export const formatRotationStep = (step: RotationStep): string => {
   const { face, angle } = step;
   if (angle === 180 || angle === -180) {
     return `${face}2`;
@@ -23,7 +23,7 @@ const formatRotationStep = (step: RotationStep): string => {
 };
 
 /** Top-level tokens: parenthesized chunks or single moves (spaces separate tokens; spaces inside `(...)` stay inside the chunk). */
-const tokenizeNotation = (notation: string): string[] => {
+export const tokenizeNotation = (notation: string): string[] => {
   const tokens: string[] = [];
   let index = 0;
   const source = notation.trim();
@@ -63,7 +63,7 @@ const tokenizeNotation = (notation: string): string[] => {
   return tokens;
 };
 
-const parseAtomicMove = (raw: string): RotationStep => {
+export const parseAtomicMove = (raw: string): RotationStep => {
   const token = raw.trim();
   const face = token[0] as RotationStep["face"];
   return { face, angle: toAngle(token) };

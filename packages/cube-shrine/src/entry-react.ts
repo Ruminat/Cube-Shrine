@@ -4,3 +4,9 @@ export { useCubeRenderer } from "./react/useCubeRenderer";
 export { MiniCube } from "./react/MiniCube";
 export { useInViewport } from "./react/useInViewport";
 export { useCubeSceneLifecycle, useCubePaletteSync } from "./react/hooks";
+export { useAlgorithmInput, useAlgorithmTextArea } from "./react/useAlgorithmInput";
+export type {
+  NativeAlgorithmFieldProps,
+  UseAlgorithmFieldOptions,
+  UseAlgorithmFieldResult
+} from "./react/useAlgorithmInput";

@@ -77,7 +77,7 @@ function PllCasePreview({
 }
 
 function PllCasesGrid() {
-  const [mode, setMode] = useState<IsoFlatMode>("iso");
+  const [mode, setMode] = useState<IsoFlatMode>("flat");
 
   return (
     <Flex direction="column" gap="4" style={{ maxWidth: 1200 }}>
@@ -86,8 +86,8 @@ function PllCasesGrid() {
           PLL views
         </Heading>
         <Text size="2" color="gray" mb="3">
-          Isometric preparation matches PLL cards (reversed notation). Switch to <strong>Top flat</strong> for the
-          diagram layout (arrows not shown in Storybook).
+          <strong>Top flat</strong> is the default diagram layout (arrows not shown in Storybook). Switch to{" "}
+          <strong>Isometric</strong> for the same reversed-notation preparation as PLL cards on the site.
         </Text>
         <IsoFlatToggle value={mode} onChange={setMode} />
       </Box>

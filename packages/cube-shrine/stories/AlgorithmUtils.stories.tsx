@@ -14,8 +14,10 @@ import {
 } from "@radix-ui/themes";
 import {
   invertNotationSequence,
+  normalizeAlgorithm,
   parseNotation,
   parseReversedNotation,
+  validateAlgorithm,
   type RotationStep
 } from "@shreklabs/cube-shrine/core";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
@@ -169,4 +171,48 @@ function AlgorithmUtilsPanel() {
 export const ParseInvertReverse: StoryObj = {
   name: "Parse · invert · reversed steps",
   render: () => <AlgorithmUtilsPanel />
+};
+
+function ValidateNormalizePanel() {
+  const [sample, setSample] = useState("  R   U2'  M'  ");
+  const validationError = validateAlgorithm(sample);
+  const normalized = normalizeAlgorithm(sample);
+
+  return (
+    <Flex direction="column" gap="3" style={{ maxWidth: 720 }}>
+      <Heading size="5">Validate & normalize</Heading>
+      <Text size="2" color="gray">
+        <code>validateAlgorithm</code> returns an error string or <code>undefined</code>.{" "}
+        <code>normalizeAlgorithm</code> returns a canonical string only when the input is valid (see Vitest:{" "}
+        <code>algorithmFormat.test.ts</code>).
+      </Text>
+      <TextArea
+        value={sample}
+        onChange={(e) => setSample(e.target.value)}
+        rows={3}
+        style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", fontSize: 13 }}
+      />
+      <Card size="1" variant="surface">
+        <Text size="2" weight="medium" mb="1" as="div">
+          validateAlgorithm(input)
+        </Text>
+        <Text size="2" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
+          {validationError === undefined ? "undefined (valid)" : JSON.stringify(validationError)}
+        </Text>
+      </Card>
+      <Card size="1" variant="surface">
+        <Text size="2" weight="medium" mb="1" as="div">
+          normalizeAlgorithm(input)
+        </Text>
+        <Text size="2" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
+          {normalized === undefined ? "undefined (invalid)" : JSON.stringify(normalized)}
+        </Text>
+      </Card>
+    </Flex>
+  );
+}
+
+export const ValidateAndNormalize: StoryObj = {
+  name: "Validate & normalize",
+  render: () => <ValidateNormalizePanel />
 };

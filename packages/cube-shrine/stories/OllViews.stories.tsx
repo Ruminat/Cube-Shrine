@@ -65,7 +65,7 @@ function OllCasePreview({ notation, label, mode }: { notation: string; label: st
 }
 
 function OllCasesGrid() {
-  const [mode, setMode] = useState<IsoFlatMode>("iso");
+  const [mode, setMode] = useState<IsoFlatMode>("flat");
 
   return (
     <Flex direction="column" gap="4" style={{ maxWidth: 1200 }}>
@@ -74,8 +74,8 @@ function OllCasesGrid() {
           OLL views
         </Heading>
         <Text size="2" color="gray" mb="3">
-          Isometric preparation uses the same reversed moves as the site. Switch to <strong>Top flat</strong> for the
-          canonical U-face diagram.
+          <strong>Top flat</strong> is the default canonical U-face diagram. Switch to <strong>Isometric</strong> for
+          the same reversed-move preparation as the site.
         </Text>
         <IsoFlatToggle value={mode} onChange={setMode} />
       </Box>
