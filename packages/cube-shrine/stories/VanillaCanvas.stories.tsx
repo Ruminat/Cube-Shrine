@@ -7,6 +7,7 @@ import {
   parseNotation,
   type PaletteKey
 } from "@shreklabs/cube-shrine/core";
+import { useAlgorithmInput } from "@shreklabs/cube-shrine/react";
 import { CUBE_DETAIL_DPR_CAP, drawCube } from "@shreklabs/cube-shrine/render";
 
 /** Fixed hex palette so this demo never calls `getPaletteFromCSS` (no React helpers). */
@@ -25,7 +26,7 @@ const meta = {
     docs: {
       description: {
         component:
-          "Mount a canvas with `document.createElement`, run `createSolvedCubies` → `parseNotation` → `applyRotationStep`, then `drawCube` from `@shreklabs/cube-shrine/render`. The only React here is Storybook’s wrapper component around `useEffect`. Use the **Controls** panel or the field below to edit notation."
+          "Mount a canvas with `document.createElement`, run `createSolvedCubies` → `parseNotation` → `applyRotationStep`, then `drawCube` from `@shreklabs/cube-shrine/render`. Storybook’s shell uses `useAlgorithmInput` (strict WCA validation) for the notation field. Use the **Controls** panel or the field below to edit notation."
       }
     }
   }
@@ -75,6 +76,14 @@ function VanillaStoryShell({ initialNotation }: { initialNotation: string }) {
     setNotation(initialNotation);
   }, [initialNotation]);
 
+  const alg = useAlgorithmInput({
+    allowInvalid: false,
+    value: notation,
+    onChange: setNotation
+  });
+
+  const cubeNotation = alg.error ? "" : (alg.normalized ?? alg.value);
+
   return (
     <Flex direction="column" gap="4" style={{ maxWidth: 560 }}>
       <Section size="1">
@@ -82,21 +91,25 @@ function VanillaStoryShell({ initialNotation }: { initialNotation: string }) {
           Plain canvas
         </Heading>
         <Text size="2" color="gray" mb="3">
-          Uses only <code>@shreklabs/cube-shrine/core</code> and <code>@shreklabs/cube-shrine/render</code>. No{" "}
-          <code>MiniCube</code>, <code>useCubeRenderer</code>, or <code>getPaletteFromCSS</code>.
+          Canvas path uses only <code>@shreklabs/cube-shrine/core</code> and <code>@shreklabs/cube-shrine/render</code> (no{" "}
+          <code>MiniCube</code>, <code>useCubeRenderer</code>, or <code>getPaletteFromCSS</code>). The notation field uses{" "}
+          <code>useAlgorithmInput</code> from <code>@shreklabs/cube-shrine/react</code> — same strict rules as the
+          Algorithm input story.
         </Text>
         <Box mb="3">
           <Text as="label" size="2" weight="medium" htmlFor="vanilla-notation-field" mb="1" style={{ display: "block" }}>
-            WCA notation
+            WCA notation (strict)
           </Text>
           <TextField.Root
             id="vanilla-notation-field"
-            value={notation}
-            onChange={(e) => setNotation(e.target.value)}
+            {...alg.inputProps}
             style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}
           />
+          <Text size="1" color="gray" mt="1" as="div">
+            error: {alg.error ?? "—"}
+          </Text>
         </Box>
-        <VanillaCubeDemo key={notation} notation={notation} />
+        <VanillaCubeDemo notation={cubeNotation} />
       </Section>
     </Flex>
   );
