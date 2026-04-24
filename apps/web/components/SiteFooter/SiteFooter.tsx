@@ -17,6 +17,7 @@ const FOOTER_SITES: readonly FooterSite[] = [
   {
     name: "J Perm",
     links: [
+      { label: "Home", href: "https://jperm.net" },
       { label: "OLL", href: "https://jperm.net/algs/oll" },
       { label: "PLL", href: "https://jperm.net/algs/pll" },
     ],
