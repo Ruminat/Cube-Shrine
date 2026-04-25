@@ -59,7 +59,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-21-h",
     name: "H",
-    notation: "F (R U R' U') (R U R' U') (R U R' U') F'",
+    notation: "R U R' U R U' R' U R U2 R'",
     description: "OLL case 21 — H.",
     category: "OLL",
     subgroupId: "oll-cross",
