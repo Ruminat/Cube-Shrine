@@ -1,6 +1,6 @@
 import { memo, useCallback, useMemo, useState } from "react";
 import { Copy, RotateCcw, SquareArrowOutUpRight } from "lucide-react";
-import { Tooltip } from "@radix-ui/themes";
+import { IconButton, Tooltip } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
@@ -10,7 +10,6 @@ import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 import type { Algorithm } from "@/types/algorithm";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
 const CARD_MINI_CUBE_PX = 100;
@@ -31,7 +30,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
 
   const normalizedForwardNotation = useMemo(
     () => normalizeAlgorithm(algorithm.notation) ?? algorithm.notation,
-    [algorithm.notation]
+    [algorithm.notation],
   );
   const displayNotation = useMemo(() => {
     if (!isReversed) {
@@ -58,7 +57,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
     if (algorithm.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
       const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
         face: "y" as const,
-        angle: 90 as const
+        angle: 90 as const,
       }));
       return [...rev, ...yTail];
     }
@@ -85,7 +84,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
       setIsCopied(true);
       window.setTimeout(() => setIsCopied(false), 1400);
     },
-    [displayNotation]
+    [displayNotation],
   );
 
   const handleReverseClick = useCallback(
@@ -93,7 +92,7 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
       event.stopPropagation();
       onToggleReverse();
     },
-    [onToggleReverse]
+    [onToggleReverse],
   );
 
   const handleOpenClick = useCallback(
@@ -101,25 +100,23 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
       event.stopPropagation();
       handleOpenDialog();
     },
-    [handleOpenDialog]
+    [handleOpenDialog],
   );
-
-  const iconButtonClass = "size-8 shrink-0";
 
   return (
     <div
       className={cn(
         "group relative flex flex-row items-center gap-4 rounded-lg border border-border bg-card p-4",
-        "shadow-sm transition-[border-color,box-shadow] hover:border-primary/50 hover:shadow-md"
+        "shadow-sm transition-[border-color,box-shadow] hover:border-primary/50 hover:shadow-md",
       )}
     >
       <div
-        className="flex shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/50"
+        className='flex shrink-0 items-center justify-center overflow-hidden rounded-md bg-muted/50'
         style={{
           width: previewSlotPx,
           height: previewSlotPx,
           minWidth: previewSlotPx,
-          minHeight: previewSlotPx
+          minHeight: previewSlotPx,
         }}
       >
         {ollTopPattern ? (
@@ -131,51 +128,48 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
         )}
       </div>
 
-      <div className="flex min-w-0 flex-1 flex-col justify-center gap-2" style={{ minHeight: previewSlotPx }}>
-        <div className="flex items-center justify-between gap-2">
-          <h3 className="m-0 min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground">{algorithm.name}</h3>
-          <div className="flex shrink-0 items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100">
+      <div className='flex min-w-0 flex-1 flex-col justify-center gap-2' style={{ minHeight: previewSlotPx }}>
+        <div className='flex items-center justify-between gap-2'>
+          <h3 className='m-0 min-w-0 flex-1 text-sm font-semibold leading-snug text-foreground'>{algorithm.name}</h3>
+          <div className='flex shrink-0 items-center gap-4 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 sm:group-focus-within:opacity-100'>
             <Tooltip content={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={cn(iconButtonClass, isReversed && "bg-accent")}
+              <IconButton
+                type='button'
+                variant='ghost'
+                size='2'
                 aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
                 aria-pressed={isReversed}
                 onClick={handleReverseClick}
               >
-                <RotateCcw className="size-4" />
-              </Button>
+                <RotateCcw className='size-4' />
+              </IconButton>
             </Tooltip>
             <Tooltip content={isCopied ? "Copied!" : "Copy notation"}>
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={iconButtonClass}
+              <IconButton
+                type='button'
+                variant='ghost'
+                size='2'
                 aria-label={`Copy ${algorithm.name} notation`}
                 onClick={handleCopyNotation}
               >
                 <Copy className={cn("size-4", isCopied && "text-green-600 dark:text-green-500")} />
-              </Button>
+              </IconButton>
             </Tooltip>
-            <Tooltip content="View details">
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={iconButtonClass}
+            <Tooltip content='View details'>
+              <IconButton
+                type='button'
+                variant='ghost'
+                size='2'
                 aria-label={`Open ${algorithm.name} details`}
                 onClick={handleOpenClick}
               >
-                <SquareArrowOutUpRight className="size-4" />
-              </Button>
+                <SquareArrowOutUpRight className='size-4' />
+              </IconButton>
             </Tooltip>
           </div>
         </div>
 
-        <AlgorithmNotation notation={displayNotation} className="break-words text-xs text-muted-foreground" />
+        <AlgorithmNotation notation={displayNotation} className='break-words text-xs text-muted-foreground' />
       </div>
     </div>
   );

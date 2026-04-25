@@ -11,35 +11,31 @@ describe("getCanonicalOllTopPatternFromNotation", () => {
   });
 
   it("produces distinct patterns for H (21) and Pi (22)", () => {
-    const h = getCanonicalOllTopPatternFromNotation(
-      "F (R U R' U') (R U R' U') (R U R' U') F'"
-    );
+    const h = getCanonicalOllTopPatternFromNotation("R U R' U R U' R' U R U2 R'");
     const pi = getCanonicalOllTopPatternFromNotation("R U2 (R2' U' R2 U') (R2' U2 R)");
     expect(JSON.stringify(h.pattern)).not.toBe(JSON.stringify(pi.pattern));
   });
 
   it("matches snapshot for OLL 21 (H)", () => {
-    const { pattern: p } = getCanonicalOllTopPatternFromNotation(
-      "F (R U R' U') (R U R' U') (R U R' U') F'"
-    );
+    const { pattern: p } = getCanonicalOllTopPatternFromNotation("R U R' U R U' R' U R U2 R'");
     expect(p).toMatchInlineSnapshot(`
       {
         "corners": {
           "bottomLeft": {
-            "bottom": true,
-            "left": false,
+            "bottom": false,
+            "left": true,
           },
           "bottomRight": {
-            "bottom": true,
-            "right": false,
+            "bottom": false,
+            "right": true,
           },
           "topLeft": {
-            "left": false,
-            "top": true,
+            "left": true,
+            "top": false,
           },
           "topRight": {
-            "right": false,
-            "top": true,
+            "right": true,
+            "top": false,
           },
         },
         "edgeMids": {
@@ -82,9 +78,7 @@ describe("getCanonicalOllTopPatternFromNotation", () => {
   });
 
   it("dot-style Runway leaves center U yellow but not a solid yellow U face", () => {
-    const { pattern } = getCanonicalOllTopPatternFromNotation(
-      "(R U2 R') (R' F R F') U2 (R' F R F')"
-    );
+    const { pattern } = getCanonicalOllTopPatternFromNotation("(R U2 R') (R' F R F') U2 (R' F R F')");
     expect(pattern.face[4]).toBe(true);
     expect(pattern.face.some((v) => !v)).toBe(true);
   });
@@ -96,7 +90,7 @@ describe("getCanonicalOllTopPatternFromNotation", () => {
 
   it("accepts whole-cube y inside the stored string (Spotted Chameleon) without extra canonical y", () => {
     const { pattern, yQuarterTurns } = getCanonicalOllTopPatternFromNotation(
-      "y (R U R' U') (R U' R') (F' U' F) (R U R')"
+      "y (R U R' U') (R U' R') (F' U' F) (R U R')",
     );
     expect(yQuarterTurns).toBe(0);
     expect(pattern.face).toHaveLength(9);

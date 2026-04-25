@@ -4,7 +4,7 @@ import { validateOLLAlgorithm } from "./validateOllAlgorithm";
 const SUNE = "(R U R' U) (R U2 R')";
 const T_PERM = "(R U R' U') R' F R2 U' R' U' R U R' F'";
 const H_PERM = "(M2' U M2') U2 (M2' U M2')";
-const ANTI_SUNE = "(L' U' L U') (L' U2 L)";
+const ANTI_SUNE = "(R U2 R') (U' R U' R')";
 const PI = "R U2 (R2' U' R2 U') (R2' U2 R)";
 
 describe("validateOLLAlgorithm", () => {
