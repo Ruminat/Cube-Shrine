@@ -491,7 +491,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-02-zamboni",
     name: "Zamboni",
-    notation: "R U' R2 D' r U r' D R2 U R'",
+    notation: "(R U' R2) D' (r U r') D (R2 U R')",
     description: "OLL case 2 — Zamboni.",
     category: "OLL",
     subgroupId: "oll-dot",

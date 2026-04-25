@@ -1,5 +1,6 @@
 @import 'tailwindcss';
 @import 'tw-animate-css';
+@import 'uplot/dist/uPlot.min.css';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -150,6 +151,12 @@
 }
 
 @layer base {
+  .uplot {
+    font-family: inherit;
+    width: 100% !important;
+    max-width: 100%;
+  }
+
   * {
     @apply border-border outline-ring/50;
   }

@@ -1,6 +1,7 @@
 import { Header } from "@/components/header";
 import { AlgorithmGallery } from "@/components/algorithm-gallery";
 import { SiteFooter } from "@/components/SiteFooter/SiteFooter";
+import { MARKETING_HERO_TITLE_CLASS } from "@/lib/marketing-hero-title-class";
 
 export function HomePage() {
   return (
@@ -9,9 +10,7 @@ export function HomePage() {
 
       <main className='container mx-auto px-4 py-8'>
         <div className='mb-10 text-center'>
-          <h1 className='text-balance text-4xl font-bold tracking-tight text-foreground sm:text-5xl'>
-            Master the CFOP Method
-          </h1>
+          <h1 className={MARKETING_HERO_TITLE_CLASS}>Master the CFOP Method</h1>
 
           <div className='mx-auto mt-8 grid max-w-3xl gap-4 sm:grid-cols-2'>
             <div className='rounded-lg border border-border bg-card p-4'>

@@ -30,7 +30,7 @@ function buildSubgroups(
   return subgroupOrder
     .map((id) => ({
       id,
-      title: subgroupLabels[id],
+      title: subgroupLabels[id] ?? id,
       algorithms: bucket.get(id) ?? []
     }))
     .filter((section) => section.algorithms.length > 0);
