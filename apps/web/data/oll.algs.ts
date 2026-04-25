@@ -59,7 +59,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-21-h",
     name: "H",
-    notation: "R U R' U R U' R' U R U2 R'",
+    notation: "(R U R' U) (R U' R' U) (R U2 R')",
     description: "OLL case 21 — H.",
     category: "OLL",
     subgroupId: "oll-cross",
@@ -239,7 +239,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-56-streetlights",
     name: "Streetlights",
-    notation: "F (R U R' U') R F' (r U R' U') r'",
+    notation: "F R U R' U' R F' r U R' U' r'",
     description: "OLL case 56 — Streetlights.",
     category: "OLL",
     subgroupId: "oll-i",
@@ -248,7 +248,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-52-rice-cooker",
     name: "Rice Cooker",
-    notation: "(R U R' U) R d' R U' R' F'",
+    notation: "F (U R U' R') (U R U' R') F'",
     description: "OLL case 52 — Rice Cooker.",
     category: "OLL",
     subgroupId: "oll-i",
@@ -257,7 +257,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-55-highway",
     name: "Highway",
-    notation: "y (R' F R U) (R U' R2' F') R2 U' R' (U R U R')",
+    notation: "r U2 R' U' R2 r' U R' U' r U' r'",
     description: "OLL case 55 — Highway.",
     category: "OLL",
     subgroupId: "oll-i",
@@ -392,7 +392,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-29-spotted-chameleon",
     name: "Spotted Chameleon",
-    notation: "y (R U R' U') (R U' R') (F' U' F) (R U R')",
+    notation: "M U (R U R' U') (R' F R F') M'",
     description: "OLL case 29 — Spotted Chameleon.",
     category: "OLL",
     subgroupId: "oll-y",
@@ -401,7 +401,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-30-anti-spotted-chameleon",
     name: "Anti Spotted Chameleon",
-    notation: "y' F U (R U2 R' U') (R U2 R' U') F'",
+    notation: "M U' (L' U' L U) (L F' L' F) M'",
     description: "OLL case 30 — Anti Spotted Chameleon.",
     category: "OLL",
     subgroupId: "oll-y",
@@ -491,7 +491,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-02-zamboni",
     name: "Zamboni",
-    notation: "F (R U R' U') F' f (R U R' U') f'",
+    notation: "R U' R2 D' r U r' D R2 U R'",
     description: "OLL case 2 — Zamboni.",
     category: "OLL",
     subgroupId: "oll-dot",
@@ -500,7 +500,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-03-anti-nazi",
     name: "Anti Nazi",
-    notation: "f (R U R' U') f' U' F (R U R' U') F'",
+    notation: "M U (R' F2 R) (U L' U L) M'",
     description: "OLL case 3 — Anti Nazi.",
     category: "OLL",
     subgroupId: "oll-dot",
@@ -509,7 +509,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-04-nazi",
     name: "Nazi",
-    notation: "f (R U R' U') f' U F (R U R' U') F'",
+    notation: "M U' (r U2 r') (U' R U' R') M'",
     description: "OLL case 4 — Nazi.",
     category: "OLL",
     subgroupId: "oll-dot",
@@ -518,7 +518,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-18-crown",
     name: "Crown",
-    notation: "(r U R' U) (R U2 r') (r' U' R U') (R' U2 r)",
+    notation: "(R U2 R2) (F R F') U2 M' (U R U' r')",
     description: "OLL case 18 — Crown.",
     category: "OLL",
     subgroupId: "oll-dot",
