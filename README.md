@@ -55,8 +55,9 @@ npx serve apps/web/out
 **Other root scripts**
 
 ```bash
-npm run lint             # ESLint in apps/web
+npm run lint             # ESLint in apps/web + @shreklabs/cube-shrine
 npm run test             # Vitest in @shreklabs/cube-shrine
+npm run codecheck        # typecheck + lint (+ tests in @shreklabs/cube-shrine)
 npm run start            # next start in apps/web (after a production build)
 npm run storybook        # Storybook for @shreklabs/cube-shrine (port 6006)
 npm run build-storybook  # static Storybook → packages/cube-shrine/storybook-static/
@@ -94,6 +95,82 @@ npm run build-storybook
 ```
 
 Included groups: **every atomic move** (grid), **OLL / PLL** views (OLL iso vs top-flat toggle; PLL matches the site’s top-flat + arrows), **vanilla canvas** (core + render only), and **notation utilities** (parse / invert / reversed steps).
+
+### Publish `@shreklabs/cube-shrine` to npm
+
+From `packages/cube-shrine`:
+
+```bash
+npm run release:pack     # verify package contents and dist output locally
+npm run release:publish  # codecheck + build + npm publish
+```
+
+Manual flow (equivalent):
+
+```bash
+npm run prepublishOnly   # runs codecheck + build
+npm publish --access public
+```
+
+Notes:
+
+- The package publishes only `dist/` (`"files": ["dist"]` in `package.json`).
+- You must be authenticated in npm (`npm login`) with rights for `@shreklabs`.
+
+### Automated npm publish (GitHub Actions)
+
+Use the manual workflow **`Publish @shreklabs/cube-shrine`** in GitHub Actions.
+
+It will:
+
+- bump `packages/cube-shrine/package.json` version automatically (from `bump` or explicit `version` input),
+- run library checks/build (`prepublishOnly`),
+- publish to npm with provenance,
+- push the release commit and git tag,
+- optionally create a GitHub Release for that tag.
+
+Required repo secret:
+
+- `NPM_TOKEN` (npm automation token with publish rights for `@shreklabs`).
+
+## Using the library in other projects
+
+Install from npm:
+
+```bash
+npm install @shreklabs/cube-shrine
+```
+
+Use the focused entrypoint you need:
+
+```ts
+// Node-safe core utilities
+import { parseNotation, normalizeAlgorithm, validatePLLAlgorithm } from "@shreklabs/cube-shrine/core";
+
+// Canvas rendering helpers
+import { drawCube, getPaletteFromCSS } from "@shreklabs/cube-shrine/render";
+
+// React components/hooks (optional)
+import { MiniCube, useAlgorithmInput } from "@shreklabs/cube-shrine/react";
+```
+
+Minimal browser example (core + render):
+
+```ts
+import { createSolvedCubies, parseNotation, applyRotationStep } from "@shreklabs/cube-shrine/core";
+import { drawCube } from "@shreklabs/cube-shrine/render";
+
+const cubies = createSolvedCubies();
+for (const step of parseNotation("R U R' U'")) {
+  applyRotationStep(cubies, step);
+}
+
+const canvas = document.querySelector("canvas");
+const ctx = canvas?.getContext("2d");
+if (ctx) {
+  drawCube(ctx, 220, cubies);
+}
+```
 
 **Entry points** (import maps are defined in `packages/cube-shrine/package.json` under `"exports"`):
 

@@ -19,7 +19,8 @@ Copy this file (or sections) into a new chat when onboarding an agent. Keep it u
 
 - **Gallery**: `apps/web/components/algorithm-gallery.tsx` → `AlgorithmGroup` → **`AlgorithmCard`**.
 - **Detail modal**: **`AlgorithmModal`** — notation, reverse toggle, copy, **3D `CubeRenderer`**, **PLL top-flat** (always), and **OLL top-flat** when the OLL toggle is on.
-- **Top flat toggle (OLL only)**: `apps/web/lib/client-storage/top-flat-view.ts` + `apps/web/lib/top-flat-view-prefs.ts` — switch in `AlgorithmGroup` for OLL. PLL cards always use the canvas top-flat with arrows.
+- **Top flat toggles (OLL + PLL)**: `apps/web/lib/client-storage/top-flat-view.ts` + `apps/web/lib/top-flat-view-prefs.ts` — switches in `AlgorithmGroup`, persisted via `@nanostores/persistent`.
+- **Collapsed group/subgroup state**: `apps/web/lib/client-storage/hidden-disclosures.ts` + `apps/web/lib/hidden-disclosures-prefs.ts` — persisted disclosure visibility (hidden IDs) via `@nanostores/persistent`.
 - **PLL on the site**: `parseReversedNotation(displayNotation)` plus **`pllCanonicalYQuarterTurns`** whole-cube `y` steps on **`MiniCube` / `CubeRenderer`**, matching `getPllTopViewFromNotation` (see library section). Algorithm data lives in **`apps/web/data/pll.algs.ts`** (subgroups: edges, corners, adjacent, diagonal, G — no separate “test” group).
 
 ## `packages/cube-shrine` (`@shreklabs/cube-shrine`)
@@ -96,8 +97,16 @@ World-axis palette (tests depend on it):
 | `npm run test` | Vitest in `@shreklabs/cube-shrine`. |
 | `npm run lint` | ESLint: `web` then `@shreklabs/cube-shrine`. |
 | `npm run typecheck` | `tsc --noEmit` in library then `web`. |
-| `npm run codecheck` | Per-workspace `typecheck && lint` (library, then web). |
+| `npm run codecheck` | Per-workspace checks: library `typecheck && lint && test`, then web `typecheck && lint`. |
 | `npm run storybook` / `build-storybook` | Storybook in `packages/cube-shrine`. |
+
+## NPM publishing (`@shreklabs/cube-shrine`)
+
+- Package is configured for public npm publishing from `packages/cube-shrine` (`publishConfig.access = "public"`).
+- Release helpers:
+  - `npm run release:pack` — build + `npm pack --dry-run`
+  - `npm run release:publish` — `prepublishOnly` then `npm publish --access public`
+- `prepublishOnly` runs `npm run codecheck && npm run build`.
 
 ## Conventions
 
@@ -106,6 +115,7 @@ World-axis palette (tests depend on it):
 ## CI / known gotchas
 
 - **GitHub Actions** builds with `npm run build` and deploys **`apps/web/out`** (see `.github/workflows/deploy-pages.yml`).
+- **Manual npm release workflow**: `.github/workflows/publish-npm.yml` bumps `@shreklabs/cube-shrine` version, runs `prepublishOnly`, publishes to npm, pushes commit/tag, and can create a GitHub Release. Requires repo secret `NPM_TOKEN`.
 - **Library `npm run build`**: JS via Vite; **`.d.ts`** via `tsc -p tsconfig.build-dts.json` (no `vite-plugin-dts` / api-extractor).
 
 ## Human docs

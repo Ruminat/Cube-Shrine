@@ -1,0 +1,71 @@
+import { Canvas, Meta } from "@storybook/blocks";
+import * as VanillaCanvasStories from "./VanillaCanvas.stories";
+
+<Meta title="Docs/Getting started" />
+
+# Getting started
+
+`@shreklabs/cube-shrine` provides three focused entrypoints:
+
+- `@shreklabs/cube-shrine/core` for notation/model logic (Node-safe),
+- `@shreklabs/cube-shrine/render` for canvas rendering helpers,
+- `@shreklabs/cube-shrine/react` for optional React components/hooks.
+
+## Install
+
+```bash
+npm install @shreklabs/cube-shrine
+```
+
+## Choose imports by runtime
+
+```ts
+import { parseNotation, normalizeAlgorithm } from "@shreklabs/cube-shrine/core";
+import { drawCube } from "@shreklabs/cube-shrine/render";
+import { MiniCube } from "@shreklabs/cube-shrine/react";
+```
+
+Use only `core` in server/Node environments. Use `render` in browser/canvas contexts. Add `react` only in React apps.
+
+## Minimal core + render example
+
+```ts
+import { createSolvedCubies, parseNotation, applyRotationStep } from "@shreklabs/cube-shrine/core";
+import { drawCube } from "@shreklabs/cube-shrine/render";
+
+const cubies = createSolvedCubies();
+for (const step of parseNotation("R U R' U'")) {
+  applyRotationStep(cubies, step);
+}
+
+drawCube(ctx, 220, cubies);
+```
+
+## No React example (live story)
+
+The story below renders a cube using only the `core` + `render` entrypoints for drawing.
+
+<Canvas of={VanillaCanvasStories.PlainCanvas} />
+
+Minimal version of that approach:
+
+```ts
+import { createSolvedCubies, parseNotation, applyRotationStep } from "@shreklabs/cube-shrine/core";
+import { drawCube } from "@shreklabs/cube-shrine/render";
+
+const cubies = createSolvedCubies();
+parseNotation("R U R' U'").forEach((step) => applyRotationStep(cubies, step));
+drawCube(ctx, 220, cubies);
+```
+
+## Next steps
+
+- See story groups for ready-to-run examples:
+  - `Docs/Core entrypoint`
+  - `Docs/Render entrypoint`
+  - `Docs/React entrypoint`
+  - `The cube/Basic moves`
+  - `The cube/OLL`
+  - `The cube/PLL`
+  - `Components`
+  - `Utilities`

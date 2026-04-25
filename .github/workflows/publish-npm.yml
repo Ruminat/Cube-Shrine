@@ -1,0 +1,84 @@
+name: Publish @shreklabs/cube-shrine
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: "Version bump type (ignored when version is set)"
+        required: true
+        default: patch
+        type: choice
+        options:
+          - patch
+          - minor
+          - major
+          - prerelease
+      version:
+        description: "Explicit version (example: 0.2.0). Leave empty to use bump."
+        required: false
+        type: string
+      create_github_release:
+        description: "Create a GitHub Release for the published tag"
+        required: true
+        default: true
+        type: boolean
+
+permissions:
+  contents: write
+  id-token: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Configure git identity
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Bump package version
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ -n "${{ github.event.inputs.version }}" ]]; then
+            npm version "${{ github.event.inputs.version }}" -w @shreklabs/cube-shrine
+          else
+            npm version "${{ github.event.inputs.bump }}" -w @shreklabs/cube-shrine
+          fi
+          VERSION="$(node -p "require('./packages/cube-shrine/package.json').version")"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "TAG=v$VERSION" >> "$GITHUB_ENV"
+
+      - name: Verify and build package
+        run: npm run prepublishOnly -w @shreklabs/cube-shrine
+
+      - name: Publish to npm
+        run: npm publish -w @shreklabs/cube-shrine --access public --provenance
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+
+      - name: Push release commit and tag
+        run: |
+          git push origin HEAD
+          git push origin "$TAG"
+
+      - name: Create GitHub release
+        if: ${{ github.event.inputs.create_github_release == 'true' }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release create "$TAG" --generate-notes --title "$TAG"

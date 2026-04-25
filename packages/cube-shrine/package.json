@@ -1,7 +1,30 @@
 {
   "name": "@shreklabs/cube-shrine",
   "version": "0.1.0",
-  "private": true,
+  "description": "Rubik's Cube notation/model utilities, 2D canvas rendering, and optional React helpers.",
+  "private": false,
+  "license": "UNLICENSED",
+  "author": "Shrek Labs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruminat/Cube-Shrine.git",
+    "directory": "packages/cube-shrine"
+  },
+  "bugs": {
+    "url": "https://github.com/ruminat/Cube-Shrine/issues"
+  },
+  "homepage": "https://github.com/ruminat/Cube-Shrine/tree/main/packages/cube-shrine#readme",
+  "keywords": [
+    "rubiks-cube",
+    "cube",
+    "algorithm",
+    "notation",
+    "canvas",
+    "react"
+  ],
+  "publishConfig": {
+    "access": "public"
+  },
   "type": "module",
   "sideEffects": false,
   "types": "./dist/entry-index.d.ts",
@@ -32,6 +55,9 @@
     "codecheck": "npm run typecheck && npm run lint && npm run test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "prepublishOnly": "npm run codecheck && npm run build",
+    "release:pack": "npm run build && npm pack --dry-run",
+    "release:publish": "npm run prepublishOnly && npm publish --access public",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static"
   },

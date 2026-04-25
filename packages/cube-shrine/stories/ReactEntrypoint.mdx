@@ -1,0 +1,37 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Docs/React entrypoint" />
+
+# React entrypoint
+
+Use `@shreklabs/cube-shrine/react` for React-first integrations.
+
+## Best for
+
+- drop-in cube previews (`MiniCube`),
+- hydration-safe palette updates (`CubePaletteProvider`),
+- validated notation inputs (`useAlgorithmInput`, `useAlgorithmTextArea`).
+
+## Common imports
+
+```tsx
+import {
+  MiniCube,
+  CubePaletteProvider,
+  useAlgorithmInput,
+  useAlgorithmTextArea
+} from "@shreklabs/cube-shrine/react";
+```
+
+## Minimal usage
+
+```tsx
+import { parseNotation } from "@shreklabs/cube-shrine/core";
+import { MiniCube } from "@shreklabs/cube-shrine/react";
+
+export function Preview() {
+  return <MiniCube size={120} preparationRotations={parseNotation("R U R' U'")} />;
+}
+```
+
+`react` has `react` and `react-dom` peer dependencies (`^18 || ^19`).

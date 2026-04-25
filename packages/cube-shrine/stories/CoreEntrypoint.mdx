@@ -1,0 +1,36 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Docs/Core entrypoint" />
+
+# Core entrypoint
+
+Use `@shreklabs/cube-shrine/core` for notation parsing, algorithm validation/normalization, cubie state, and move application.
+
+## Best for
+
+- Node/server usage (no DOM/canvas requirements),
+- algorithm preprocessing pipelines,
+- validation and canonicalization before rendering.
+
+## Common imports
+
+```ts
+import {
+  parseNotation,
+  parseReversedNotation,
+  invertNotationSequence,
+  validateAlgorithm,
+  normalizeAlgorithm,
+  createSolvedCubies,
+  applyRotationStep
+} from "@shreklabs/cube-shrine/core";
+```
+
+## Minimal usage
+
+```ts
+const normalized = normalizeAlgorithm("  R   U2'  M'  ");
+const steps = parseNotation(normalized ?? "");
+const cubies = createSolvedCubies();
+steps.forEach((step) => applyRotationStep(cubies, step));
+```

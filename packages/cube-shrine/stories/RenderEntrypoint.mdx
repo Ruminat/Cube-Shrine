@@ -1,0 +1,33 @@
+import { Meta } from "@storybook/blocks";
+
+<Meta title="Docs/Render entrypoint" />
+
+# Render entrypoint
+
+Use `@shreklabs/cube-shrine/render` for Canvas drawing helpers.
+
+## Best for
+
+- browser canvas rendering without React,
+- custom UIs that already manage state themselves,
+- top-flat OLL/PLL diagrams and isometric cube previews.
+
+## Common imports
+
+```ts
+import {
+  drawCube,
+  getPaletteFromCSS,
+  drawOllTopPatternOnCanvas,
+  drawPllTopPatternOnCanvas
+} from "@shreklabs/cube-shrine/render";
+```
+
+## Minimal usage
+
+```ts
+const palette = getPaletteFromCSS(document.documentElement);
+drawCube(ctx, cubies, 220, palette);
+```
+
+`drawCube` uses the cubie state from `@shreklabs/cube-shrine/core`, so most integrations combine both entrypoints.
