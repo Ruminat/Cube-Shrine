@@ -10,7 +10,7 @@ const siteBase = process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? "";
 const themeInitSrc = `${siteBase}/theme-init.js`;
 
 export const metadata: Metadata = {
-  title: "Cube Shrine — CFOP algorithm gallery",
+  title: "Cube Shrine",
   description:
     "Interactive Rubik's Cube algorithm gallery for the CFOP method. Explore OLL and PLL with accurate visualizations.",
   icons: {
@@ -24,13 +24,13 @@ export function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang='en' suppressHydrationWarning>
       <head>
         {/* eslint-disable-next-line @next/next/no-sync-scripts -- blocking theme init; see `public/theme-init.js` */}
         <script src={themeInitSrc} />
       </head>
-      <body className="font-sans antialiased" suppressHydrationWarning>
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+      <body className='font-sans antialiased' suppressHydrationWarning>
+        <ThemeProvider attribute='class' defaultTheme='system' enableSystem disableTransitionOnChange>
           <RadixCubeProviders>{children}</RadixCubeProviders>
         </ThemeProvider>
         <Analytics />

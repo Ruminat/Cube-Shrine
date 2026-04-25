@@ -1,7 +1,7 @@
 "use client";
 
 import { useCallback, useMemo, useState } from "react";
-import { Copy } from "lucide-react";
+import { CircleHelp, Copy } from "lucide-react";
 import { parseNotation } from "@shreklabs/cube-shrine/core";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 import { AlertDialog, Button, Dialog, Flex, IconButton, Text, Tooltip } from "@radix-ui/themes";
@@ -52,20 +52,48 @@ export function TimerSolveDetailsDialog({
           <Dialog.Title>Solve Details</Dialog.Title>
           {selectedSolveEntry ? (
             <Flex gap="2">
-              <Button type="button" size="1" variant={selectedSolveEntry.penalty === "+2" ? "solid" : "soft"} onClick={onTogglePlusTwo}>
-                +2
-              </Button>
-              <Button type="button" size="1" variant={selectedSolveEntry.penalty === "DNF" ? "solid" : "soft"} onClick={onToggleDnf}>
-                DNF
-              </Button>
+              <Tooltip content="Add or remove a +2 second penalty">
+                <Button
+                  type="button"
+                  size="1"
+                  variant={selectedSolveEntry.penalty === "+2" ? "solid" : "soft"}
+                  onClick={onTogglePlusTwo}
+                >
+                  +2
+                </Button>
+              </Tooltip>
+              <Tooltip content="Mark this solve as Did Not Finish">
+                <Button
+                  type="button"
+                  size="1"
+                  variant={selectedSolveEntry.penalty === "DNF" ? "solid" : "soft"}
+                  onClick={onToggleDnf}
+                >
+                  DNF
+                </Button>
+              </Tooltip>
             </Flex>
           ) : null}
         </Flex>
         {selectedSolveEntry !== null ? (
           <Flex direction="column" gap="4">
-            <Text>Result: {formatSolveEntry(selectedSolveEntry)}</Text>
-            <Text>Solve number: {selectedSolveIndex !== null ? selectedSolveIndex + 1 : "-"}</Text>
-            <Text>Rank in finite solves: {selectedRank ?? "-"}</Text>
+            <Text>Time: {formatSolveEntry(selectedSolveEntry)}</Text>
+            <Flex align="center" gap="2">
+              <Text>Solve number: {selectedSolveIndex !== null ? selectedSolveIndex + 1 : "-"}</Text>
+              <Tooltip content="This solve position in your session history (1-based).">
+                <IconButton type="button" size="1" variant="ghost" aria-label="What is solve number?">
+                  <CircleHelp className="size-4 text-muted-foreground" />
+                </IconButton>
+              </Tooltip>
+            </Flex>
+            <Flex align="center" gap="2">
+              <Text>Rank in finite solves: {selectedRank ?? "-"}</Text>
+              <Tooltip content="Placement among solves with a valid numeric time; DNF solves are excluded.">
+                <IconButton type="button" size="1" variant="ghost" aria-label="What is rank in finite solves?">
+                  <CircleHelp className="size-4 text-muted-foreground" />
+                </IconButton>
+              </Tooltip>
+            </Flex>
 
             <Flex direction="column" gap="2">
               <Flex align="center" justify="between" gap="2">
@@ -111,7 +139,9 @@ export function TimerSolveDetailsDialog({
               </AlertDialog.Root>
 
               <Dialog.Close>
-                <Button type="button">Ok</Button>
+                <Button type="button" autoFocus>
+                  Close
+                </Button>
               </Dialog.Close>
             </Flex>
           </Flex>

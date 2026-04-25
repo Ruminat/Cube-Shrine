@@ -68,22 +68,22 @@ export function TimerStatisticsSection({
             <StatReadoutRow label="Best" value={formatStatsValue(mo3.best.value)} sigma={formatSigma(mo3.best.sigma)} />
           </StatGroup>
 
-          <StatGroup title="Average of 5 (trimmed)">
+          <StatGroup title="Average of 5">
             <StatReadoutRow label="Current" value={formatStatsValue(ao5.current.value)} sigma={formatSigma(ao5.current.sigma)} />
             <StatReadoutRow label="Best" value={formatStatsValue(ao5.best.value)} sigma={formatSigma(ao5.best.sigma)} />
           </StatGroup>
 
-          <StatGroup title="Average of 12 (trimmed)">
+          <StatGroup title="Average of 12">
             <StatReadoutRow label="Current" value={formatStatsValue(ao12.current.value)} sigma={formatSigma(ao12.current.sigma)} />
             <StatReadoutRow label="Best" value={formatStatsValue(ao12.best.value)} sigma={formatSigma(ao12.best.sigma)} />
           </StatGroup>
 
-          <StatGroup title="Average of 50 (trimmed)">
+          <StatGroup title="Average of 50">
             <StatReadoutRow label="Current" value={formatStatsValue(ao50.current.value)} sigma={formatSigma(ao50.current.sigma)} />
             <StatReadoutRow label="Best" value={formatStatsValue(ao50.best.value)} sigma={formatSigma(ao50.best.sigma)} />
           </StatGroup>
 
-          <StatGroup title="Average of 100 (trimmed)">
+          <StatGroup title="Average of 100">
             <StatReadoutRow label="Current" value={formatStatsValue(ao100.current.value)} sigma={formatSigma(ao100.current.sigma)} />
             <StatReadoutRow label="Best" value={formatStatsValue(ao100.best.value)} sigma={formatSigma(ao100.best.sigma)} />
           </StatGroup>
