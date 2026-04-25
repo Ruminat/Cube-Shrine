@@ -1,9 +1,15 @@
 "use client";
 
+import { useCallback, type SyntheticEvent } from "react";
 import { ChevronDownIcon } from "@radix-ui/react-icons";
 import { Heading, Switch, Text } from "@radix-ui/themes";
 import { AlgorithmCard } from "@/components/AlgorithmCard/AlgorithmCard";
 import type { AlgorithmCategoryGroup } from "@/data/algorithms";
+import {
+  useHiddenAlgorithmGroups,
+  useHiddenAlgorithmSubgroups,
+} from "@/lib/client-storage/hidden-disclosures";
+import { hiddenAlgorithmGroups$, hiddenAlgorithmSubgroups$ } from "@/lib/hidden-disclosures-prefs";
 import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { ollTopFlatViewEnabled$, pllTopFlatViewEnabled$ } from "@/lib/top-flat-view-prefs";
 import type { Algorithm } from "@/types/algorithm";
@@ -49,10 +55,37 @@ export function AlgorithmGroup({
   onToggleAlgorithmReverse,
 }: AlgorithmGroupProps) {
   const headingId = `alg-group-${group.category}`;
+  const hiddenGroups = useHiddenAlgorithmGroups();
+  const hiddenSubgroups = useHiddenAlgorithmSubgroups();
+  const isGroupOpen = !hiddenGroups.has(group.category);
   const isOll = group.category === "OLL";
   const isPll = group.category === "PLL";
   const ollSwitchChecked = useOllTopFlatViewEnabled();
   const pllSwitchChecked = usePllTopFlatViewEnabled();
+
+  const handleGroupToggle = useCallback(
+    (event: SyntheticEvent<HTMLDetailsElement>) => {
+      const nextIsOpen = event.currentTarget.open;
+      const next = new Set(hiddenAlgorithmGroups$.get());
+      if (nextIsOpen) {
+        next.delete(group.category);
+      } else {
+        next.add(group.category);
+      }
+      hiddenAlgorithmGroups$.set(Array.from(next));
+    },
+    [group.category]
+  );
+
+  const handleSubgroupToggle = useCallback((subgroupId: string, nextIsOpen: boolean) => {
+    const next = new Set(hiddenAlgorithmSubgroups$.get());
+    if (nextIsOpen) {
+      next.delete(subgroupId);
+    } else {
+      next.add(subgroupId);
+    }
+    hiddenAlgorithmSubgroups$.set(Array.from(next));
+  }, []);
 
   const hasFlatViewToggle = isOll || isPll;
   const categorySummaryClass = hasFlatViewToggle
@@ -100,7 +133,7 @@ export function AlgorithmGroup({
   if (group.variant === "flat") {
     return (
       <section className={styles.group} aria-labelledby={headingId}>
-        <details className={styles.disclosure} open aria-labelledby={headingId}>
+        <details className={styles.disclosure} open={isGroupOpen} aria-labelledby={headingId} onToggle={handleGroupToggle}>
           <summary className={categorySummaryClass}>
             <ChevronDownIcon className={styles.summaryChevron} aria-hidden />
             <Heading as="h2" size="4" className={styles.groupTitle} id={headingId}>
@@ -123,7 +156,7 @@ export function AlgorithmGroup({
 
   return (
     <section className={styles.group} aria-labelledby={headingId}>
-      <details className={styles.disclosure} open aria-labelledby={headingId}>
+      <details className={styles.disclosure} open={isGroupOpen} aria-labelledby={headingId} onToggle={handleGroupToggle}>
         <summary className={categorySummaryClass}>
           <ChevronDownIcon className={styles.summaryChevron} aria-hidden />
           <Heading as="h2" size="4" className={styles.groupTitle} id={headingId}>
@@ -135,8 +168,15 @@ export function AlgorithmGroup({
           <div className={styles.subgroups}>
             {group.subgroups.map((section) => {
               const subHeadingId = `alg-subgroup-${section.id}`;
+              const isSubgroupOpen = !hiddenSubgroups.has(section.id);
               return (
-                <details key={section.id} className={styles.subDisclosure} open aria-labelledby={subHeadingId}>
+                <details
+                  key={section.id}
+                  className={styles.subDisclosure}
+                  open={isSubgroupOpen}
+                  aria-labelledby={subHeadingId}
+                  onToggle={(event) => handleSubgroupToggle(section.id, event.currentTarget.open)}
+                >
                   <summary className={styles.subSummary}>
                     <ChevronDownIcon className={styles.subSummaryChevron} aria-hidden />
                     <h3 className={styles.subgroupTitle} id={subHeadingId}>

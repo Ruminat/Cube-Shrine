@@ -11,7 +11,7 @@ import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { Button as UiButton } from "@/components/ui/button";
 import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { cn } from "@/lib/utils";
-import { invertNotationSequence, parseReversedNotation } from "@shreklabs/cube-shrine/core";
+import { invertNotationSequence, normalizeAlgorithm, parseReversedNotation } from "@shreklabs/cube-shrine/core";
 import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
 import type { Algorithm } from "@/types/algorithm";
@@ -32,9 +32,20 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
   const [isCopied, setIsCopied] = useState(false);
   const ollTopFlat = useOllTopFlatViewEnabled();
   const pllTopFlat = usePllTopFlatViewEnabled();
-  const baseNotation = algorithm?.notation ?? "";
+  const baseNotation = useMemo(() => {
+    if (!algorithm) {
+      return "";
+    }
+    return normalizeAlgorithm(algorithm.notation) ?? algorithm.notation;
+  }, [algorithm]);
   const displayNotation = useMemo(
-    () => (isReversed ? invertNotationSequence(baseNotation) : baseNotation),
+    () => {
+      if (!isReversed) {
+        return baseNotation;
+      }
+      const reversedNotation = invertNotationSequence(baseNotation);
+      return normalizeAlgorithm(reversedNotation) ?? reversedNotation;
+    },
     [baseNotation, isReversed]
   );
   const ollCanon = useMemo(() => {

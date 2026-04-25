@@ -127,7 +127,7 @@ describe("drawOllTopPatternOnCanvas", () => {
     const size = 64;
     const { ctx, fillCount } = createCounting2dContext(size);
     const p = emptyFacePattern();
-    p.face = p.face.map(() => true);
+    p.face = [true, true, true, true, true, true, true, true, true];
     drawOllTopPatternOnCanvas(ctx, size, p, TEST_PALETTE);
     expect(fillCount()).toBe(9);
   });

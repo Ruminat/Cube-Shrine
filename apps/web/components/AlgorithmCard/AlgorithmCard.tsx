@@ -5,7 +5,7 @@ import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotat
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
-import { invertNotationSequence, parseReversedNotation } from "@shreklabs/cube-shrine/core";
+import { invertNotationSequence, normalizeAlgorithm, parseReversedNotation } from "@shreklabs/cube-shrine/core";
 import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
@@ -29,10 +29,17 @@ function AlgorithmCardComponent({ algorithm, isReversed, onClick, onToggleRevers
   const useOllSpecialTopView = algorithm.category === "OLL" && ollTopFlat;
   const usePllSpecialTopView = algorithm.category === "PLL" && pllTopFlat;
 
-  const displayNotation = useMemo(
-    () => (isReversed ? invertNotationSequence(algorithm.notation) : algorithm.notation),
-    [algorithm.notation, isReversed]
+  const normalizedForwardNotation = useMemo(
+    () => normalizeAlgorithm(algorithm.notation) ?? algorithm.notation,
+    [algorithm.notation]
   );
+  const displayNotation = useMemo(() => {
+    if (!isReversed) {
+      return normalizedForwardNotation;
+    }
+    const reversedNotation = invertNotationSequence(normalizedForwardNotation);
+    return normalizeAlgorithm(reversedNotation) ?? reversedNotation;
+  }, [isReversed, normalizedForwardNotation]);
   const ollCanon = useMemo(() => {
     if (algorithm.category !== "OLL") {
       return null;

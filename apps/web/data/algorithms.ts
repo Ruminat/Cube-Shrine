@@ -1,6 +1,7 @@
 import type { Algorithm, AlgorithmCategory } from "@/types/algorithm";
 import { ollAlgorithms, ollSubgroupLabels, ollSubgroupOrder } from "@/data/oll.algs";
 import { pllAlgorithms, pllSubgroupLabels, pllSubgroupOrder } from "@/data/pll.algs";
+import { normalizeAlgorithm } from "@shreklabs/cube-shrine/core";
 
 /** Display order for grouped sections on the home page. */
 export const ALGORITHM_CATEGORY_ORDER: AlgorithmCategory[] = ["F2L", "OLL", "PLL"];
@@ -67,4 +68,7 @@ export function getAlgorithmGroupsByCategory(source: Algorithm[]): AlgorithmCate
   return groups;
 }
 
-export const algorithms: Algorithm[] = [...pllAlgorithms, ...ollAlgorithms];
+export const algorithms: Algorithm[] = [...pllAlgorithms, ...ollAlgorithms].map((algorithm) => ({
+  ...algorithm,
+  notation: normalizeAlgorithm(algorithm.notation) ?? algorithm.notation,
+}));

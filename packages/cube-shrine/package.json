@@ -29,7 +29,7 @@
   "scripts": {
     "build": "vite build --config vite.core.config.ts && vite build --config vite.render.config.ts && vite build --config vite.react.config.ts && vite build --config vite.index.config.ts && tsc -p tsconfig.build-dts.json",
     "lint": "eslint . --max-warnings=0",
-    "codecheck": "npm run typecheck && npm run lint",
+    "codecheck": "npm run typecheck && npm run lint && npm run test",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
     "storybook": "storybook dev -p 6006",
