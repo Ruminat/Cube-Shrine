@@ -1,18 +1,6 @@
 import type { Meta, StoryObj } from "@storybook/react";
 import { useMemo, useState } from "react";
-import {
-  Badge,
-  Box,
-  Button,
-  Card,
-  Flex,
-  Grid,
-  Heading,
-  ScrollArea,
-  Separator,
-  Text,
-  TextArea
-} from "@radix-ui/themes";
+import { Badge, Box, Button, Card, Flex, Grid, Heading, ScrollArea, Separator, Text, TextArea } from "@radix-ui/themes";
 import {
   invertNotationSequence,
   normalizeAlgorithm,
@@ -21,7 +9,7 @@ import {
   validateAlgorithm,
   validateOLLAlgorithm,
   validatePLLAlgorithm,
-  type RotationStep
+  type RotationStep,
 } from "@shreklabs/cube-shrine/core";
 import { MiniCube } from "@shreklabs/cube-shrine/react";
 
@@ -31,10 +19,10 @@ const meta = {
     docs: {
       description: {
         component:
-          "Notation parsing, reversal, and PLL-style reversed steps. The **mini cube** applies `parseNotation(input)` so you can see the forward interpretation at a glance."
-      }
-    }
-  }
+          "Notation parsing, reversal, and PLL-style reversed steps. The **mini cube** applies `parseNotation(input)` so you can see the forward interpretation at a glance.",
+      },
+    },
+  },
 } satisfies Meta;
 
 export default meta;
@@ -48,18 +36,18 @@ const formatStep = (step: RotationStep): string => {
 function StepChipRail({ label, steps, color }: { label: string; steps: RotationStep[]; color: "blue" | "orange" }) {
   return (
     <Box>
-      <Text size="1" weight="medium" color="gray" mb="1">
+      <Text size='1' weight='medium' color='gray' mb='1'>
         {label}
       </Text>
-      <ScrollArea scrollbars="horizontal" type="hover">
-        <Flex gap="1" pb="1" style={{ minHeight: 28 }}>
+      <ScrollArea scrollbars='horizontal' type='hover'>
+        <Flex gap='1' pb='1' style={{ minHeight: 28 }}>
           {steps.length === 0 ? (
-            <Text size="1" color="gray">
+            <Text size='1' color='gray'>
               (empty)
             </Text>
           ) : (
             steps.map((step, i) => (
-              <Badge key={`${label}-${i}`} color={color} variant="soft" size="1">
+              <Badge key={`${label}-${i}`} color={color} variant='soft' size='1'>
                 {formatStep(step)}
               </Badge>
             ))
@@ -72,8 +60,8 @@ function StepChipRail({ label, steps, color }: { label: string; steps: RotationS
 
 function JsonPanel({ label, value }: { label: string; value: unknown }) {
   return (
-    <Card size="1">
-      <Text size="1" weight="medium" color="gray" mb="2">
+    <Card size='1'>
+      <Text size='1' weight='medium' color='gray' mb='2'>
         {label}
       </Text>
       <pre
@@ -85,7 +73,7 @@ function JsonPanel({ label, value }: { label: string; value: unknown }) {
           fontSize: 12,
           overflow: "auto",
           maxHeight: 200,
-          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace"
+          fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
         }}
       >
         {JSON.stringify(value, null, 2)}
@@ -102,16 +90,16 @@ function AlgorithmUtilsPanel() {
   const reversedSteps = useMemo(() => parseReversedNotation(input), [input]);
 
   return (
-    <Flex direction="column" gap="4" style={{ maxWidth: 1100 }}>
-      <Heading size="5">Notation utilities</Heading>
-      <Text size="2" color="gray">
+    <Flex direction='column' gap='4' style={{ maxWidth: 1100 }}>
+      <Heading size='5'>Notation utilities</Heading>
+      <Text size='2' color='gray'>
         Edit WCA-style notation. Forward steps become move chips; JSON panels mirror what tests and the site consume.
       </Text>
 
-      <Grid columns={{ initial: "1", md: "2" }} gap="4" align="start">
-        <Flex direction="column" gap="3">
+      <Grid columns={{ initial: "1", md: "2" }} gap='4' align='start'>
+        <Flex direction='column' gap='3'>
           <Box>
-            <Text size="2" weight="medium" mb="1" as="div">
+            <Text size='2' weight='medium' mb='1' as='div'>
               Input
             </Text>
             <TextArea
@@ -122,20 +110,20 @@ function AlgorithmUtilsPanel() {
             />
           </Box>
 
-          <StepChipRail label="parseNotation — forward atomic steps" steps={parsed} color="blue" />
-          <StepChipRail label="parseReversedNotation — PLL-style prep steps" steps={reversedSteps} color="orange" />
+          <StepChipRail label='parseNotation — forward atomic steps' steps={parsed} color='blue' />
+          <StepChipRail label='parseReversedNotation — PLL-style prep steps' steps={reversedSteps} color='orange' />
 
-          <Card size="1" variant="surface">
-            <Flex direction="column" gap="2">
-              <Text size="1" weight="medium" color="gray" as="div">
+          <Card size='1' variant='surface'>
+            <Flex direction='column' gap='2'>
+              <Text size='1' weight='medium' color='gray' as='div'>
                 invertNotationSequence — string that undoes the sequence
               </Text>
               <Text
-                size="2"
-                as="div"
+                size='2'
+                as='div'
                 style={{
                   fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace",
-                  wordBreak: "break-word"
+                  wordBreak: "break-word",
                 }}
               >
                 {inverted || "—"}
@@ -143,25 +131,28 @@ function AlgorithmUtilsPanel() {
             </Flex>
           </Card>
 
-          <Separator size="4" />
+          <Separator size='4' />
 
-          <JsonPanel label="parseNotation(input) — RotationStep[]" value={parsed} />
-          <JsonPanel label="parseReversedNotation(input) — RotationStep[]" value={reversedSteps} />
+          <JsonPanel label='parseNotation(input) — RotationStep[]' value={parsed} />
+          <JsonPanel label='parseReversedNotation(input) — RotationStep[]' value={reversedSteps} />
         </Flex>
 
-        <Card size="2" variant="classic">
-          <Flex direction="column" gap="3" align="center">
-            <Text size="2" weight="bold">
+        <Card size='2' variant='classic'>
+          <Flex direction='column' gap='3' align='center'>
+            <Text size='2' weight='bold'>
               Cube after forward parse
             </Text>
-            <Text size="1" color="gray" align="center">
-              <code>MiniCube</code> with <code>preparationRotations={'{'}parseNotation(input){'}'}</code>
+            <Text size='1' color='gray' align='center'>
+              <code>MiniCube</code> with{" "}
+              <code>
+                preparationRotations={"{"}parseNotation(input){"}"}
+              </code>
             </Text>
-            <Box py="2">
+            <Box py='2'>
               <MiniCube size={112} preparationRotations={parsed} deferUntilVisible={false} />
             </Box>
-            <Separator size="4" />
-            <Text size="1" color="gray" align="center">
+            <Separator size='4' />
+            <Text size='1' color='gray' align='center'>
               PLL / inverse prep uses the orange chip sequence instead of the blue one.
             </Text>
           </Flex>
@@ -173,7 +164,7 @@ function AlgorithmUtilsPanel() {
 
 export const ParseInvertReverse: StoryObj = {
   name: "Parse · invert · reversed steps",
-  render: () => <AlgorithmUtilsPanel />
+  render: () => <AlgorithmUtilsPanel />,
 };
 
 function ValidateNormalizePanel() {
@@ -182,9 +173,9 @@ function ValidateNormalizePanel() {
   const normalized = normalizeAlgorithm(sample);
 
   return (
-    <Flex direction="column" gap="3" style={{ maxWidth: 720 }}>
-      <Heading size="5">Validate & normalize</Heading>
-      <Text size="2" color="gray">
+    <Flex direction='column' gap='3' style={{ maxWidth: 720 }}>
+      <Heading size='5'>Validate & normalize</Heading>
+      <Text size='2' color='gray'>
         <code>validateAlgorithm</code> returns an error string or <code>undefined</code>.{" "}
         <code>normalizeAlgorithm</code> returns a canonical string only when the input is valid (see Vitest:{" "}
         <code>algorithmFormat.test.ts</code>).
@@ -195,19 +186,19 @@ function ValidateNormalizePanel() {
         rows={3}
         style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", fontSize: 13 }}
       />
-      <Card size="1" variant="surface">
-        <Text size="2" weight="medium" mb="1" as="div">
+      <Card size='1' variant='surface'>
+        <Text size='2' weight='medium' mb='1' as='div'>
           validateAlgorithm(input)
         </Text>
-        <Text size="2" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
+        <Text size='2' style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
           {validationError === undefined ? "undefined (valid)" : JSON.stringify(validationError)}
         </Text>
       </Card>
-      <Card size="1" variant="surface">
-        <Text size="2" weight="medium" mb="1" as="div">
+      <Card size='1' variant='surface'>
+        <Text size='2' weight='medium' mb='1' as='div'>
           normalizeAlgorithm(input)
         </Text>
-        <Text size="2" style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
+        <Text size='2' style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace" }}>
           {normalized === undefined ? "undefined (invalid)" : JSON.stringify(normalized)}
         </Text>
       </Card>
@@ -217,35 +208,40 @@ function ValidateNormalizePanel() {
 
 export const ValidateAndNormalize: StoryObj = {
   name: "Validate & normalize",
-  render: () => <ValidateNormalizePanel />
+  render: () => <ValidateNormalizePanel />,
 };
 
 const SUNE = "(R U R' U) (R U2 R')";
 const T_PERM = "(R U R' U') R' F R2 U' R' U' R U R' F'";
-const ANTI_SUNE = "(L' U' L U') (L' U2 L)";
+const ANTI_SUNE = "(R U2 R') (U' R U' R')";
 
 function CaseValidatorRow({ label, error }: { label: string; error: string | undefined }) {
   const ok = error === undefined;
   return (
     <Card
-      size="2"
+      size='2'
       style={{
         borderLeftWidth: 4,
         borderLeftStyle: "solid",
         borderLeftColor: ok ? "var(--green-9)" : "var(--red-9)",
-        background: ok ? "var(--green-a2)" : "var(--red-a2)"
+        background: ok ? "var(--green-a2)" : "var(--red-a2)",
       }}
     >
-      <Flex align="center" justify="between" gap="3" wrap="wrap">
-        <Text size="2" weight="bold">
+      <Flex align='center' justify='between' gap='3' wrap='wrap'>
+        <Text size='2' weight='bold'>
           {label}
         </Text>
-        <Badge color={ok ? "green" : "red"} variant="solid" size="2" highContrast>
+        <Badge color={ok ? "green" : "red"} variant='solid' size='2' highContrast>
           {ok ? "Pass" : "Fail"}
         </Badge>
       </Flex>
       {!ok ? (
-        <Text size="1" color="gray" mt="2" style={{ fontFamily: "ui-monospace, Menlo, monospace", wordBreak: "break-word" }}>
+        <Text
+          size='1'
+          color='gray'
+          mt='2'
+          style={{ fontFamily: "ui-monospace, Menlo, monospace", wordBreak: "break-word" }}
+        >
           {error}
         </Text>
       ) : null}
@@ -259,11 +255,11 @@ function ValidateCaseAlgorithmsPanel() {
   const ollError = validateOLLAlgorithm(notation);
 
   return (
-    <Flex direction="column" gap="3" style={{ maxWidth: 720 }}>
-      <Heading size="5">PLL / OLL case validation</Heading>
-      <Text size="2" color="gray">
-        Green and red rows summarize the cube after <code>parseReversedNotation</code> (same prep as <code>MiniCube</code>{" "}
-        cards). Failed checks show the message under the row.
+    <Flex direction='column' gap='3' style={{ maxWidth: 720 }}>
+      <Heading size='5'>PLL / OLL case validation</Heading>
+      <Text size='2' color='gray'>
+        Green and red rows summarize the cube after <code>parseReversedNotation</code> (same prep as{" "}
+        <code>MiniCube</code> cards). Failed checks show the message under the row.
       </Text>
       <TextArea
         value={notation}
@@ -271,24 +267,24 @@ function ValidateCaseAlgorithmsPanel() {
         rows={4}
         style={{ fontFamily: "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace", fontSize: 13 }}
       />
-      <Flex gap="2" wrap="wrap">
-        <Button type="button" size="1" variant="soft" color="blue" onClick={() => setNotation(SUNE)}>
+      <Flex gap='2' wrap='wrap'>
+        <Button type='button' size='1' variant='soft' color='blue' onClick={() => setNotation(SUNE)}>
           Apply Sune example
         </Button>
-        <Button type="button" size="1" variant="soft" color="blue" onClick={() => setNotation(ANTI_SUNE)}>
+        <Button type='button' size='1' variant='soft' color='blue' onClick={() => setNotation(ANTI_SUNE)}>
           Apply Anti-Sune example
         </Button>
-        <Button type="button" size="1" variant="soft" color="orange" onClick={() => setNotation(T_PERM)}>
+        <Button type='button' size='1' variant='soft' color='orange' onClick={() => setNotation(T_PERM)}>
           Apply T perm example
         </Button>
       </Flex>
-      <CaseValidatorRow label="validatePLLAlgorithm" error={pllError} />
-      <CaseValidatorRow label="validateOLLAlgorithm" error={ollError} />
+      <CaseValidatorRow label='validatePLLAlgorithm' error={pllError} />
+      <CaseValidatorRow label='validateOLLAlgorithm' error={ollError} />
     </Flex>
   );
 }
 
 export const ValidatePllOllCases: StoryObj = {
   name: "Validate · PLL / OLL cases",
-  render: () => <ValidateCaseAlgorithmsPanel />
+  render: () => <ValidateCaseAlgorithmsPanel />,
 };

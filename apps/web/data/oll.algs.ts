@@ -50,7 +50,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-26-anti-sune",
     name: "Anti Sune",
-    notation: "(L' U' L U') (L' U2 L)",
+    notation: "(R U2 R') (U' R U' R')",
     description: "OLL case 26 — Anti Sune.",
     category: "OLL",
     subgroupId: "oll-cross",
