@@ -1,10 +1,10 @@
 "use client";
 
 import Image from "next/image";
+import { IconButton } from "@radix-ui/themes";
 import { useTheme } from "@/components/theme-provider";
 import { useDocumentAppearance } from "@/lib/document-appearance";
 import { Moon, Sun } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const siteIconSrc = `${process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? ""}/icon.png`;
 
@@ -33,16 +33,17 @@ export function Header() {
         </div>
 
         <div className="flex items-center gap-2">
-          <Button
+          <IconButton
             variant="ghost"
-            size="sm"
+            size="2"
             onClick={() => setTheme(appearance === "dark" ? "light" : "dark")}
-            className="relative h-9 w-9 p-0"
+            className="relative"
+            aria-label="Toggle theme"
           >
             <Sun className="h-4 w-4 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
             <Moon className="absolute h-4 w-4 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
             <span className="sr-only">Toggle theme</span>
-          </Button>
+          </IconButton>
         </div>
       </div>
     </header>

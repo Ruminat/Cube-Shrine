@@ -2,13 +2,11 @@
 
 import { useCallback, useMemo, useState } from "react";
 import { Copy, RotateCcw } from "lucide-react";
-import { Tooltip } from "@radix-ui/themes";
-import { Box, Button, Dialog, Flex, Text } from "@radix-ui/themes";
+import { Box, Button, Dialog, Flex, IconButton, Text, Tooltip } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
-import { Button as UiButton } from "@/components/ui/button";
 import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
 import { cn } from "@/lib/utils";
 import { invertNotationSequence, normalizeAlgorithm, parseReversedNotation } from "@shreklabs/cube-shrine/core";
@@ -18,8 +16,6 @@ import type { Algorithm } from "@/types/algorithm";
 
 const MODAL_CUBE_SIZE = 240;
 const MODAL_TOP_FLAT_PX = 168;
-
-const iconButtonClass = "size-8 shrink-0";
 
 interface AlgorithmModalProps {
   algorithm: Algorithm | null;
@@ -38,16 +34,13 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
     }
     return normalizeAlgorithm(algorithm.notation) ?? algorithm.notation;
   }, [algorithm]);
-  const displayNotation = useMemo(
-    () => {
-      if (!isReversed) {
-        return baseNotation;
-      }
-      const reversedNotation = invertNotationSequence(baseNotation);
-      return normalizeAlgorithm(reversedNotation) ?? reversedNotation;
-    },
-    [baseNotation, isReversed]
-  );
+  const displayNotation = useMemo(() => {
+    if (!isReversed) {
+      return baseNotation;
+    }
+    const reversedNotation = invertNotationSequence(baseNotation);
+    return normalizeAlgorithm(reversedNotation) ?? reversedNotation;
+  }, [baseNotation, isReversed]);
   const ollCanon = useMemo(() => {
     if (!algorithm || algorithm.category !== "OLL") {
       return null;
@@ -66,7 +59,7 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
     if (algorithm?.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
       const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
         face: "y" as const,
-        angle: 90 as const
+        angle: 90 as const,
       }));
       return [...rev, ...yTail];
     }
@@ -92,66 +85,64 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
 
   return (
     <Dialog.Root open onOpenChange={(isOpen) => (!isOpen ? onClose() : undefined)}>
-      <Dialog.Content maxWidth="980px" style={{ maxHeight: "90vh", overflow: "auto" }}>
-        <Flex direction="column" gap="4">
+      <Dialog.Content maxWidth='980px' style={{ maxHeight: "90vh", overflow: "auto" }}>
+        <Flex direction='column' gap='4'>
           <Box>
             <Dialog.Title>{algorithm.name}</Dialog.Title>
             <Dialog.Description>
-              <Text as="span" size="2" color="gray">
+              <Text as='span' size='2' color='gray'>
                 {algorithm.description}
               </Text>
             </Dialog.Description>
           </Box>
 
-          <Flex align="center" justify="center" gap="2" wrap="wrap">
+          <Flex align='center' justify='center' gap='4' wrap='wrap'>
             <AlgorithmNotation notation={displayNotation} />
-            <Flex align="center" gap="1">
+            <Flex align='center' gap='4'>
               <Tooltip content={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}>
-                <UiButton
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={cn(iconButtonClass, isReversed && "bg-accent")}
+                <IconButton
+                  type='button'
+                  variant='ghost'
+                  size='2'
                   aria-label={isReversed ? "Show forward algorithm" : "Show reversed algorithm"}
                   aria-pressed={isReversed}
                   onClick={onToggleReverse}
                 >
-                  <RotateCcw className="size-4" />
-                </UiButton>
+                  <RotateCcw className='size-4' />
+                </IconButton>
               </Tooltip>
               <Tooltip content={isCopied ? "Copied!" : "Copy notation"}>
-                <UiButton
-                  type="button"
-                  variant="ghost"
-                  size="icon"
-                  className={iconButtonClass}
+                <IconButton
+                  type='button'
+                  variant='ghost'
+                  size='2'
                   aria-label={`Copy ${algorithm.name} notation`}
                   onClick={handleCopyNotation}
                 >
                   <Copy className={cn("size-4", isCopied && "text-green-600 dark:text-green-500")} />
-                </UiButton>
+                </IconButton>
               </Tooltip>
             </Flex>
           </Flex>
 
           {ollTopPattern ? (
-            <Flex justify="center" align="center">
+            <Flex justify='center' align='center'>
               <OllTopView pattern={ollTopPattern} label={algorithm.name} size={MODAL_TOP_FLAT_PX} />
             </Flex>
           ) : null}
           {pllTopModel && pllTopFlat ? (
-            <Flex justify="center" align="center">
+            <Flex justify='center' align='center'>
               <PllTopView model={pllTopModel} label={algorithm.name} size={MODAL_TOP_FLAT_PX} />
             </Flex>
           ) : null}
 
-          <Flex justify="center" align="center">
+          <Flex justify='center' align='center'>
             <CubeRenderer size={MODAL_CUBE_SIZE} preparationRotations={notationRotations} />
           </Flex>
 
-          <Flex justify="end">
+          <Flex justify='end'>
             <Dialog.Close>
-              <Button variant="soft" color="gray">
+              <Button variant='soft' color='gray' autoFocus>
                 Close
               </Button>
             </Dialog.Close>
