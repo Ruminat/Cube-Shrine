@@ -239,7 +239,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-56-streetlights",
     name: "Streetlights",
-    notation: "F R U R' U' R F' r U R' U' r'",
+    notation: "r' U' r U' R' U R U' R' U R r' U r",
     description: "OLL case 56 — Streetlights.",
     category: "OLL",
     subgroupId: "oll-i",
@@ -257,7 +257,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-55-highway",
     name: "Highway",
-    notation: "r U2 R' U' R2 r' U R' U' r U' r'",
+    notation: "R' F R U R U' R2 F' R2 U' R' U R U R'",
     description: "OLL case 55 — Highway.",
     category: "OLL",
     subgroupId: "oll-i",
