@@ -410,7 +410,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-41-awkward-fish",
     name: "Awkward Fish",
-    notation: "(R U R' U) (R U2' R') F (R U R' U') F'",
+    notation: "F U R2 (D R' U' R D') R2 F'",
     description: "OLL case 41 — Awkward Fish.",
     category: "OLL",
     subgroupId: "oll-y",
@@ -419,7 +419,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-42-lefty-awkward-fish",
     name: "Lefty Awkward Fish",
-    notation: "(R' U' R U') (R' U2 R) F (R U R' U') F'",
+    notation: "R' U' F2 u' (R U R') D R2 B",
     description: "OLL case 42 — Lefty Awkward Fish.",
     category: "OLL",
     subgroupId: "oll-y",
