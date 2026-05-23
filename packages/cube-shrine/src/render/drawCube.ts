@@ -25,7 +25,7 @@ export const computeStickerCorners2D = (
   size: number,
   uHalf: number,
   vHalf: number
-): { x: number; y: number }[] => {
+): readonly [{ x: number; y: number }, { x: number; y: number }, { x: number; y: number }, { x: number; y: number }] => {
   const normalVector = normalToVector(normal);
   const center = {
     x: cubie.x + normalVector.x * 0.5,
@@ -39,7 +39,8 @@ export const computeStickerCorners2D = (
     { x: center.x + u.x * uHalf + v.x * vHalf, y: center.y + u.y * uHalf + v.y * vHalf, z: center.z + u.z * uHalf + v.z * vHalf },
     { x: center.x - u.x * uHalf + v.x * vHalf, y: center.y - u.y * uHalf + v.y * vHalf, z: center.z - u.z * uHalf + v.z * vHalf }
   ];
-  return corners3.map((corner) => projectCubePoint(corner, tile, size));
+  const projected = corners3.map((corner) => projectCubePoint(corner, tile, size));
+  return [projected[0]!, projected[1]!, projected[2]!, projected[3]!];
 };
 
 export type DrawStickerFaceOptions = {

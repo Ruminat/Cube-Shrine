@@ -17,4 +17,6 @@ out/
 packages/cube-shrine/dist/
 packages/cube-shrine/storybook-static/
 tsconfig.tsbuildinfo
+**/.eslintcache
 .DS_Store
+apps/web/tsconfig.cube-shrine-check.tsbuildinfo

@@ -231,7 +231,7 @@ function CaseValidatorRow({ label, error }: { label: string; error: string | und
         <Text size='2' weight='bold'>
           {label}
         </Text>
-        <Badge color={ok ? "green" : "red"} variant='solid' size='2' highContrast>
+        <Badge color={ok ? "green" : "red"} variant='solid' size='2'>
           {ok ? "Pass" : "Fail"}
         </Badge>
       </Flex>

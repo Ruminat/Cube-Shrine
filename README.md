@@ -56,12 +56,15 @@ npx serve apps/web/out
 
 ```bash
 npm run lint             # ESLint in apps/web + @shreklabs/cube-shrine
-npm run test             # Vitest in @shreklabs/cube-shrine
-npm run codecheck        # typecheck + lint (+ tests in @shreklabs/cube-shrine)
+npm run test             # Vitest in apps/web + @shreklabs/cube-shrine
+npm run typecheck        # tsc --noEmit in both workspaces (extend root tsconfig.json)
+npm run codecheck        # typecheck + lint + test in both workspaces
 npm run start            # next start in apps/web (after a production build)
 npm run storybook        # Storybook for @shreklabs/cube-shrine (port 6006)
 npm run build-storybook  # static Storybook → packages/cube-shrine/storybook-static/
 ```
+
+`npm install` installs a **pre-commit** hook (via `simple-git-hooks`) that runs `npm run codecheck` when you commit on **`main`** or **`master`**.
 
 ## Working on `@shreklabs/cube-shrine` independently
 

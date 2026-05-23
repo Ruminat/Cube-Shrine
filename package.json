@@ -7,10 +7,17 @@
     "dev": "npm run dev -w web",
     "lint": "npm run lint -w web && npm run lint -w @shreklabs/cube-shrine",
     "codecheck": "npm run codecheck -w @shreklabs/cube-shrine && npm run codecheck -w web",
-    "test": "npm run test -w @shreklabs/cube-shrine",
+    "test": "npm run test -w @shreklabs/cube-shrine && npm run test -w web",
     "typecheck": "npm run typecheck -w @shreklabs/cube-shrine && npm run typecheck -w web",
     "start": "npm run start -w web",
     "storybook": "npm run storybook -w @shreklabs/cube-shrine",
-    "build-storybook": "npm run build-storybook -w @shreklabs/cube-shrine"
+    "build-storybook": "npm run build-storybook -w @shreklabs/cube-shrine",
+    "prepare": "simple-git-hooks"
+  },
+  "simple-git-hooks": {
+    "pre-commit": "node scripts/pre-commit.mjs"
+  },
+  "devDependencies": {
+    "simple-git-hooks": "^2.13.1"
   }
 }

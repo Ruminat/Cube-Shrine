@@ -14,7 +14,7 @@ Copy this file (or sections) into a new chat when onboarding an agent. Keep it u
 - **Local package**: `@shreklabs/cube-shrine` with `transpilePackages` in `next.config.mjs`.
 - **Algorithm data**: `apps/web/data/` — `oll.algs.ts`, `pll.algs.ts`, `algorithms.ts`. Types: `apps/web/types/algorithm.ts` (imports `RotationStep` from `@shreklabs/cube-shrine/core`).
 - **Path alias**: `@/*` → `apps/web/*`.
-- **TypeScript (`apps/web/tsconfig.json`)**: `strict` plus **`noImplicitAny`**, **`noImplicitReturns`**, **`noFallthroughCasesInSwitch`**, **`noUncheckedIndexedAccess`**, **`exactOptionalPropertyTypes`**, **`forceConsistentCasingInFileNames`**. (Library `packages/cube-shrine` tsconfig remains `strict` only; tightening it there is a larger follow-up if desired.)
+- **TypeScript**: repo root **`tsconfig.json`** — shared compiler defaults (`strict`, indexed-access safety, unused/unreachable checks, `verbatimModuleSyntax`, `moduleResolution: "bundler"`, etc.); `"files": []` so the root is a base only. Extended by **`apps/web/tsconfig.json`** and **`packages/cube-shrine/tsconfig.json`**.
 
 ### Routes
 
@@ -128,7 +128,8 @@ World-axis palette (tests depend on it):
 | `npm run test` | Vitest in `@shreklabs/cube-shrine`. |
 | `npm run lint` | ESLint: `web` then `@shreklabs/cube-shrine`. |
 | `npm run typecheck` | `tsc --noEmit` in library then `web`. |
-| `npm run codecheck` | Per-workspace checks: library `typecheck && lint && test`, then web `typecheck && lint`. |
+| `npm run codecheck` | Per-workspace checks: library `typecheck && lint && test`, then web `typecheck && lint && test`. Both extend root **`tsconfig.json`**. |
+| *(git hook)* | After `npm install`, **pre-commit** on `main`/`master` runs root `codecheck` (`scripts/pre-commit.mjs` + `simple-git-hooks`). |
 | `npm run storybook` / `build-storybook` | Storybook in `packages/cube-shrine`. |
 
 ## NPM publishing (`@shreklabs/cube-shrine`)

@@ -152,7 +152,17 @@ export function drawOllTopPatternOnCanvas(
     for (let col = 0; col < 3; col += 1) {
       const index = row * 3 + col;
       const { x: cx, y: cy } = faceCellOrigin(faceX, faceY, cell, gap, row, col);
-      drawFlatCell(context, cx, cy, cell, cell, pattern.face[index], yellowHex, whiteHex, lineWidthThin);
+      drawFlatCell(
+        context,
+        cx,
+        cy,
+        cell,
+        cell,
+        pattern.face[index] ?? false,
+        yellowHex,
+        whiteHex,
+        lineWidthThin
+      );
     }
   }
 

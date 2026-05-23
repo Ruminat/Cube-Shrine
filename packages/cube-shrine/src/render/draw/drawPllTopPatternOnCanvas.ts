@@ -270,22 +270,26 @@ export function drawPllTopPatternOnCanvas(
   context.clearRect(0, 0, s, s);
 
   for (let col = 0; col < 3; col += 1) {
-    const hex = palette[model.topStrip[col]] ?? palette.white;
+    const stripKey = model.topStrip[col] ?? "white";
+    const hex = palette[stripKey] ?? palette.white;
     fillGradientQuad(context, pllTopTrap(colBarLeft, topBarY, barAlong, barThick, trapSkew, col), hex, quadStroke);
   }
 
   for (let col = 0; col < 3; col += 1) {
-    const hex = palette[model.bottomStrip[col]] ?? palette.white;
+    const stripKey = model.bottomStrip[col] ?? "white";
+    const hex = palette[stripKey] ?? palette.white;
     fillGradientQuad(context, pllBottomTrap(colBarLeft, botBarY, barAlong, barThick, trapSkew, col), hex, quadStroke);
   }
 
   for (let row = 0; row < 3; row += 1) {
-    const hex = palette[model.leftStrip[row]] ?? palette.white;
+    const stripKey = model.leftStrip[row] ?? "white";
+    const hex = palette[stripKey] ?? palette.white;
     fillGradientQuad(context, pllLeftTrap(rowBarTop, leftBarX, barAlong, barThick, trapSkew, row), hex, quadStroke);
   }
 
   for (let row = 0; row < 3; row += 1) {
-    const hex = palette[model.rightStrip[row]] ?? palette.white;
+    const stripKey = model.rightStrip[row] ?? "white";
+    const hex = palette[stripKey] ?? palette.white;
     fillGradientQuad(context, pllRightTrap(rowBarTop, rightBarX, barAlong, barThick, trapSkew, row), hex, quadStroke);
   }
 
@@ -293,7 +297,16 @@ export function drawPllTopPatternOnCanvas(
     for (let col = 0; col < 3; col += 1) {
       const index = row * 3 + col;
       const { x: cx, y: cy } = faceCellOrigin(faceX, faceY, cell, gap, row, col);
-      drawPaletteCell(context, cx, cy, cell, cell, model.face9[index], palette, lineWidthThin);
+      drawPaletteCell(
+        context,
+        cx,
+        cy,
+        cell,
+        cell,
+        model.face9[index] ?? "white",
+        palette,
+        lineWidthThin
+      );
     }
   }
 

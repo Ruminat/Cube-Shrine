@@ -6,9 +6,9 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint . --max-warnings=0",
+    "lint": "eslint . --max-warnings=0 --cache --cache-location .eslintcache",
     "test": "vitest run",
-    "codecheck": "npm run typecheck && npm run lint",
+    "codecheck": "npm run typecheck && npm run lint && npm run test",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {

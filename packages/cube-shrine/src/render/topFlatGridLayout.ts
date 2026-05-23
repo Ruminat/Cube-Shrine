@@ -22,11 +22,18 @@ export function fillGradientQuad(
   const g = context.createLinearGradient(cx - 3, cy - 3, cx + 5, cy + 5);
   g.addColorStop(0, tintColor(hex, 0.12));
   g.addColorStop(1, shadeColor(hex, 0.1));
-  context.beginPath();
-  context.moveTo(corners[0].x, corners[0].y);
-  for (let i = 1; i < corners.length; i += 1) {
-    context.lineTo(corners[i].x, corners[i].y);
+  const c0 = corners[0];
+  const c1 = corners[1];
+  const c2 = corners[2];
+  const c3 = corners[3];
+  if (c0 === undefined || c1 === undefined || c2 === undefined || c3 === undefined) {
+    return;
   }
+  context.beginPath();
+  context.moveTo(c0.x, c0.y);
+  context.lineTo(c1.x, c1.y);
+  context.lineTo(c2.x, c2.y);
+  context.lineTo(c3.x, c3.y);
   context.closePath();
   context.fillStyle = g;
   context.fill();
