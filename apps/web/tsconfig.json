@@ -29,9 +29,11 @@
       }
     ],
     "paths": {
-      "@/*": [
-        "./*"
-      ]
+      "@/*": ["./*"],
+      "@shreklabs/cube-shrine/react": ["../../packages/cube-shrine/src/entry-react.ts"],
+      "@shreklabs/cube-shrine/render": ["../../packages/cube-shrine/src/entry-render.ts"],
+      "@shreklabs/cube-shrine/core": ["../../packages/cube-shrine/src/entry-core.ts"],
+      "@shreklabs/cube-shrine": ["../../packages/cube-shrine/src/entry-index.ts"]
     }
   },
   "include": [
