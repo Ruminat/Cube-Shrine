@@ -22,7 +22,9 @@ export function useInViewport<T extends HTMLElement>(options?: UseInViewportOpti
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        setIsIntersecting(entry.isIntersecting);
+        if (entry) {
+          setIsIntersecting(entry.isIntersecting);
+        }
       },
       { root, rootMargin, threshold: 0 }
     );

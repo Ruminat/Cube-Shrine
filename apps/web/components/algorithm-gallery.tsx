@@ -1,6 +1,7 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { useAlgorithmGalleryFilter } from "@/lib/client-storage/algorithm-gallery-filter";
 import { Search } from "lucide-react";
 import { AlgorithmGroup } from "@/components/AlgorithmGroup/AlgorithmGroup";
 import { AlgorithmModal } from "@/components/AlgorithmModal/AlgorithmModal";
@@ -26,9 +27,12 @@ function filterBySubgroup(list: Algorithm[], subgroupId: string | null) {
 }
 
 export function AlgorithmGallery() {
-  const [selectedCategory, setSelectedCategory] = useState<AlgorithmCategory | "All">("All");
-  const [selectedSubgroup, setSelectedSubgroup] = useState<string | null>(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const {
+    filter: { category: selectedCategory, subgroupId: selectedSubgroup, searchQuery },
+    setCategory,
+    setSubgroupId,
+    setSearchQuery,
+  } = useAlgorithmGalleryFilter();
   const [selected, setSelected] = useState<Algorithm | null>(null);
   const [reversedById, setReversedById] = useState<Record<string, boolean>>({});
 
@@ -88,9 +92,17 @@ export function AlgorithmGallery() {
       .map((id) => ({ id, title: labels[id as keyof typeof labels] }));
   }, [selectedCategory]);
 
+  useEffect(() => {
+    if (
+      selectedSubgroup &&
+      !availableSubgroups.some((subgroup) => subgroup.id === selectedSubgroup)
+    ) {
+      setSubgroupId(null);
+    }
+  }, [availableSubgroups, selectedSubgroup, setSubgroupId]);
+
   const handleCategoryChange = (category: AlgorithmCategory | "All") => {
-    setSelectedCategory(category);
-    setSelectedSubgroup(null);
+    setCategory(category);
   };
 
   const totalShown = filteredAlgorithms.length;
@@ -132,7 +144,7 @@ export function AlgorithmGallery() {
             <Badge
               variant={selectedSubgroup === null ? "secondary" : "outline"}
               className="cursor-pointer px-3 py-1 text-xs transition-colors"
-              onClick={() => setSelectedSubgroup(null)}
+              onClick={() => setSubgroupId(null)}
             >
               All
             </Badge>
@@ -141,7 +153,7 @@ export function AlgorithmGallery() {
                 key={subgroup.id}
                 variant={selectedSubgroup === subgroup.id ? "secondary" : "outline"}
                 className="cursor-pointer px-3 py-1 text-xs transition-colors"
-                onClick={() => setSelectedSubgroup(subgroup.id)}
+                onClick={() => setSubgroupId(subgroup.id)}
               >
                 {subgroup.title}
               </Badge>
