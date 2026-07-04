@@ -19,6 +19,8 @@ export function Header() {
   const router = useRouter();
   const pathname = usePathname() ?? "";
   const isTimerRoute = pathname.includes("/timer");
+  const isNotationRoute = pathname.includes("/notation");
+  const isAlgorithmsRoute = !isTimerRoute && !isNotationRoute;
   const [isNavigating, setIsNavigating] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMdUp = useMediaQuery("(min-width: 768px)");
@@ -80,12 +82,24 @@ export function Header() {
                 onClick={(event) => handleNavClick("/", event)}
                 className={cn(
                   "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
-                  !isTimerRoute
+                  isAlgorithmsRoute
                     ? "bg-muted text-foreground"
                     : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                 )}
               >
                 Algorithms
+              </Link>
+              <Link
+                href='/notation'
+                onClick={(event) => handleNavClick("/notation", event)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                  isNotationRoute
+                    ? "bg-muted text-foreground"
+                    : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                )}
+              >
+                Notation
               </Link>
               <Link
                 href='/timer'
@@ -128,12 +142,27 @@ export function Header() {
                     }}
                     className={cn(
                       "rounded-md px-3 py-2 text-sm font-medium transition-colors",
-                      !isTimerRoute
+                      isAlgorithmsRoute
                         ? "bg-muted text-foreground"
                         : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
                     )}
                   >
                     Algorithms
+                  </Link>
+                  <Link
+                    href='/notation'
+                    onClick={(event) => {
+                      setMobileMenuOpen(false);
+                      handleNavClick("/notation", event);
+                    }}
+                    className={cn(
+                      "rounded-md px-3 py-2 text-sm font-medium transition-colors",
+                      isNotationRoute
+                        ? "bg-muted text-foreground"
+                        : "text-muted-foreground hover:bg-muted/60 hover:text-foreground",
+                    )}
+                  >
+                    Notation
                   </Link>
                   <Link
                     href='/timer'

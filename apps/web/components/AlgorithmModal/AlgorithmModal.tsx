@@ -8,8 +8,9 @@ import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { OllTopView } from "@/components/OllTopView/OllTopView";
 import { PllTopView } from "@/components/PllTopView/PllTopView";
 import { useOllTopFlatViewEnabled, usePllTopFlatViewEnabled } from "@/lib/client-storage/top-flat-view";
+import { getAlgorithmPreviewRotations } from "@/lib/algorithm-preview-rotations";
 import { cn } from "@/lib/utils";
-import { invertNotationSequence, normalizeAlgorithm, parseReversedNotation } from "@shreklabs/cube-shrine/core";
+import { invertNotationSequence, normalizeAlgorithm } from "@shreklabs/cube-shrine/core";
 import { getPllTopViewFromNotation } from "@/lib/pll-top-view-from-source";
 import { getCanonicalOllTopPatternFromNotation } from "@/lib/oll-canonical-top-pattern";
 import type { Algorithm } from "@/types/algorithm";
@@ -54,17 +55,10 @@ export function AlgorithmModal({ algorithm, isReversed, onClose, onToggleReverse
     return getPllTopViewFromNotation(algorithm.id, displayNotation);
   }, [algorithm, displayNotation]);
 
-  const notationRotations = useMemo(() => {
-    const rev = parseReversedNotation(displayNotation);
-    if (algorithm?.category === "PLL" && pllTopModel && pllTopModel.pllCanonicalYQuarterTurns > 0) {
-      const yTail = Array.from({ length: pllTopModel.pllCanonicalYQuarterTurns }, () => ({
-        face: "y" as const,
-        angle: 90 as const,
-      }));
-      return [...rev, ...yTail];
-    }
-    return rev;
-  }, [algorithm?.category, displayNotation, pllTopModel]);
+  const notationRotations = useMemo(
+    () => (algorithm ? getAlgorithmPreviewRotations(algorithm, displayNotation, pllTopModel) : []),
+    [algorithm, displayNotation, pllTopModel],
+  );
   const ollTopPattern = useMemo(() => {
     if (!algorithm || algorithm.category !== "OLL" || !ollTopFlat || !ollCanon) {
       return null;

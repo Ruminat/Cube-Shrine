@@ -1,6 +1,6 @@
 import type { RotationStep } from "@shreklabs/cube-shrine/core";
 
-export type AlgorithmCategory = "PLL" | "OLL" | "F2L";
+export type AlgorithmCategory = "PLL" | "OLL" | "F2L" | "Notation";
 
 export interface Algorithm {
   id: string;

@@ -8,11 +8,12 @@ import { AlgorithmModal } from "@/components/AlgorithmModal/AlgorithmModal";
 import { algorithms, getAlgorithmGroupsByCategory } from "@/data/algorithms";
 import { ollSubgroupLabels, ollSubgroupOrder } from "@/data/oll.algs";
 import { pllSubgroupLabels, pllSubgroupOrder } from "@/data/pll.algs";
-import type { Algorithm, AlgorithmCategory } from "@/types/algorithm";
+import type { AlgorithmGalleryCategoryFilter } from "@/lib/algorithm-gallery-filter-prefs";
+import type { Algorithm } from "@/types/algorithm";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 
-const categories: Array<AlgorithmCategory | "All"> = [
+const categories: AlgorithmGalleryCategoryFilter[] = [
   "All",
   // "F2L",
   "OLL",
@@ -101,7 +102,7 @@ export function AlgorithmGallery() {
     }
   }, [availableSubgroups, selectedSubgroup, setSubgroupId]);
 
-  const handleCategoryChange = (category: AlgorithmCategory | "All") => {
+  const handleCategoryChange = (category: AlgorithmGalleryCategoryFilter) => {
     setCategory(category);
   };
 
