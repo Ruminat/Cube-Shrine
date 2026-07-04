@@ -1,0 +1,58 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-vps
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Code check
+        run: npm run codecheck
+
+      # GITHUB_ACTIONS=false keeps next.config.mjs from applying the
+      # GitHub Pages base path, so the export is built for the site root.
+      - name: Build static export
+        run: GITHUB_ACTIONS=false npm run build
+
+      - name: Build Storybook
+        run: STORYBOOK_BASE_PATH="/storybook/" npm run build-storybook -w @shreklabs/cube-shrine
+
+      - name: Copy Storybook into static export
+        run: |
+          set -euo pipefail
+          mkdir -p apps/web/out/storybook
+          cp -r packages/cube-shrine/storybook-static/. apps/web/out/storybook/
+
+      - name: Copy to VPS
+        uses: appleboy/scp-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          source: apps/web/out/*
+          target: /var/www/cube-shrine
+          strip_components: 3
+          overwrite: true
