@@ -68,6 +68,28 @@ const FACE_DESCRIPTIONS: Record<CubeFace, string> = {
 
 const TURN_SUFFIXES = ["", "'", "2"] as const;
 
+const SUFFIX_TITLE_INDEX = { "": 0, "'": 1, "2": 2 } as const;
+
+/** Readable titles per face, indexed like TURN_SUFFIXES: [clockwise, counterclockwise, double]. */
+const MOVE_TITLES: Record<CubeFace, [cw: string, ccw: string, double: string]> = {
+  U: ["Up clockwise", "Up counterclockwise", "Up 180°"],
+  D: ["Down clockwise", "Down counterclockwise", "Down 180°"],
+  L: ["Left clockwise", "Left counterclockwise", "Left 180°"],
+  R: ["Right clockwise", "Right counterclockwise", "Right 180°"],
+  F: ["Front clockwise", "Front counterclockwise", "Front 180°"],
+  B: ["Back clockwise", "Back counterclockwise", "Back 180°"],
+  M: ["Middle slice down", "Middle slice up", "Middle slice 180°"],
+  S: ["Standing slice clockwise", "Standing slice counterclockwise", "Standing slice 180°"],
+  u: ["Wide up clockwise", "Wide up counterclockwise", "Wide up 180°"],
+  d: ["Wide down clockwise", "Wide down counterclockwise", "Wide down 180°"],
+  l: ["Wide left clockwise", "Wide left counterclockwise", "Wide left 180°"],
+  r: ["Wide right clockwise", "Wide right counterclockwise", "Wide right 180°"],
+  f: ["Wide front clockwise", "Wide front counterclockwise", "Wide front 180°"],
+  x: ["Rotate cube up", "Rotate cube down", "Rotate cube up 180°"],
+  y: ["Rotate cube left", "Rotate cube right", "Rotate cube left 180°"],
+  z: ["Roll cube clockwise", "Roll cube counterclockwise", "Roll cube 180°"],
+};
+
 function moveId(face: CubeFace, suffix: (typeof TURN_SUFFIXES)[number]): string {
   return `notation-${suffix === "" ? face : `${face}${suffix}`}`;
 }
@@ -80,7 +102,7 @@ function buildMove(face: CubeFace, suffix: (typeof TURN_SUFFIXES)[number]): Algo
   const notation = moveNotation(face, suffix);
   return {
     id: moveId(face, suffix),
-    name: notation,
+    name: MOVE_TITLES[face][SUFFIX_TITLE_INDEX[suffix]],
     notation,
     description: FACE_DESCRIPTIONS[face],
     category: "Notation",

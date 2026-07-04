@@ -101,3 +101,8 @@
 .grid {
   @include mixins.grid-responsive;
 }
+
+/* auto-fit collapses unused tracks so partial rows stretch to the full width. */
+.gridStretch {
+  @include mixins.grid-responsive(auto-fit);
+}

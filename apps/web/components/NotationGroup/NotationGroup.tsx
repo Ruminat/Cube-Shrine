@@ -32,7 +32,7 @@ function MoveCardGrid({
   onToggleMoveReverse: (algorithmId: string) => void;
 }) {
   return (
-    <div className={styles.grid}>
+    <div className={styles.gridStretch}>
       {moves.map((move) => (
         <AlgorithmCard
           key={move.id}
