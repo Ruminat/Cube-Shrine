@@ -2,6 +2,8 @@
 
 [![Deploy](https://img.shields.io/github/actions/workflow/status/ruminat/Cube-Shrine/.github/workflows/deploy-pages.yml?branch=main&label=Deploy&logo=github)](https://github.com/ruminat/Cube-Shrine/actions/workflows/deploy-pages.yml?query=branch%3Amain) [![Storybook](https://img.shields.io/badge/Storybook-deployed-ff4685?logo=storybook)](https://ruminat.github.io/Cube-Shrine/storybook/) [![Cube Shrine](https://img.shields.io/badge/Cube_Shrine-live-24292f?logo=githubpages)](https://ruminat.github.io/Cube-Shrine/)
 
+![Cube Shrine — CFOP algorithm gallery with isometric Canvas-2D cube previews](apps/web/docs/screenshot.png)
+
 Static [Next.js](https://nextjs.org/) app for browsing CFOP-style algorithms with **isometric cube previews** (Canvas 2D). TypeScript, SCSS modules, and [Radix Themes](https://www.radix-ui.com/themes) for layout and UI.
 
 Cube modeling, notation parsing, canvas drawing, and optional React helpers live in the workspace package **`@shreklabs/cube-shrine`** (`packages/cube-shrine`), built with **Vite** and tested with **Vitest**.
@@ -65,6 +67,12 @@ npm run build-storybook  # static Storybook → packages/cube-shrine/storybook-s
 ```
 
 `npm install` installs a **pre-commit** hook (via `simple-git-hooks`) that runs `npm run codecheck` when you commit on **`main`** or **`master`**.
+
+**Regenerate the README screenshot** (framed capture of the live gallery, [Playwright](https://playwright.dev/)):
+
+```bash
+npm run screenshot -w web   # builds the static export, then writes apps/web/docs/screenshot.png
+```
 
 ## Working on `@shreklabs/cube-shrine` independently
 
