@@ -1,0 +1,71 @@
+/*
+ * Navigation veil.
+ *
+ * Intensity is driven by elapsed time instead of being applied at full strength on
+ * mount: route commits on this site land in roughly 20-120ms, and a full blur for that
+ * long reads as a hard page reload rather than a transition. The curve below is mapped
+ * onto a 1000ms timeline — near-invisible through the first ~150ms, still light at
+ * 300ms, and only prominent past that, where a wait genuinely deserves feedback.
+ *
+ * NOTE: the 0% keyframe deliberately omits `backdrop-filter`. Any zero-length blur
+ * (`blur(0)` *and* `blur(0px)`) is minified to `blur()`, which is invalid and silently
+ * kills interpolation for the whole property — the veil then animates opacity only.
+ * Leaving it out starts the interpolation from the element's base `none`, which the
+ * filter spec treats as the identity, i.e. exactly the zero blur we want.
+ * Vendor prefixes are left to the build; writing `-webkit-backdrop-filter` by hand
+ * made the minifier drop the standard property.
+ */
+.navVeil {
+  position: fixed;
+  inset: 0;
+  z-index: 250;
+  background-color: var(--background);
+  opacity: 0;
+  animation: nav-veil-in 1000ms linear forwards;
+}
+
+@keyframes nav-veil-in {
+  /* 0ms — see the note above: no `backdrop-filter` here on purpose */
+  0% {
+    opacity: 0;
+  }
+  /* ~80ms — below the threshold where a flash is perceivable */
+  8% {
+    opacity: 0.12;
+    backdrop-filter: blur(1px);
+  }
+  /* 300ms — "really light" */
+  30% {
+    opacity: 0.32;
+    backdrop-filter: blur(3px);
+  }
+  /* ~650ms */
+  65% {
+    opacity: 0.5;
+    backdrop-filter: blur(8px);
+  }
+  /* 1000ms and held via `forwards` */
+  100% {
+    opacity: 0.6;
+    backdrop-filter: blur(14px);
+  }
+}
+
+/* Animating blur is a common motion-sickness trigger; fade a flat tint instead. */
+@media (prefers-reduced-motion: reduce) {
+  .navVeil {
+    animation-name: nav-veil-in-reduced;
+  }
+}
+
+@keyframes nav-veil-in-reduced {
+  0% {
+    opacity: 0;
+  }
+  30% {
+    opacity: 0.2;
+  }
+  100% {
+    opacity: 0.5;
+  }
+}

@@ -2,21 +2,26 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { type MouseEvent, useCallback, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation";
+import { type MouseEvent, useCallback, useEffect, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Button, Dialog, Flex, IconButton, Text } from "@radix-ui/themes";
 import { useTheme } from "@/components/theme-provider";
 import { useDocumentAppearance } from "@/lib/document-appearance";
 import { useMediaQuery } from "@/hooks/use-media-query";
 import { cn } from "@/lib/utils";
 import { Menu, Moon, Sun } from "lucide-react";
+import styles from "./header.module.scss";
 
 const siteIconSrc = `${process.env.NEXT_PUBLIC_SITE_BASE_PATH ?? ""}/icon.png`;
+
+/** `trailingSlash: true` means `usePathname()` yields `/timer/` while hrefs are `/timer`. */
+function normalizeRoute(value: string): string {
+  return value.length > 1 && value.endsWith("/") ? value.slice(0, -1) : value;
+}
 
 export function Header() {
   const appearance = useDocumentAppearance();
   const { setTheme } = useTheme();
-  const router = useRouter();
   const pathname = usePathname() ?? "";
   const isTimerRoute = pathname.includes("/timer");
   const isNotationRoute = pathname.includes("/notation");
@@ -25,7 +30,11 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const isMdUp = useMediaQuery("(min-width: 768px)");
 
+  /** Routes already committed once; their payload is in the App Router cache. */
+  const visitedRoutesRef = useRef<Set<string>>(new Set());
+
   useEffect(() => {
+    visitedRoutesRef.current.add(normalizeRoute(pathname));
     setIsNavigating(false);
     setMobileMenuOpen(false);
   }, [pathname]);
@@ -46,15 +55,22 @@ export function Header() {
       ) {
         return;
       }
-      if (pathname === href || pathname === `${href}/`) {
+      const target = normalizeRoute(href);
+      if (normalizeRoute(pathname) === target) {
         return;
       }
-      event.preventDefault();
-      setIsNavigating(true);
       setMobileMenuOpen(false);
-      router.push(href);
+
+      // No `preventDefault()` / `router.push()`: `Link` performs the client-side
+      // navigation itself, which keeps its prefetch and modifier-key handling intact.
+      // A route we have already been to comes from the router cache, so it commits
+      // before the veil would be worth showing — skip it entirely there.
+      if (visitedRoutesRef.current.has(target)) {
+        return;
+      }
+      setIsNavigating(true);
     },
-    [pathname, router],
+    [pathname],
   );
 
   return (
@@ -211,12 +227,7 @@ export function Header() {
         </div>
       </header>
       {isNavigating ? (
-        <div
-          className='fixed inset-0 z-[250] bg-background/50 backdrop-blur-sm'
-          role='status'
-          aria-live='polite'
-          aria-label='Navigating'
-        />
+        <div className={styles.navVeil} role='status' aria-live='polite' aria-label='Navigating' />
       ) : null}
     </>
   );
