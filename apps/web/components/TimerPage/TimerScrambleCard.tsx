@@ -56,7 +56,9 @@ export function TimerScrambleCard({
           <button
             type="button"
             onClick={handleCopyScramble}
-            disabled={!scramble}
+            // `undefined` until hydrated so the pre-hydration render matches the
+            // prerendered HTML (the scramble only exists after the localStorage effect).
+            disabled={hydrated ? !scramble : undefined}
             aria-label="Copy scramble"
             className={cn(styles.scrambleCopy, isCopied && styles.scrambleCopied)}
           >

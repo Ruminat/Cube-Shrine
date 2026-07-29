@@ -72,10 +72,28 @@ describe("buildTimerSessionStats", () => {
 });
 
 describe("computeWindowStats", () => {
-  it("returns zero labels when there are not enough solves", () => {
-    const stats = computeWindowStats([10, 11], 3, false);
+  it("returns zero labels only when there are no solves at all", () => {
+    const stats = computeWindowStats([], 3, false);
     expect(stats.current).toEqual({ value: 0, sigma: 0 });
     expect(stats.best).toEqual({ value: 0, sigma: 0 });
+  });
+
+  it("uses the solves available when the window is not full yet", () => {
+    const stats = computeWindowStats([10, 11], 3, false);
+    expect(stats.current).toEqual({ value: 10.5, sigma: 0.5 });
+    expect(stats.best).toEqual({ value: 10.5, sigma: 0.5 });
+  });
+
+  it("still trims a partial window, so ao5 over 3 solves drops best and worst", () => {
+    const stats = computeWindowStats([10, 12, 20], 5, true);
+    expect(stats.current.value).toBe(12);
+    expect(stats.best.value).toBe(12);
+  });
+
+  it("keeps rolling behaviour once the window is full", () => {
+    const stats = computeWindowStats([10, 11, 12, 13, 20], 3, false);
+    expect(stats.current.value).toBe(15);
+    expect(stats.best.value).toBe(11);
   });
 
   it("returns DNF average for windows that include DNF", () => {

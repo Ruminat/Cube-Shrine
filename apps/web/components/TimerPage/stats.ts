@@ -35,33 +35,38 @@ export function statLabel(values: number[]): StatLabel {
   return { value: mean(values), sigma: stdDev(values) };
 }
 
+/**
+ * Current and best value for a rolling window of `size` solves.
+ *
+ * Before the window is full the stat is computed over however many solves exist rather
+ * than being withheld, so a 3-solve session still reports a meaningful "average of 5".
+ * Trimming still applies (`trimmedWindow` is a no-op below 3 samples), so the statistic
+ * keeps its identity and only the sample count shrinks.
+ */
 export function computeWindowStats(
   effective: number[],
   size: number,
   trimmed: boolean
 ): WindowStatPair {
-  if (effective.length < size) {
+  if (effective.length === 0) {
     return { current: { value: 0, sigma: 0 }, best: { value: 0, sigma: 0 } };
   }
-  const currentWindow = effective.slice(-size);
-  const currentSeries = trimmed ? trimmedWindow(currentWindow) : currentWindow;
-  const current = statLabel(currentSeries);
-  let best = { value: Number.POSITIVE_INFINITY, sigma: 0 };
-  for (let i = 0; i <= effective.length - size; i += 1) {
-    const window = effective.slice(i, i + size);
-    const series = trimmed ? trimmedWindow(window) : window;
-    const stat = statLabel(series);
-    if (stat.value < best.value) {
+
+  const windowSize = Math.min(size, effective.length);
+  const series = (window: number[]) => (trimmed ? trimmedWindow(window) : window);
+  const current = statLabel(series(effective.slice(-windowSize)));
+
+  // Seeded from the first window rather than +Infinity so an all-DNF session reports the
+  // DNF label (with its sigma) instead of a synthetic zero.
+  let best: StatLabel | null = null;
+  for (let i = 0; i <= effective.length - windowSize; i += 1) {
+    const stat = statLabel(series(effective.slice(i, i + windowSize)));
+    if (best === null || stat.value < best.value) {
       best = stat;
     }
   }
-  if (!Number.isFinite(best.value) && best.value !== Number.POSITIVE_INFINITY) {
-    return { current, best: { value: 0, sigma: 0 } };
-  }
-  return {
-    current,
-    best: Number.isFinite(best.value) || best.value === Number.POSITIVE_INFINITY ? best : { value: 0, sigma: 0 },
-  };
+
+  return { current, best: best ?? current };
 }
 
 export type TimerSessionStats = {

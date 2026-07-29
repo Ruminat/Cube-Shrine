@@ -94,6 +94,7 @@ export function TimerPage() {
                 <TimerSessionAside
                   solveEntries={solveEntries}
                   stats={sessionStats}
+                  hydrated={hydrated}
                   onClearSession={clearSession}
                   onSelectSolve={setSelectedSolveIndex}
                 />

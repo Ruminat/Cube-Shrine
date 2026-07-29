@@ -17,6 +17,8 @@ import styles from "./TimerPage.module.scss";
 export type TimerSessionAsideProps = {
   solveEntries: SolveEntry[];
   stats: TimerSessionStats;
+  /** False until the IndexedDB read settles; gates `disabled` so hydration matches the HTML. */
+  hydrated: boolean;
   onClearSession: () => void;
   onSelectSolve: (index: number) => void;
 };
@@ -24,11 +26,13 @@ export type TimerSessionAsideProps = {
 export function TimerSessionAside({
   solveEntries,
   stats,
+  hydrated,
   onClearSession,
   onSelectSolve,
 }: TimerSessionAsideProps) {
   const { bestEffective, worstEffective, worstHasDnf, canColorExtremes } = stats;
   const hasSolves = solveEntries.length > 0;
+  const exportDisabled = hydrated ? !hasSolves : undefined;
   const displayedSolves = solveEntries
     .map((entry, index) => ({ entry, index }))
     .slice()
@@ -62,14 +66,14 @@ export function TimerSessionAside({
           <Flex align="center" gap="2">
             <DropdownMenu.Root>
               <Tooltip content={hasSolves ? "Save session data as..." : "No solves to export yet"}>
-                <DropdownMenu.Trigger disabled={!hasSolves}>
+                <DropdownMenu.Trigger disabled={exportDisabled}>
                   <IconButton
                     type="button"
                     size="2"
                     variant="outline"
                     color="gray"
                     aria-label="Save session data as…"
-                    disabled={!hasSolves}
+                    disabled={exportDisabled}
                   >
                     <Download className="size-4" />
                   </IconButton>
