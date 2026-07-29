@@ -2,8 +2,11 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import uPlot from "uplot";
+import { ChartColumnBig, TrendingUp } from "lucide-react";
 import type { SolveEntry } from "@/components/TimerPage/definitions";
+import { PanelEyebrow } from "@/components/TimerPage/render";
 import { effectiveSeconds } from "@/components/TimerPage/utils";
+import styles from "./TimerPage.module.scss";
 
 type TimerStatsChartProps = {
   solveEntries: SolveEntry[];
@@ -69,6 +72,28 @@ function buildHistogramBins(solveEntries: SolveEntry[]): HistogramBin[] {
   return bins;
 }
 
+/**
+ * Y-axis ticks on a 1/2/5 x 10^n step so the histogram gridlines land on round counts
+ * (0/10/20/30) instead of fractions of the tallest bin. Returns descending values; the
+ * first entry doubles as the axis maximum the bars are scaled against.
+ */
+function buildCountTicks(maxCount: number): number[] {
+  if (maxCount <= 0) return [0];
+  const rawStep = maxCount / 3;
+  const magnitude = 10 ** Math.floor(Math.log10(rawStep));
+  const step = [1, 2, 5, 10].map((m) => m * magnitude).find((candidate) => candidate >= rawStep) ?? magnitude * 10;
+  const top = Math.ceil(maxCount / step) * step;
+  const ticks: number[] = [];
+  for (let value = top; value >= 0; value -= step) ticks.push(value);
+  return ticks;
+}
+
+/** Reads a themed token off the chart host so uPlot (canvas) matches the CSS palette. */
+function readToken(host: HTMLElement, name: string, fallback: string): string {
+  const value = getComputedStyle(host).getPropertyValue(name).trim();
+  return value === "" ? fallback : value;
+}
+
 export function TimerStatsChart({ solveEntries }: TimerStatsChartProps) {
   const graphHostRef = useRef<HTMLDivElement | null>(null);
   const graphPlotRef = useRef<uPlot | null>(null);
@@ -84,26 +109,32 @@ export function TimerStatsChart({ solveEntries }: TimerStatsChartProps) {
     }
 
     const render = () => {
-      const width = Math.max(220, host.clientWidth);
-      const height = 280;
+      const axisStroke = readToken(host, "--tm-chart-axis", "#94a3b8");
+      const gridStroke = readToken(host, "--tm-chart-grid", "rgba(148,163,184,0.16)");
+      const lineStroke = readToken(host, "--tm-chart-line", "#a78bfa");
+      const grid = { stroke: gridStroke, width: 1, dash: [4, 4] };
 
       const options: uPlot.Options = {
-        width,
-        height,
+        width: Math.max(220, host.clientWidth),
+        // Host height comes from flex, not from uPlot's own DOM, so reading it back here
+        // cannot feed the ResizeObserver below into a loop.
+        height: Math.max(200, host.clientHeight),
         legend: { show: false },
+        cursor: { y: false },
         scales: {
           x: { time: false },
           y: { auto: true },
         },
         axes: [
-          { label: graph.xLabel, stroke: "#64748b", grid: { stroke: "rgba(100,116,139,0.2)" } },
-          { label: graph.yLabel, stroke: "#64748b", grid: { stroke: "rgba(100,116,139,0.2)" } },
+          { label: graph.xLabel, stroke: axisStroke, ticks: { stroke: gridStroke }, grid },
+          // Wider tick spacing keeps the seconds axis on round steps rather than halves.
+          { label: graph.yLabel, stroke: axisStroke, ticks: { stroke: gridStroke }, grid, space: 96 },
         ],
         series: [
           {},
           {
             label: graph.legend,
-            stroke: "#7c3aed",
+            stroke: lineStroke,
             width: 2,
             points: { show: false },
           },
@@ -118,8 +149,14 @@ export function TimerStatsChart({ solveEntries }: TimerStatsChartProps) {
 
     const resizeObserver = new ResizeObserver(() => render());
     resizeObserver.observe(host);
+
+    // Canvas colours are baked in at draw time — repaint when the theme class flips.
+    const themeObserver = new MutationObserver(() => render());
+    themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+
     return () => {
       resizeObserver.disconnect();
+      themeObserver.disconnect();
       graphPlotRef.current?.destroy();
       graphPlotRef.current = null;
     };
@@ -128,66 +165,60 @@ export function TimerStatsChart({ solveEntries }: TimerStatsChartProps) {
   const hasGraphData = graph !== null;
   const hasHistogramData = histogramBins.length > 0;
   const maxCount = histogramBins.reduce((acc, bin) => Math.max(acc, bin.count), 0);
-  const yTicks = maxCount > 0 ? [maxCount, Math.round(maxCount * 0.66), Math.round(maxCount * 0.33), 0] : [0];
+  const yTicks = buildCountTicks(maxCount);
+  const countAxisMax = yTicks[0] ?? 0;
+  const labelEvery = histogramBins.length > 10 ? 2 : 1;
 
   return (
-    <div className="min-h-[220px] min-w-0 space-y-4 overflow-hidden rounded-lg border border-border/70 bg-muted/15 p-4">
-      <div>
-        <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Graph</p>
+    <div className="flex h-full min-w-0 flex-col gap-5">
+      <div className={`${styles.chartBlock} flex-1`}>
+        <PanelEyebrow icon={TrendingUp} title="Solve time over solves" />
         {hasGraphData ? (
-          <div ref={graphHostRef} className="min-w-0 overflow-hidden" />
+          <div ref={graphHostRef} className={`${styles.chartCanvas} mt-3`} />
         ) : (
-          <div className="flex min-h-[230px] items-center justify-center rounded-md border border-dashed border-border/70">
-            <p className="text-sm text-muted-foreground">Add solves to render statistics</p>
-          </div>
+          <div className={`${styles.chartEmpty} mt-3`}>Add solves to render statistics</div>
         )}
       </div>
 
-      {hasHistogramData ? (
-        <div>
-          <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">Histogram</p>
-          <div className="rounded-md border border-border/70 bg-background/80 p-3">
-            <div className="grid min-h-[180px] grid-cols-[auto_1fr] gap-2">
-              <div className="flex flex-col justify-between pb-4 text-xs text-muted-foreground">
-                {yTicks.map((tick, index) => (
-                  <span key={`${tick}-${index}`} className="tabular-nums">
-                    {tick}
-                  </span>
+      <div className={styles.dividerPlain} />
+
+      <div className={`${styles.chartBlock} flex-1`}>
+        <PanelEyebrow icon={ChartColumnBig} title="Solve time distribution" />
+        {hasHistogramData ? (
+          <div className={`${styles.histogram} mt-3`}>
+            <div className={styles.histogramTicks}>
+              {yTicks.map((tick, index) => (
+                <span key={`${tick}-${index}`}>{tick}</span>
+              ))}
+            </div>
+            <div className={styles.histogramPlot}>
+              <div className={styles.histogramGrid}>
+                {yTicks.map((_, index) => (
+                  <div key={index} className={styles.histogramGridLine} />
                 ))}
               </div>
-              <div className="relative">
-                <div className="absolute inset-0 flex flex-col justify-between pb-4">
-                  {yTicks.map((_, index) => (
-                    <div key={index} className="border-t border-border/50" />
-                  ))}
-                </div>
-                <div className="relative z-10 grid h-[160px] grid-cols-[repeat(var(--hist-bins),minmax(0,1fr))] items-end gap-0.5 pb-4" style={{ ["--hist-bins" as string]: `${histogramBins.length}` }}>
-                  {histogramBins.map((bin, index) => {
-                    const barHeightPx = maxCount > 0 ? Math.round((bin.count / maxCount) * 130) : 0;
-                    const showLabel = index % Math.max(1, Math.floor(histogramBins.length / 5)) === 0;
-                    return (
-                      <div key={`${bin.start}-${bin.end}`} className="flex min-w-0 flex-col items-center">
-                        <div
-                          className="w-full rounded-t-sm border border-violet-700/90 bg-violet-500/70"
-                          style={{ height: `${bin.count === 0 ? 0 : Math.max(3, barHeightPx)}px` }}
-                          title={`${bin.start.toFixed(2)}s - ${bin.end.toFixed(2)}s: ${bin.count}`}
-                        />
-                        <span className="mt-1 text-[10px] tabular-nums text-muted-foreground">
-                          {showLabel ? `${bin.start.toFixed(0)}s` : ""}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
+              <div className={styles.histogramBars}>
+                {histogramBins.map((bin, index) => (
+                  <div key={`${bin.start}-${bin.end}`} className={styles.histogramColumn}>
+                    <div
+                      className={styles.histogramBar}
+                      style={{ height: countAxisMax > 0 ? `${(bin.count / countAxisMax) * 100}%` : "0%" }}
+                      title={`${bin.start.toFixed(2)}s - ${bin.end.toFixed(2)}s: ${bin.count}`}
+                    />
+                    <span className={styles.histogramLabel}>
+                      {index % labelEvery === 0 ? `${bin.start.toFixed(0)}s` : ""}
+                    </span>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
-        </div>
-      ) : (
-        <div className="rounded-md border border-dashed border-border/70 p-3 text-sm text-muted-foreground">
-          Histogram appears after at least one non-DNF solve.
-        </div>
-      )}
+        ) : (
+          <div className={`${styles.chartEmpty} mt-3`}>
+            Histogram appears after at least one non-DNF solve.
+          </div>
+        )}
+      </div>
     </div>
   );
 }

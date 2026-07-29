@@ -1,11 +1,15 @@
 "use client";
 
+import { useCallback, useState } from "react";
 import type { RefObject } from "react";
 import type { RotationStep } from "@shreklabs/cube-shrine/core";
-import { Box, Button, Flex, Text } from "@radix-ui/themes";
+import { Box as BoxIcon, ChevronsRight, Copy } from "lucide-react";
+import { Button, Flex, Text, Tooltip } from "@radix-ui/themes";
 import { AlgorithmNotation } from "@/components/AlgorithmNotation/AlgorithmNotation";
 import { CubeRenderer } from "@/components/CubeRenderer/CubeRenderer";
 import { TIMER_CUBE_SIZE } from "@/components/TimerPage/definitions";
+import { cn } from "@/lib/utils";
+import styles from "./TimerPage.module.scss";
 
 export type TimerScrambleCardProps = {
   scramble: string | null;
@@ -24,28 +28,51 @@ export function TimerScrambleCard({
   onStartTap,
   onSkipScramble,
 }: TimerScrambleCardProps) {
+  const [isCopied, setIsCopied] = useState(false);
+
+  const handleCopyScramble = useCallback(async () => {
+    if (!scramble || !navigator?.clipboard?.writeText) return;
+    await navigator.clipboard.writeText(scramble);
+    setIsCopied(true);
+    window.setTimeout(() => setIsCopied(false), 1200);
+  }, [scramble]);
+
   return (
-    <Flex direction="column" align="center" gap="6" className="mx-auto max-w-3xl">
-      <Box className="w-full rounded-lg border border-border bg-card p-6 shadow-sm">
+    <Flex direction="column" gap="5">
+      <div className={styles.scrambleBar}>
+        <span className={styles.scrambleIcon} aria-hidden>
+          <BoxIcon className="size-[18px]" />
+        </span>
+
         {scramble ? (
-          <AlgorithmNotation
-            centered
-            notation={scramble}
-            className="mb-4 text-xl leading-relaxed tracking-wide"
-          />
+          <AlgorithmNotation centered notation={scramble} className={cn(styles.scrambleText)} />
+        ) : (
+          <Text size="2" color="gray" className={cn(styles.scrambleText)}>
+            Preparing scramble...
+          </Text>
+        )}
+
+        <Tooltip content={isCopied ? "Copied!" : "Copy scramble"}>
+          <button
+            type="button"
+            onClick={handleCopyScramble}
+            disabled={!scramble}
+            aria-label="Copy scramble"
+            className={cn(styles.scrambleCopy, isCopied && styles.scrambleCopied)}
+          >
+            <Copy className="size-[18px]" />
+          </button>
+        </Tooltip>
+      </div>
+
+      <div className={styles.cubeStage}>
+        {scramble ? (
+          <CubeRenderer size={TIMER_CUBE_SIZE} preparationRotations={preparationRotations} />
         ) : null}
-        <Flex justify="center" align="center" className="min-h-[280px]">
-          {scramble ? (
-            <CubeRenderer size={TIMER_CUBE_SIZE} preparationRotations={preparationRotations} />
-          ) : (
-            <Text size="2" color="gray">
-              Preparing scramble...
-            </Text>
-          )}
-        </Flex>
-      </Box>
-      <div className="md:hidden">
-        <Flex gap="2">
+      </div>
+
+      <Flex justify="center" gap="3">
+        <div className="md:hidden">
           <Button
             type="button"
             size="3"
@@ -57,16 +84,18 @@ export function TimerScrambleCard({
           >
             Start
           </Button>
-          <Button type="button" size="3" variant="soft" onClick={onSkipScramble} disabled={hydrated ? !scramble : undefined}>
-            Skip scramble
-          </Button>
-        </Flex>
-      </div>
-      <div className="hidden md:flex">
-        <Button type="button" variant="soft" size="2" onClick={onSkipScramble} disabled={hydrated ? !scramble : undefined}>
+        </div>
+        <Button
+          type="button"
+          size="3"
+          variant="soft"
+          onClick={onSkipScramble}
+          disabled={hydrated ? !scramble : undefined}
+        >
+          <ChevronsRight className="size-4" />
           Skip scramble
         </Button>
-      </div>
+      </Flex>
     </Flex>
   );
 }

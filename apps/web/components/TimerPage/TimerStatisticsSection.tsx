@@ -1,14 +1,18 @@
 "use client";
 
+import { Box as BoxIcon, ChartColumnBig, Star, Timer } from "lucide-react";
 import type { TimerSessionStats } from "@/components/TimerPage/stats";
 import type { SolveEntry } from "@/components/TimerPage/definitions";
 import {
+  PanelEyebrow,
   StatExtremeHighlight,
   StatGroup,
   StatReadoutRow,
 } from "@/components/TimerPage/render";
 import { TimerStatsChart } from "@/components/TimerPage/TimerStatsChart";
 import { formatSigma, formatStatsValue } from "@/components/TimerPage/utils";
+import { cn } from "@/lib/utils";
+import styles from "./TimerPage.module.scss";
 
 export type TimerStatisticsSectionProps = {
   solveEntries: SolveEntry[];
@@ -28,25 +32,33 @@ export function TimerStatisticsSection({
   const bestLabel = bestEffective === null ? "0.00" : formatStatsValue(bestEffective);
   const worstLabel = worstEffective === null ? "0.00" : formatStatsValue(worstEffective);
 
+  const windowGroups = [
+    { title: "Mean of 3", pair: mo3 },
+    { title: "Average of 5", pair: ao5 },
+    { title: "Average of 12", pair: ao12 },
+    { title: "Average of 50", pair: ao50 },
+    { title: "Average of 100", pair: ao100 },
+  ];
+
   return (
-    <section className="rounded-lg border border-border bg-card p-4 shadow-sm">
-      <h2 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Statistics</h2>
+    <section>
+      <PanelEyebrow icon={ChartColumnBig} title="Statistics" className="mb-3" />
 
-      <div className="mt-3 grid gap-6 md:grid-cols-2">
-        <TimerStatsChart solveEntries={solveEntries} />
+      <div className="grid gap-4 lg:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)]">
+        <div className={cn(styles.panel, styles.panelSheen, "flex min-w-0 flex-col p-4")}>
+          <TimerStatsChart solveEntries={solveEntries} />
+        </div>
 
-        <div className="min-w-0 flex flex-col gap-4">
-          <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 dark:border-primary/30 dark:bg-primary/10">
-            <p className="mb-2 text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">
-              Best / worst
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <StatExtremeHighlight label="Best" value={bestLabel} />
-              <StatExtremeHighlight label="Worst" value={worstLabel} />
+        <div className="flex min-w-0 flex-col gap-3">
+          <div className={styles.statCard}>
+            <PanelEyebrow icon={Star} title="Best / worst" />
+            <div className="mt-2 flex flex-wrap gap-3">
+              <StatExtremeHighlight label="Best" value={bestLabel} tone="best" />
+              <StatExtremeHighlight label="Worst" value={worstLabel} tone="worst" />
             </div>
           </div>
 
-          <StatGroup title="Session">
+          <StatGroup icon={Timer} title="Session">
             <StatReadoutRow
               label="Completed solves"
               value={`${completedCount} / ${solveEntriesLength}`}
@@ -63,30 +75,21 @@ export function TimerStatisticsSection({
             />
           </StatGroup>
 
-          <StatGroup title="Mean of 3">
-            <StatReadoutRow label="Current" value={formatStatsValue(mo3.current.value)} sigma={formatSigma(mo3.current.sigma)} />
-            <StatReadoutRow label="Best" value={formatStatsValue(mo3.best.value)} sigma={formatSigma(mo3.best.sigma)} />
-          </StatGroup>
-
-          <StatGroup title="Average of 5">
-            <StatReadoutRow label="Current" value={formatStatsValue(ao5.current.value)} sigma={formatSigma(ao5.current.sigma)} />
-            <StatReadoutRow label="Best" value={formatStatsValue(ao5.best.value)} sigma={formatSigma(ao5.best.sigma)} />
-          </StatGroup>
-
-          <StatGroup title="Average of 12">
-            <StatReadoutRow label="Current" value={formatStatsValue(ao12.current.value)} sigma={formatSigma(ao12.current.sigma)} />
-            <StatReadoutRow label="Best" value={formatStatsValue(ao12.best.value)} sigma={formatSigma(ao12.best.sigma)} />
-          </StatGroup>
-
-          <StatGroup title="Average of 50">
-            <StatReadoutRow label="Current" value={formatStatsValue(ao50.current.value)} sigma={formatSigma(ao50.current.sigma)} />
-            <StatReadoutRow label="Best" value={formatStatsValue(ao50.best.value)} sigma={formatSigma(ao50.best.sigma)} />
-          </StatGroup>
-
-          <StatGroup title="Average of 100">
-            <StatReadoutRow label="Current" value={formatStatsValue(ao100.current.value)} sigma={formatSigma(ao100.current.sigma)} />
-            <StatReadoutRow label="Best" value={formatStatsValue(ao100.best.value)} sigma={formatSigma(ao100.best.sigma)} />
-          </StatGroup>
+          {windowGroups.map(({ title, pair }) => (
+            <StatGroup key={title} icon={BoxIcon} title={title}>
+              <StatReadoutRow
+                label="Current"
+                value={formatStatsValue(pair.current.value)}
+                sigma={formatSigma(pair.current.sigma)}
+              />
+              <StatReadoutRow
+                label="Best"
+                value={formatStatsValue(pair.best.value)}
+                sigma={formatSigma(pair.best.sigma)}
+                highlight
+              />
+            </StatGroup>
+          ))}
         </div>
       </div>
     </section>

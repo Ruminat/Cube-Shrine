@@ -10,6 +10,8 @@ import { TimerSessionAside } from "@/components/TimerPage/TimerSessionAside";
 import { TimerSolveDetailsDialog } from "@/components/TimerPage/TimerSolveDetailsDialog";
 import { TimerStatisticsSection } from "@/components/TimerPage/TimerStatisticsSection";
 import { useTimerPageController } from "@/components/TimerPage/useTimerPageController";
+import { cn } from "@/lib/utils";
+import styles from "./TimerPage.module.scss";
 
 export function TimerPage() {
   const {
@@ -61,32 +63,41 @@ export function TimerPage() {
   }, [removeSolve, selectedSolveIndex]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className={cn(styles.page, "min-h-screen bg-background")}>
       {showChrome ? (
         <TimerIdleChrome>
-          <div className="space-y-6">
-            <div className="grid gap-6 lg:grid-cols-[1fr_380px]">
-              <section>
+          <div className="space-y-5">
+            <div className="grid gap-5 lg:grid-cols-[minmax(0,1fr)_minmax(340px,420px)]">
+              <section className={cn(styles.panel, styles.panelSheen, "min-w-0 p-5 sm:p-6")}>
                 <TimerLatestSolveBanner
                   latestDisplay={latestDisplay}
                   latestIsDnf={latestIsDnf}
                   latestIsPlusTwo={latestIsPlusTwo}
                 />
-                <TimerScrambleCard
-                  scramble={scramble}
-                  preparationRotations={preparationRotations}
-                  hydrated={hydrated}
-                  blockStartClickUntilRef={blockStartClickUntilRef}
-                  onStartTap={beginRun}
-                  onSkipScramble={skipScramble}
-                />
+                <div className="mt-6">
+                  <TimerScrambleCard
+                    scramble={scramble}
+                    preparationRotations={preparationRotations}
+                    hydrated={hydrated}
+                    blockStartClickUntilRef={blockStartClickUntilRef}
+                    onStartTap={beginRun}
+                    onSkipScramble={skipScramble}
+                  />
+                </div>
               </section>
-              <TimerSessionAside
-                solveEntries={solveEntries}
-                stats={sessionStats}
-                onClearSession={clearSession}
-                onSelectSolve={setSelectedSolveIndex}
-              />
+              {/*
+                The aside is absolutely positioned at `lg` (see TimerSessionAside) so a long
+                solve list cannot stretch the grid row: the row height stays driven by the
+                timer panel and the solve grid scrolls inside instead.
+              */}
+              <div className="lg:relative">
+                <TimerSessionAside
+                  solveEntries={solveEntries}
+                  stats={sessionStats}
+                  onClearSession={clearSession}
+                  onSelectSolve={setSelectedSolveIndex}
+                />
+              </div>
             </div>
             <TimerStatisticsSection
               solveEntries={solveEntries}

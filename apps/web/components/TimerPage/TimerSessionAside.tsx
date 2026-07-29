@@ -1,16 +1,18 @@
 "use client";
 
 import { useCallback, useState } from "react";
-import { Download } from "lucide-react";
+import { ChartColumnBig, Download, Trash2 } from "lucide-react";
 import { AlertDialog, Button, DropdownMenu, Flex, IconButton, Tooltip } from "@radix-ui/themes";
 import type { SolveEntry } from "@/components/TimerPage/definitions";
 import type { TimerSessionStats } from "@/components/TimerPage/stats";
+import { PanelEyebrow } from "@/components/TimerPage/render";
 import {
   TimerSessionExportDialog,
   type TimerSessionExportMode,
 } from "@/components/TimerPage/TimerSessionExportDialog";
 import { effectiveSeconds, formatSolveEntry } from "@/components/TimerPage/utils";
 import { cn } from "@/lib/utils";
+import styles from "./TimerPage.module.scss";
 
 export type TimerSessionAsideProps = {
   solveEntries: SolveEntry[];
@@ -47,9 +49,16 @@ export function TimerSessionAside({
 
   return (
     <>
-      <aside className="flex max-h-[calc(100vh-8rem)] flex-col overflow-y-auto rounded-lg border border-border bg-card p-4 shadow-sm lg:sticky lg:top-20">
-        <div className="mb-3 flex shrink-0 items-center justify-between gap-2">
-          <h2 className="text-lg font-semibold text-foreground">Session</h2>
+      <aside
+        className={cn(
+          styles.panel,
+          styles.panelSheen,
+          styles.asideFill,
+          "flex flex-col p-4"
+        )}
+      >
+        <div className="mb-3 flex shrink-0 flex-wrap items-center justify-between gap-2">
+          <PanelEyebrow icon={ChartColumnBig} title="Session" />
           <Flex align="center" gap="2">
             <DropdownMenu.Root>
               <Tooltip content={hasSolves ? "Save session data as..." : "No solves to export yet"}>
@@ -75,6 +84,7 @@ export function TimerSessionAside({
             <AlertDialog.Root>
               <AlertDialog.Trigger>
                 <Button type="button" color="red" variant="outline" size="2">
+                  <Trash2 className="size-4" />
                   Clear the session
                 </Button>
               </AlertDialog.Trigger>
@@ -100,33 +110,47 @@ export function TimerSessionAside({
           </Flex>
         </div>
 
-        <div className="grid shrink-0 grid-cols-4 gap-2 rounded border border-border/60 p-2">
-          {displayedSolves.map(({ entry, index }) => {
-            const value = effectiveSeconds(entry);
-            const isBest =
-              canColorExtremes && Number.isFinite(value) && bestEffective !== null && value === bestEffective;
-            const isWorst =
-              canColorExtremes &&
-              ((worstHasDnf && !Number.isFinite(value)) ||
-                (Number.isFinite(value) && worstEffective !== null && value === worstEffective));
-            const label = formatSolveEntry(entry);
-            return (
-              <Tooltip key={`${index}-${entry.scramble}-${entry.time}`} content={`Solve ${index + 1}: ${label}`}>
-                <button
-                  type="button"
-                  onClick={() => onSelectSolve(index)}
-                  className={cn(
-                    "rounded border border-border/60 bg-background px-2 py-1 text-sm font-medium transition-colors hover:bg-muted",
-                    isBest && "text-green-600 dark:text-green-400",
-                    isWorst && "text-red-600 dark:text-red-400",
-                  )}
-                >
-                  {label}
-                </button>
-              </Tooltip>
-            );
-          })}
-        </div>
+        {hasSolves ? (
+          <div className={cn(styles.solveScroller, "min-h-0 flex-1 pr-1")}>
+            <div className="grid grid-cols-4 gap-2">
+              {displayedSolves.map(({ entry, index }) => {
+                const value = effectiveSeconds(entry);
+                const isBest =
+                  canColorExtremes &&
+                  Number.isFinite(value) &&
+                  bestEffective !== null &&
+                  value === bestEffective;
+                const isWorst =
+                  canColorExtremes &&
+                  ((worstHasDnf && !Number.isFinite(value)) ||
+                    (Number.isFinite(value) && worstEffective !== null && value === worstEffective));
+                const label = formatSolveEntry(entry);
+                return (
+                  <Tooltip
+                    key={`${index}-${entry.scramble}-${entry.time}`}
+                    content={`Solve ${index + 1}: ${label}`}
+                  >
+                    <button
+                      type="button"
+                      onClick={() => onSelectSolve(index)}
+                      className={cn(
+                        styles.solveChip,
+                        isBest && styles.solveChipBest,
+                        isWorst && styles.solveChipWorst
+                      )}
+                    >
+                      {label}
+                    </button>
+                  </Tooltip>
+                );
+              })}
+            </div>
+          </div>
+        ) : (
+          <p className="py-10 text-center text-sm text-muted-foreground">
+            No solves yet — press space to start your first one.
+          </p>
+        )}
       </aside>
 
       <TimerSessionExportDialog
