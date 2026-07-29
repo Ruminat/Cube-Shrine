@@ -294,6 +294,13 @@
 
 .solveScroller {
   overflow-y: auto;
+  /*
+   * `overflow-y: auto` also computes `overflow-x` to `auto`, so this box clips on both
+   * axes. Without the inset, `.solveChip:hover`'s 1px lift would push top-row chips past
+   * the clip edge and shave their rounded top corners. Padding (not margin) so the
+   * scrollbar still tracks the full height.
+   */
+  padding: 3px 5px 3px 3px;
   scrollbar-width: thin;
   scrollbar-color: var(--tm-accent) transparent;
 }

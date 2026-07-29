@@ -111,7 +111,7 @@ export function TimerSessionAside({
         </div>
 
         {hasSolves ? (
-          <div className={cn(styles.solveScroller, "min-h-0 flex-1 pr-1")}>
+          <div className={cn(styles.solveScroller, "min-h-0 flex-1")}>
             <div className="grid grid-cols-4 gap-2">
               {displayedSolves.map(({ entry, index }) => {
                 const value = effectiveSeconds(entry);
