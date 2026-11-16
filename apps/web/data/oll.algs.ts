@@ -239,7 +239,7 @@ export const ollAlgorithms: Algorithm[] = [
   {
     id: "oll-56-streetlights",
     name: "Streetlights",
-    notation: "r' U' r U' R' U R U' R' U R r' U r",
+    notation: "(r U r') (U R U' R') (U R U' R') (r U' r')",
     description: "OLL case 56 — Streetlights.",
     category: "OLL",
     subgroupId: "oll-i",
